@@ -25,6 +25,28 @@ public class Main {
 			int num = st.hasMoreTokens() ? Integer.parseInt(st.nextToken()) : 0;
 			
 			switch (op) {
+			case "all":
+				bitSet = (1 << 21) - 1;
+				break;
+			case "empty":
+				bitSet = 0;
+				break;
+			case "add":
+				bitSet |= (1 << num);
+				break;
+			case "remove":
+				bitSet &= ~(1 << num);
+				break;
+			case "check":
+				int checkResult = (bitSet & (1 << num)) == (1 << num) ? 1 : 0;
+				bw.write(String.valueOf(checkResult));
+				bw.newLine();
+				break;
+			case "toggle":
+				bitSet ^= (1 << num);
+				break;
+			default:
+				break;
 			}
 		}
 		
