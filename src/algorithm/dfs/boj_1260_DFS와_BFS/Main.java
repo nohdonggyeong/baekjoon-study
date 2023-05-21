@@ -37,7 +37,7 @@ public class Main {
 		while (!queue.isEmpty()) {
 			int vertex = queue.poll();
 			
-			for (int i = 0; i <= edges.length; i++) {
+			for (int i = 0; i < edges.length; i++) {
 				if (edges[vertex][i] && !visited[i]) {
 					queue.add(i);
 					visited[i] = true;
@@ -59,8 +59,8 @@ public class Main {
 		M = Integer.parseInt(st.nextToken());
 		V = Integer.parseInt(st.nextToken());
 		
-		edges = new boolean[N + 1][N + 1];
-		visited = new boolean[N + 1];
+		edges = new boolean[1001][1001];
+		visited = new boolean[1001];
 		
 		for(int i = 0; i < M; i++) {
 			st = new StringTokenizer(br.readLine(), " ");
@@ -72,6 +72,7 @@ public class Main {
 		sb = new StringBuilder();
 		dfs(V);
 		bw.write(sb.toString().trim());
+		bw.newLine();
 		
 		Arrays.fill(visited, false);
 		sb = new StringBuilder();

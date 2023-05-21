@@ -7,7 +7,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.PriorityQueue;
 
-public class Main {
+public class Main_XXX {
 	private static int N;
 	private static int M;
 	private static int[] dx = {-1, 1, 0, 0};
