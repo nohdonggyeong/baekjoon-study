@@ -7,23 +7,24 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.PriorityQueue;
 
-public class Main_XXX {
+public class Main {
 	private static int N;
 	private static int M;
 	private static int[] dx = {-1, 1, 0, 0};
 	private static int[] dy = {0, 0, -1, 1};
 	private static int[][] maze;
 	private static boolean[][] visited;
+	private static PriorityQueue<Room> priorityQueue;
+	private static Room nowRoom;
+	private static int nx, ny;
 	
-	private static int bfs() {
-		PriorityQueue<Room> priorityQueue = new PriorityQueue<>();
+	private static int bfs() { // 최단거리로 벽을 부수면서 가므로, priorityQueue로 bfs를 구하기만 하면 된다.
+		priorityQueue = new PriorityQueue<>();
 		priorityQueue.offer(new Room(0, 0, 0));
+		visited[0][0] = true;
 
-		Room nowRoom;
-		int nx, ny;
 		while (!priorityQueue.isEmpty()) {
 			nowRoom = priorityQueue.poll();
-			visited[nowRoom.x][nowRoom.y] = true;
 			
 			if (nowRoom.x == M - 1 && nowRoom.y == N - 1) {
 				return nowRoom.cnt;
@@ -34,6 +35,7 @@ public class Main_XXX {
 				ny = nowRoom.y + dy[i];
 				if (nx >= 0 && nx <= M - 1 && ny >= 0 && ny <= N - 1 && !visited[nx][ny]) {
 					priorityQueue.offer(new Room(nx, ny, nowRoom.cnt + maze[nx][ny]));
+					visited[nx][ny] = true;
 				}
 			}
 		}
