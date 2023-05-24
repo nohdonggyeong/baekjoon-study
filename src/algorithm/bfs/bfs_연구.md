@@ -5,3 +5,5 @@
 - int N, int M, int[N][M] maze, boolean[N][M] visited, int[4] dx {-1, 1, 0, 0}, int[4] dy {0, 0, -1, 1}을 보통 선언하고 시작한다.
 - class Node로 x, y, minCnt를 관리하고, NoArgsConstructor, 그 외 필요한 생성자를 활용한다.
 - Queue<Node> commandQueue = new LinkedList<>();로 명령을 적재시킨다는 개념으로 가능한 방향들을 while 문 안에서 추가시켜준다.
+- 목적지 도달하는 최단 경로는 while문 안의 각 방향의 if문에서 cnt + 1로 최신화시켜주면 된다. 각 경로마다의 시간이 cnt이고, 너비 우선 탐색으로 최단 거리를 찾기 때문.
+- dfs와 비슷하게 풀기 가능한 타일의 개수를 구하는 것은 max = 0, max++로 풀어야 하고 위의 내용처럼 while문 안의 각 방향의 if문에서 cnt + 1로 최신화하면 안됨.
