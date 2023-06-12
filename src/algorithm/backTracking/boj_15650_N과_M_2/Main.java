@@ -11,6 +11,7 @@ public class Main {
 	static int N, M;
 	static boolean[] visited;
 	static int[] selectedArr;
+	
 	static StringBuilder sb = new StringBuilder();
 	
 	static void dfs(int startNum, int depth) {
@@ -26,7 +27,7 @@ public class Main {
 		for (int i = startNum; i < N; i++) {
 			if (!visited[i]) {
 				visited[i] = true;
-				selectedArr[depth]= i + 1;
+				selectedArr[depth] = i + 1;
 				dfs(i + 1, depth + 1);
 				visited[i] = false;
 			}
