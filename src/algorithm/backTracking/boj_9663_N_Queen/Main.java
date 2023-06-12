@@ -10,7 +10,7 @@ public class Main {
 	static int N, result = 0;
 	static int[] arr;
 	// 배열을 받을 때 2차원 배열로 해도 되지만, 1차원 배열로 받아도 된다.
-	// 각 원소의 index를 '열'이라 생각하고, 원소 값을 '행'이라 생각하는 것이다. 예시: [2, 0, 3, 1]
+	// 각 원소의 index를 '행'이라 생각하고, 원소 값을 '열'이라 생각하는 것이다. 예시: [2, 0, 3, 1]
 	
 	static void nQueen(int depth) {
 		if (depth == N) {
@@ -26,11 +26,11 @@ public class Main {
 		}
 	}
 	
-	static boolean isPossible(int col) {
-		for (int i = 0; i < col; i++) {
-			if (arr[col] == arr[i]) {
+	static boolean isPossible(int row) {
+		for (int i = 0; i < row; i++) {
+			if (arr[row] == arr[i]) {
 				return false;
-			} else if (Math.abs(col - i) == Math.abs(arr[col] - arr[i])) {
+			} else if (Math.abs(row - i) == Math.abs(arr[row] - arr[i])) {
 				return false;
 			}
 		}
