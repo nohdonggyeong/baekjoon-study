@@ -30,7 +30,7 @@ public class Main {
 			bw.write(sb.toString());
 			bw.flush();
 			bw.close();
-			return;
+			System.exit(0);
 		}
 		
 		if (sudoku[row][col] == 0) {
