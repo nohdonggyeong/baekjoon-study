@@ -5,6 +5,8 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
@@ -15,43 +17,77 @@ public class Main {
 	static int[] dy = {0, 0, -1, 1};
 	
 	static void melt() {
-		int[][] meltedMap = new int[N][M];
+		visit = new boolean[N][M];
+		Queue<Node> queue = new LinkedList<>();
 		
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < M; j++) {
-				if (map[i][j] > 0) {
-					int seaCnt = 0;
-					for (int k = 0; k < 4; k++) {
-						int ni = i + dx[k];
-						int nj = j + dy[k];
-						if (ni < 0 || nj < 0 || ni >= N || nj >= M) {
-							continue;
-						}
-						if (map[ni][nj] <= 0) {
-							seaCnt++;
-						}
-					}
-					meltedMap[i][j] = map[i][j] - seaCnt > 0 ? map[i][j] - seaCnt : 0;
-				}
-			}
-		}
-		
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < M; j++) {
-				map[i][j] = meltedMap[i][j];
-			}
-		}
-	}
-	
-	static boolean isSeperated() {
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < M; j++) {
-				if (map[i][j] <= 0) {
+				if (map[i][j] >0) {
+					queue.offer(new Node(i, j));
 					visit[i][j] = true;
 				}
 			}
 		}
-		return false;
+		
+		while (!queue.isEmpty()) {
+			Node node = queue.poll();
+			int seaCnt = 0;
+			
+			for (int k = 0; k < 4; k++) {
+				int ni = node.x + dx[k];
+				int nj = node.y + dy[k];
+				
+				if (ni >= 0 && nj >= 0 && ni < N && nj < M
+						&& !visit[ni][nj] && map[ni][nj] == 0) {
+					seaCnt++;
+				}
+			}
+			
+			if(map[node.x][node.y] - seaCnt > 0) {
+				map[node.x][node.y] -= seaCnt;
+			} else {
+				map[node.x][node.y] = 0;
+			}
+		}
+	}
+	
+	static class Node {
+		private int x;
+		private int y;
+		
+		Node(int x, int y) {
+			this.x = x;
+			this.y = y;
+		}
+	}
+	
+	static int groupCnt() {
+        visit = new boolean[N][M];
+ 
+        int cnt = 0;
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < M; j++) {
+                if (map[i][j] != 0 && !visit[i][j]) {
+                	dfs(i, j);
+                    cnt++;
+                }
+            }
+        }
+        return cnt;
+    }
+	
+	static void dfs(int i, int j) {
+		visit[i][j] = true;
+		
+		for (int k = 0; k < 4; k++) {
+			int ni = i + dx[k];
+			int nj = j + dy[k];
+			
+			if (ni >= 0 && nj >= 0 && ni < N && nj < M
+					&& map[ni][nj] > 0 && !visit[ni][nj]) {
+				dfs(ni, nj);
+			}
+		}
 	}
 	
 	public static void main(String args[]) throws IOException {
@@ -64,7 +100,6 @@ public class Main {
 		N = Integer.parseInt(st.nextToken());
 		M = Integer.parseInt(st.nextToken());
 		map = new int[N][M];
-		visit = new boolean[N][M];
 		
 		for (int i = 0; i < N; i++) {
 			st = new StringTokenizer(br.readLine());
@@ -74,8 +109,23 @@ public class Main {
 		}
 		
 		// Process
+		int cnt, result = 0;
+		while ((cnt  = groupCnt()) < 2) {
+			if (cnt == 0) {
+				result = 0;
+				break;
+			}
+			melt();
+			result++;
+		}
 		
 		// Output
+		bw.write(String.valueOf(result));
+		
+		bw.flush();
+		bw.close();
+		br.close();
+		
 //		for (int i = 0; i < N; i++) {
 //			for (int j = 0; j < M; j++) {
 //				System.out.print(map[i][j] + " ");
