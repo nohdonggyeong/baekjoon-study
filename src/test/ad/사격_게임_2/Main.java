@@ -1,255 +1,149 @@
 package test.ad.사격_게임_2;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Scanner;
+import java.util.List;
+import java.util.StringTokenizer;
+
 public class Main {
-         
-        static int H; //세로
-        static int W; //가로
-        static int[][] matrix;
-        static int[][] check;
-        static int total; // 최대 점수
-         
-        public static void main(String[] args) throws FileNotFoundException {
-                String path = "C:\\Users\\User\\Documents\\workspace-spring-tool-suite-4-4.11.0.RELEASE\\shooting\\src\\input.txt";
-                File file = new File(path);
-                System.setIn(new FileInputStream(file));
-                 
-                Scanner sc = new Scanner(System.in);
-                 
-                int T = sc.nextInt(); //testcase
-                 
-                for (int t = 1; t <= T; t ++ ) {
-                         
-                        H = sc.nextInt();
-                        W = sc.nextInt();
-                         
-                        matrix = new int[H][W];
-                        check = new int[H][W];
-                        total = 0;
-                        for (int h=0; h<H; h++) {
-                                for (int w=0; w < W; w++) {
-                                        matrix[h][w] = sc.nextInt();
-                                }
-                        }
-                         
-                        LinkedList<Game> q = new LinkedList<>();
-                        Game game = new Game(new ArrayList<>(), -1);
-                        q.add(game);
-                         
-                        //bfs
-                        while(!q.isEmpty()) {       
-                                Game tmpGame = q.removeFirst();
-                                 
-                                //종료, 계산
-                                if (tmpGame.round == 3) {
-                                         
-                                        // 초기화
-                                        for (int h=0; h<H; h++) {
-                                                for (int w=0; w < W; w++) {
-                                                        check[h][w] = matrix[h][w];
-                                                }
-                                        }
-                                         
-                                        //계산
-                                        int tmpTotal = 0;
-                                        for (int num=0; num<3; num++) {
-                                                 
-                                                Shoot tmp = tmpGame.getShootList().get(num);
-                                                //가로일 경우
-                                                if(tmp.getWay() == 0) {
-                                                        for (int w = 0; w < W; w++) {
-                                                                tmpTotal = tmpTotal + check[tmp.getH()][w];
-                                                                check[tmp.getH()][w] = 0;
-                                                        }
-                                                }
-                                                //세로일 경우
-                                                else if (tmp.getWay() == 1) {
-                                                        for (int h = 0; h < H; h++) {
-                                                                tmpTotal = tmpTotal + check[h][tmp.getW()];
-                                                                check[h][tmp.getW()] = 0;
-                                                        }
-                                                }
-                                                //대각선 위 way = 2
-                                                else if (tmp.getWay() == 2) {
-                                                        if (tmp.getH() >=0 ) {
-                                                                for (int h = 0; h < H; h++) {
-                                                                        if(tmp.getH()-h >= 0 && h<W) {
-                                                                                tmpTotal = tmpTotal + check[tmp.getH()-h][h];
-                                                                                check[tmp.getH()-h][h] = 0;
-                                                                        }       
-                                                                }
-                                                                 
-                                                        } else {
-                                                                for (int w = 0; w < W; w++) {
-                                                                        if(tmp.getW()-w >= 0 && w<H) {
-                                                                                tmpTotal = tmpTotal + check[w][tmp.getW()-w];
-                                                                                check[w][tmp.getW()-w] = 0;
-                                                                        }       
-                                                                }
-                                                        }
-                                                }
-                                                //대각선 아래 way = 3
-                                                else if (tmp.getWay() == 3) {
-                                                        if (tmp.getH() >=0 ) {
-                                                                for (int h = 0; h < H; h++) {
-                                                                        if(tmp.getH()+h < H && h<W) {
-                                                                                tmpTotal = tmpTotal + check[tmp.getH()+h][h];
-                                                                                check[tmp.getH()+h][h] = 0;
-                                                                        }       
-                                                                }
-                                                                 
-                                                        } else {
-                                                                for (int w = 0; w < W; w++) {
-                                                                        if(tmp.getW()+w < W && w<H) {
-                                                                                tmpTotal = tmpTotal + check[w][tmp.getW()];
-                                                                                check[w][tmp.getW()] = 0;
-                                                                        }       
-                                                                }
-                                                        }
-                                                }
-                                        }
-                                        if (tmpTotal >= total) {
-                                                total = tmpTotal;
-                                        }
-                                } else {
-                                 
-                                        //가로 way = 0
-                                        for (int h=0; h<H; h++) {
-                                                 
-                                                ArrayList<Shoot> tmpList = (ArrayList<Shoot>) tmpGame.getShootList().clone();
-                                                boolean isOkay = checkOkay(tmpList, h, -1, 0);
-                                                 
-                                                if (isOkay) {
-                                                        tmpList.add(new Shoot(h, -1, 0));
-                                                        q.add(new Game(tmpList, tmpGame.round+1));
-                                                }
-                                                 
-                                        }
-                                         
-                                        //세로 way = 1
-                                        for (int w=0; w<W; w++) {
-                                                ArrayList<Shoot> tmpList = (ArrayList<Shoot>) tmpGame.getShootList().clone();
-                                                boolean isOkay = checkOkay(tmpList, -1, w, 1);
-                                                 
-                                                if (isOkay) {
-                                                        tmpList.add(new Shoot(-1, w, 1));
-                                                        q.add(new Game(tmpList, tmpGame.round+1));
-                                                }
-                                                 
-                                        }
-                                         
-                                        //대각선 위 way = 2
-                                        for (int h=0; h<H; h++) {
-                                                ArrayList<Shoot> tmpList = (ArrayList<Shoot>) tmpGame.getShootList().clone();
-                                                 
-                                                boolean isOkay = checkOkay(tmpList, h, -1, 2);
-                                                 
-                                                if (isOkay) {
-                                                        tmpList.add(new Shoot(h, -1, 2));
-                                                        q.add(new Game(tmpList, tmpGame.round+1));
-                                                }
-                                        }
-                                         
-                                        if (W > H) {
-                                                for (int w=H; w<W; w++) {
-                                                        ArrayList<Shoot> tmpList = (ArrayList<Shoot>) tmpGame.getShootList().clone();
-                                                        boolean isOkay = checkOkay(tmpList, -1, w, 2);
-                                                         
-                                                        if (isOkay) {
-                                                                tmpList.add(new Shoot(-1, w, 2));
-                                                                q.add(new Game(tmpList, tmpGame.round+1));
-                                                        }
-                                                         
-                                                }
-                                        }
-                                         
-                                        //대각선 아래 way = 3
-                                        for (int h=0; h<H; h++) {
-                                                ArrayList<Shoot> tmpList = (ArrayList<Shoot>) tmpGame.getShootList().clone();
-                                                 
-                                                boolean isOkay = checkOkay(tmpList, -h, -1, 3);
-                                                 
-                                                if (isOkay) {
-                                                        tmpList.add(new Shoot(h, -1, 3));
-                                                        q.add(new Game(tmpList, tmpGame.round+1));
-                                                }
-                                                 
-                                        }
-                                         
-                                        for (int w=1; w<W; w++) {
-                                                ArrayList<Shoot> tmpList = (ArrayList<Shoot>) tmpGame.getShootList().clone();
-                                                 
-                                                boolean isOkay = checkOkay(tmpList, -1, w, 3);
-                                                 
-                                                if (isOkay) {
-                                                        tmpList.add(new Shoot(-1, w, 3));
-                                                        q.add(new Game(tmpList, tmpGame.round+1));
-                                                }
-                                                 
-                                        }
-                                }
-                        }
-                                 
-                         
-                        System.out.println("#"+t+" "+total);
-                }
-        }
-        // 기억 나지 않는 부분
-        private static boolean checkOkay(ArrayList<Shoot> tmpList, int h, int w, int way) {
-                for (int i =0; i < tmpList.size(); i++) {
-                        if (tmpList.get(i).h == h && tmpList.get(i).w == w && tmpList.get(i).way == way) {
-                                return false;
-                        }
-                }
-                return true;
-        }
-}
-class Game {
-        ArrayList<Shoot> shootList;
-        int round;
-        public ArrayList<Shoot> getShootList() {
-                return shootList;
-        }
-        public void setShootList(ArrayList<Shoot> shootList) {
-                this.shootList = shootList;
-        }
-        public Game(ArrayList<Shoot> shootList, int round) {
-                super();
-                this.shootList = shootList;
-                this.round = round;
-        }
-}
-class Shoot {
-        int h;
-        int w;
-        int way;
-        public int getH() {
-                return h;
-        }
-        public void setH(int h) {
-                this.h = h;
-        }
-        public int getW() {
-                return w;
-        }
-        public void setW(int w) {
-                this.w = w;
-        }
-        public int getWay() {
-                return way;
-        }
-        public void setWay(int way) {
-                this.way = way;
-        }
-        public Shoot(int h, int w, int way) {
-                super();
-                this.h = h;
-                this.w = w;
-                this.way = way;
-        }
+	
+	static int T, H, W, maxScore;
+	static int[][] D;
+	static boolean[][] visit;
+	static List<Node> startList;
+	static boolean[] startListVisit;
+	static List<List<Node>> listCombination;
+	
+	static void shootRightUp(int i, int j) {
+		if (i >= 0 && j >= 0 && i < H && j < W) {
+			visit[i][j] = true;
+			shootRightUp(i - 1, j + 1);
+		}
+	}
+	
+	static void shootRightStraight(int i, int j) {
+		if (i >= 0 && j >= 0 && i < H && j < W) {
+			visit[i][j] = true;
+			shootRightStraight(i, j + 1);
+		}
+	}
+	
+	static void shootRightDown(int i, int j) { // == shootDownRight.
+		if (i >= 0 && j >= 0 && i < H && j < W) {
+			visit[i][j] = true;
+			shootRightDown(i + 1, j + 1);
+		}
+	}
+	
+	static void shootDownLeft(int i, int j) {
+		if (i >= 0 && j >= 0 && i < H && j < W) {
+			visit[i][j] = true;
+			shootDownLeft(i + 1, j - 1);
+		}
+	}
+	
+	static void shootDownStraight(int i, int j) {
+		if (i >= 0 && j >= 0 && i < H && j < W) {
+			visit[i][j] = true;
+			shootDownStraight(i + 1, j);
+		}
+	}
+	
+	static void combinateList(int depth, int r) {
+		if (r == 0) {
+			for (int i = 0; i < startList.size(); i++) {
+	            if (startListVisit[i]) {
+	            	
+	                System.out.print(arr[i] + " ");
+	            }
+	        }
+			return;
+		}
+		
+		for (int i = depth; i < startList.size(); i++) {
+			startListVisit[i] = true;
+			combinateList(i + 1, r - 1);
+			startListVisit[i] = false;
+		}
+	}
+	
+	static int getTotalScore() {
+		int total = 0;
+		for (int i = 0; i < H; i++) {
+			for (int j = 0; j < W; j++) {
+				if (visit[i][j]) {
+					total += D[i][j];
+				}
+			}
+		}
+		return total;
+	}
+	
+	static class Node {
+		private int i;
+		private int j;
+		
+		public Node(int i, int j) {
+			this.i = i;
+			this.j = j;
+		}
+	}
+	
+	public static void main(String args[]) throws IOException {
+		// Input
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+		StringTokenizer st;
+		
+		T = Integer.parseInt(br.readLine()); // T: The number of Test case.
+		for (int t = 1; t <= T; t++) {
+			st = new StringTokenizer(br.readLine());
+			H = Integer.parseInt(st.nextToken());  // H: Height.
+			W = Integer.parseInt(st.nextToken());  // W: Width.
+			
+			D = new int[H][W];
+			visit = new boolean[H][W];
+			maxScore = Integer.MIN_VALUE;
+			
+			for (int i = 0; i < H; i++) {
+				st = new StringTokenizer(br.readLine());
+				for (int j = 0; j < W; j++) {
+					D[i][j] = Integer.parseInt(st.nextToken());
+				}
+			}
+			
+			startList = new ArrayList<>();
+			for (int i = 0; i < H; i++) {
+				startList.add(new Node(i, 0));
+			}
+			for (int j = 1; j < W; j++) {
+				startList.add(new Node(0, j));
+			}
+
+			startListVisit = new boolean[startList.size()];
+			listCombination = new ArrayList<>();
+			combinateList(0, 3);
+			// Process
+
+			// Output
+			
+//			bw.newLine();
+//			bw.write("[Input check: " + String.valueOf(t) + "]");
+//			bw.newLine();
+//			for (int i = 0; i < H; i++) {
+//				for (int j = 0; j < W; j++) {
+//					bw.write(String.valueOf(D[i][j])+ " ");
+//				}
+//				bw.newLine();
+//			}
+		}
+
+		bw.flush();
+		bw.close();
+		br.close();
+	}
 }
