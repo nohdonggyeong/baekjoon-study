@@ -55,16 +55,17 @@ public class Main {
 	
 	static void combinateList(int depth, int r) {
 		if (r == 0) {
-			for (int i = 0; i < startList.size(); i++) {
+			List<Node> tempList = new ArrayList<>();
+			for (int i = 0; i < startListVisit.length; i++) {
 	            if (startListVisit[i]) {
-	            	
-	                System.out.print(arr[i] + " ");
+	            	tempList.add(startList.get(i));
 	            }
 	        }
+			listCombination.add(tempList);
 			return;
 		}
 		
-		for (int i = depth; i < startList.size(); i++) {
+		for (int i = depth; i < startListVisit.length; i++) {
 			startListVisit[i] = true;
 			combinateList(i + 1, r - 1);
 			startListVisit[i] = false;
@@ -127,9 +128,58 @@ public class Main {
 			startListVisit = new boolean[startList.size()];
 			listCombination = new ArrayList<>();
 			combinateList(0, 3);
+			
 			// Process
-
+			for (List<Node> list : listCombination) {
+				for (Node node : list) {
+					visit = new boolean[H][W];
+					
+					for (int k = 0; k < 3; k++) {
+						switch (k) {
+						case 0:
+							if (node.i == 0 && node.j == 0) {
+								shootRightStraight(node.i, node.j);
+							} else if (node.i == 0) {
+								shootDownLeft(node.i, node.j);
+							} else if (node.j == 0) {
+								shootRightUp(node.i, node.j);
+							}
+							break;
+						case 1:
+							if (node.i == 0 && node.j == 0) {
+								shootDownStraight(node.i, node.j);
+							} else if (node.i == 0) {
+								shootDownStraight(node.i, node.j);
+							} else if (node.j == 0) {
+								shootRightStraight(node.i, node.j);
+							}
+							break;
+						case 2:
+							if (node.i == 0 && node.j == 0) {
+								shootRightDown(node.i, node.j);
+							} else if (node.i == 0) {
+								shootRightDown(node.i, node.j);
+							} else if (node.j == 0) {
+								shootRightDown(node.i, node.j);
+							}
+							break;
+						default:
+							break;
+						}
+					}
+					maxScore = Math.max(maxScore, getTotalScore());
+				}
+			}
+			
 			// Output
+			StringBuilder sb = new StringBuilder();
+			sb.append("#");
+			sb.append(String.valueOf(t));
+			sb.append(" ");
+			sb.append(String.valueOf(maxScore));
+			
+			bw.write(sb.toString());
+			bw.newLine();
 			
 //			bw.newLine();
 //			bw.write("[Input check: " + String.valueOf(t) + "]");
