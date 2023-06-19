@@ -19,36 +19,36 @@ public class Main {
 	static List<List<Node>> listCombination;
 	
 	static void shootRightUp(int i, int j) {
-		if (i >= 0 && j >= 0 && i < H && j < W) {
-			visit[i][j] = true;
+		visit[i][j] = true;
+		if (i - 1 >= 0 && j < W) {
 			shootRightUp(i - 1, j + 1);
 		}
 	}
 	
 	static void shootRightStraight(int i, int j) {
-		if (i >= 0 && j >= 0 && i < H && j < W) {
-			visit[i][j] = true;
+		visit[i][j] = true;
+		if (j + 1 < W) {
 			shootRightStraight(i, j + 1);
 		}
 	}
 	
 	static void shootRightDown(int i, int j) { // == shootDownRight.
-		if (i >= 0 && j >= 0 && i < H && j < W) {
-			visit[i][j] = true;
+		visit[i][j] = true;
+		if (i + 1 < H && j + 1 < W) {
 			shootRightDown(i + 1, j + 1);
 		}
 	}
 	
 	static void shootDownLeft(int i, int j) {
-		if (i >= 0 && j >= 0 && i < H && j < W) {
-			visit[i][j] = true;
+		visit[i][j] = true;
+		if (j - 1 >= 0 && i + 1 < H) {
 			shootDownLeft(i + 1, j - 1);
 		}
 	}
 	
 	static void shootDownStraight(int i, int j) {
-		if (i >= 0 && j >= 0 && i < H && j < W) {
-			visit[i][j] = true;
+		visit[i][j] = true;
+		if (i + 1 < H) {
 			shootDownStraight(i + 1, j);
 		}
 	}
