@@ -7,3 +7,4 @@
 - Queue<Node> commandQueue = new LinkedList<>();로 명령을 적재시킨다는 개념으로 가능한 방향들을 while 문 안에서 추가시켜준다.
 - 목적지 도달하는 최단 경로는 while문 안의 각 방향의 if문에서 cnt + 1로 최신화시켜주면 된다. 각 경로마다의 시간이 cnt이고, 너비 우선 탐색으로 최단 거리를 찾기 때문.
 - dfs와 비슷하게 풀기 가능한 타일의 개수를 구하는 것은 max = 0, max++로 풀어야 하고 위의 내용처럼 while문 안의 각 방향의 if문에서 cnt + 1로 최신화하면 안됨.
+- bfs 최종 경로를 역추적 하기 위해 String[][] history를 boolean[][] visited와 함께 선언하고, 매번 visited = true 처리할 때마다 같은 인덱스의 history에 Node경로정보 String을 쌓아가고 최종 출력할 것.

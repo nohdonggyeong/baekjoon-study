@@ -13,6 +13,7 @@ public class Main {
 	static int M, N;
 	static int[][] map;
 	static boolean[][][] visited;
+	static String[][][] history;
 	static Node startNode, endNode;
 	static int[] dx = {0, 0, 1, -1};
 	static int[] dy = {1, -1, 0, 0};
@@ -36,11 +37,13 @@ public class Main {
 		
 		queue.offer(startNode);
 		visited[startNode.x][startNode.y][startNode.direction] = true;
+		history[startNode.x][startNode.y][startNode.direction] = "(" + startNode.x + ", " + startNode.y + ", " + startNode.direction + ", " + startNode.count + ")";
 		
 		while (!queue.isEmpty()) {
 			Node node = queue.poll();
 			
 			if (node.x == endNode.x && node.y == endNode.y && node.direction == endNode.direction) {
+				System.out.println(history[node.x][node.y][node.direction]);
 				return node.count;
 			}
 			
@@ -54,6 +57,7 @@ public class Main {
 					if (!visited[nx][ny][node.direction]) {
 						queue.offer(new Node(nx, ny, node.direction, node.count + 1));
 						visited[nx][ny][node.direction] = true;
+						history[nx][ny][node.direction] = history[node.x][node.y][node.direction] + " / " + "(" + nx + ", " + ny + ", " + node.direction + ", " + (node.count + 1) + ")";
 					}
 				}
 			}
@@ -70,7 +74,8 @@ public class Main {
 						rotateCnt = 1;
 					}
 					queue.offer(new Node(node.x, node.y, i, node.count + rotateCnt));
-					visited[node.x][node.y][i] = true;			
+					visited[node.x][node.y][i] = true;
+					history[node.x][node.y][i] = history[node.x][node.y][node.direction] + " / " + "(" + node.x + ", " + node.y + ", " + i + ", " + (node.count + rotateCnt) + ")";
 				}
 			}
 		}
@@ -88,6 +93,7 @@ public class Main {
 		
 		map = new int[M][N];
 		visited = new boolean[M][N][4];
+		history = new String[M][N][4];
 		
 		for (int i = 0; i < M; i++) {
 			st = new StringTokenizer(br.readLine());
