@@ -41,7 +41,7 @@ public class Main {
 		while (!queue.isEmpty()) {
 			Node node = queue.poll();
 			
-			if (node.x == M - 1 && node.y == N - 1) {
+			if (node.x == N - 1 && node.y == M - 1) {
 				return node.dist;
 			}
 			
@@ -53,18 +53,16 @@ public class Main {
 					continue;
 				}
 				
-				if (visit[nx][ny][node.gram]) {
-					continue;
-				}
-				
-				if (node.gram == 1) {
-					queue.offer(new Node(nx, ny, 1, node.dist + 1));
-					visit[nx][ny][1] = true;
-				} else {
-					if (map[nx][ny] == 0) {
+				if (node.gram == 0) {
+					if (!visit[nx][ny][0] && map[nx][ny] == 0) {
 						queue.offer(new Node(nx, ny, 0, node.dist + 1));
 						visit[nx][ny][0] = true;
-					} else if (map[nx][ny] == 2) {
+					} else if(!visit[nx][ny][0] && map[nx][ny] == 2) {
+						queue.offer(new Node(nx, ny, 1, node.dist + 1));
+						visit[nx][ny][0] = true;
+					}
+				} else {
+					if (!visit[nx][ny][1]) {
 						queue.offer(new Node(nx, ny, 1, node.dist + 1));
 						visit[nx][ny][1] = true;
 					}
