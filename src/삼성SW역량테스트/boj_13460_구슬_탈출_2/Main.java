@@ -1,4 +1,4 @@
-package algorithm.bfs.boj_13460_구슬_탈출_2;
+package 삼성SW역량테스트.boj_13460_구슬_탈출_2;
 
 import java.io.*;
 import java.util.*;

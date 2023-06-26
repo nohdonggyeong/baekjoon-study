@@ -1,4 +1,4 @@
-package test.ad.사격_게임_2;
+package 삼성SW역량테스트.사격_게임_2;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
