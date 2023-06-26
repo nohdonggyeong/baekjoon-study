@@ -7,11 +7,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main_bak {
 	static int N, answer = 0;
 	static int[][] map;
 	
-	static void getMaxBlock() {
+	public static void findMax() {
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < N; j++) {
 				answer = Math.max(answer, map[i][j]);
@@ -19,44 +19,48 @@ public class Main {
 		}
 	}
 	
-	static void solution(int count) {
+	public static void game(int count) {
+		// 5번 실행하고 재귀함수 종료
 		if (count == 5) {
-			getMaxBlock();
+			findMax();
 			return;
 		}
 		
+		// map을 copy로 백업
 		int copy[][] = new int[N][N];
 		for (int i = 0; i < N; i++) {
 			copy[i] = map[i].clone();
 		}
 		
+		// move up, down, left, right 
 		for (int i = 0; i < 4; i++) {
-			moveBlocks(i);
-			solution(count + 1);
-			
-			for (int j = 0; j < N; j++) {
-				map[j] = copy[j].clone();
+			move(i);
+			game(count + 1);
+			for (int k = 0; k < N; k++) {
+				// map을 백업 copy로부터 복구
+				map[k] = copy[k].clone();
 			}
 		}
+			
 	}
 	
-	static void moveBlocks(int dir) {
-		switch (dir) {
+	public static void move(int dir) {
+		switch(dir) {
 		// move up
 		case 0:
-			for (int i = 0; i < N; i++) {
-				int index = 0;
-				int block = 0;
-				for (int j = 0; j < N; j++) {
-					if (map[j][i] != 0) {
+			for (int i = 0; i < N; i++) { // columne
+				int index = 0; // 0이 아닌 현재 탐색 위치
+				int block = 0; // 0이 아닌 현재 탐색 값
+				for (int j = 0; j < N; j++) { // row
+					if (map[j][i] != 0) { // 지금 확인하는 칸이 0이 아니면 작업
 						if (block == map[j][i]) {
-							map[index - 1][i] = block  * 2;
+							map[index - 1][i] = block * 2; // 마지막으로 값이 있었던 곳으로 더함
 							block = 0;
-							map[j][i] = 0;
-						} else { // 0이 아닌 이곳을 block index로 지정
-							block = map[j][i];
-							map[j][i] = 0;
-							map[index][i] = block;
+							map[j][i] = 0; // 지금 확인하는 칸을 0으로 바꿈
+						} else {
+							block = map[j][i]; // 지금 확인하는 칸의 값을 block으로 저장
+							map[j][i] = 0; // 지금 확인하는 칸을 0으로 바꿈
+							map[index][i] = block; // 마지막으로 값이 있었던 바로 아래줄로 지금 확인한 칸의 값을 기입
 							index++;
 						}
 					}
@@ -96,7 +100,7 @@ public class Main {
 						if (block == map[i][j]) {
 							map[i][index - 1] = block * 2;
 							block = 0;
-							map [i][j] = 0;
+							map[i][j] = 0;
 						} else {
 							block = map[i][j];
 							map[i][j] = 0;
@@ -116,7 +120,7 @@ public class Main {
 				for (int j = N - 1; j >= 0; j--) {
 					if (map[i][j] != 0) {
 						if (block == map[i][j]) {
-							map[i][index + 1] = block * 2;
+							map[i][index + 1]  = block * 2;
 							block = 0;
 							map[i][j] = 0;
 						} else {
@@ -131,7 +135,7 @@ public class Main {
 			break;
 			
 		default:
-			break;			
+			break;
 		}
 	}
 	
@@ -144,24 +148,17 @@ public class Main {
 		map = new int[N][N];
 		
 		for (int i = 0; i < N; i++) {
-			 st = new StringTokenizer(br.readLine());
-			 for (int j = 0; j < N; j++) {
-				 map[i][j] = Integer.parseInt(st.nextToken());
-			 }
+			st = new StringTokenizer(br.readLine());
+			for (int j = 0; j < N; j++) {
+				map[i][j] = Integer.parseInt(st.nextToken());
+			}
 		}
 		
-		solution(0);
+		game(0);
 		
 		bw.write(String.valueOf(answer));
 		bw.flush();
 		bw.close();
 		br.close();
-		
-//		for (int i = 0; i < N; i++) {
-//			for (int j = 0; j < N; j++) {
-//				System.out.print(String.valueOf(map[i][j] + " "));
-//			}
-//			System.out.println();
-//		}
 	}
 }
