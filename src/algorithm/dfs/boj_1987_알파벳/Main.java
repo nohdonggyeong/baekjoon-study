@@ -20,7 +20,7 @@ public class Main {
 			return;
 		} else {
 			visit[map[r][c]] = true; // 현재 위치 visit true
-			for (int i = 0; i < 4; i++) { // for if dfs(r, c, cnt + 1)
+			for (int i = 0; i < 4; i++) { // 깊게 탐색하기 for if dfs(r, c, cnt + 1)
 				int nr = r + dr[i];
 				int nc = c + dc[i];
 				
