@@ -1,4 +1,4 @@
-package 삼성SW역량테스트.사격_게임_2;
+package 삼성SW역량테스트.ad_230517_사격_게임_2;
 
 import java.io.File;
 import java.io.FileInputStream;
