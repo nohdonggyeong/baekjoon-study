@@ -8,61 +8,71 @@ import java.io.OutputStreamWriter;
 import java.util.StringTokenizer;
 
 public class Main {
-	static int n;
+	static int N, top, count, answer;
 	static int[][] map;
-	static boolean[][] checked;
-	static int[] dx = {-1, 1, 0, 0};
-	static int[] dy = {0, 0, -1, 1};
+	static boolean[][] underwater;
+	static int[] dr = {0, -1, 0, 1};
+	static int[] dc = {-1, 0, 1, 0};
 	
-	static int dfs(int x, int y, int height) {
-		checked[x][y] = true;
+	static void dfs(int r, int c) {
 		for (int i = 0; i < 4; i++) {
-			int nx = x + dx[i];
-			int ny = y + dy[i];
+			int nr = r + dr[i];
+			int nc = c + dc[i];
 			
-			if (nx < 0 || ny < 0 || nx > n - 1 || ny > n - 1) continue;
-			if (checked[nx][ny]) continue;
-			if (map[nx][ny] > height) {
-				dfs(nx, ny, height);
+			if (nr < 0 || nc < 0 || nr >= N || nc >= N) {
+				continue;
+			}
+			if (!underwater[nr][nc]) {
+				underwater[nr][nc] = true;
+				dfs(nr, nc);
 			}
 		}
-		return 1;
 	}
 	
-	public static void main(String[] args) throws IOException {
+	public static void main(String args[]) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		StringTokenizer st;
 		
-		n = Integer.parseInt(br.readLine());
-		map = new int[n][n];
+		N = Integer.parseInt(br.readLine());
+		map = new int[N][N];
 		
-		int maxHeight = 0;
-		for (int i = 0; i < n; i++) {
+		top = 0;
+		for (int i = 0; i < N; i++) {
 			st = new StringTokenizer(br.readLine());
-			for (int j = 0; j < n; j++) {
+			for (int j = 0; j < N; j++) {
 				map[i][j] = Integer.parseInt(st.nextToken());
-				if (map[i][j] > maxHeight) {
-					maxHeight = map[i][j];
-				}
+				top = Math.max(top, map[i][j]);
 			}
 		}
 		
-		int max = 0;
-		for (int height = 0; height <= maxHeight; height++) {
-			checked = new boolean[n][n];
-			int cnt = 0;
-			for (int i = 0; i < n; i++) {
-				for (int j = 0; j < n; j++) {
-					if (!checked[i][j] && map[i][j] > height) {
-						cnt += dfs(i, j, height);
+		answer = 0;
+		for (int i = 0; i < top; i++) {
+			underwater = new boolean[N][N];
+			for (int r = 0; r < N; r++) {
+				for (int c = 0; c < N; c++) {
+					if (map[r][c] <= i) {
+						underwater[r][c] = true;
 					}
 				}
 			}
-			max = Math.max(max, cnt);
+			
+			count = 0;
+			for (int r = 0; r < N; r++) {
+				for (int c = 0; c < N; c++) {
+					if (!underwater[r][c]) {
+						underwater[r][c] = true;
+						count += 1;
+						dfs(r, c);
+					}
+				}
+			}
+			answer = Math.max(answer,  count);
 		}
 		
-		bw.write(String.valueOf(max));
+		bw.write(String.valueOf(answer));
+		
+		bw.flush();
 		bw.close();
 		br.close();
 	}
