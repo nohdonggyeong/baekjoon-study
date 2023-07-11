@@ -1,4 +1,4 @@
-package algorithm.permutation.template_permutation;
+package algorithm.permutation.template_combination;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -12,17 +12,23 @@ public class Main {
 	static boolean[] visited;
 	static List<int[]> output;
 	
-	public static void permutation(int depth) {
+	static void combination(int start, int depth) {
 		if (depth == r) {
-			output.add(node.clone());
+			int index = 0;
+			node = new int[r];
+			for (int i = 0; i < n; i ++) {
+				if (visited[i]) {
+					node[index] = input[i];
+					index++;
+				}
+			}
+			output.add(node);
 			return;
 		}
-		
-		for (int i = 0; i < n; i++) {
+		for (int i = start; i < n; i++) {
 			if (!visited[i]) {
 				visited[i] = true;
-				node[depth] = input[i];
-				permutation(depth + 1);
+				combination(i + 1, depth + 1);
 				visited[i] = false;
 			}
 		}
@@ -32,18 +38,17 @@ public class Main {
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		StringBuilder sb = new StringBuilder();
 		
-		n = 5;
+		n = 3;
 		r = 2;
 		
-		input = new int[] {1, 2, 3, 4, 5};
-		node = new int[r];
+		input = new int[] {1, 2, 3};
 		visited = new boolean[n];
 		output = new ArrayList<>();
 		
-		permutation(0);
+		combination(0, 0);
 		
 		for (int i = 0; i < output.size(); i++) {
-			for (int j = 0; j < r; j++) {
+			for (int j = 0; j < output.get(i).length; j++) {
 				sb.append(String.valueOf(output.get(i)[j])).append(" ");
 			}
 			sb.append("\n");
@@ -54,4 +59,3 @@ public class Main {
 		bw.close();
 	}
 }
-
