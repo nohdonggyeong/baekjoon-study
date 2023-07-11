@@ -1,30 +1,57 @@
 package algorithm.permutation.template_permutation;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
-	public static void permutation(int[] arr, int[] out, boolean[] visited, int depth, int r) {
+	static int n, r;
+	static int[] input, node;
+	static boolean[] visited;
+	static List<int[]> output;
+	
+	public static void permutation(int depth) {
 		if (depth == r) {
-			for (int num : out) {
-				System.out.print(num);
-			}
-			System.out.println();
+			output.add(node.clone());
 			return;
 		}
 		
-		for (int i = 0; i < arr.length; i++) {
+		for (int i = 0; i < n; i++) {
 			if (!visited[i]) {
 				visited[i] = true;
-				out[depth] = arr[i];
-				permutation(arr, out, visited, depth + 1, r);
+				node[depth] = input[i];
+				permutation(depth + 1);
 				visited[i] = false;
 			}
 		}
 	}
 	
 	public static void main(String args[]) throws IOException {
-		int[] arr = {1, 2, 3};
-		int r = 2;
-		permutation(arr, new int[r], new boolean[arr.length], 0, r);
+		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+		StringBuilder sb = new StringBuilder();
+		
+		n = 5;
+		r = 3;
+		
+		input = new int[] {1, 2, 3, 4, 5};
+		node = new int[r];
+		visited = new boolean[n];
+		output = new ArrayList<>();
+		
+		permutation(0);
+		
+		for (int i = 0; i < output.size(); i++) {
+			for (int j = 0; j < r; j++) {
+				sb.append(String.valueOf(output.get(i)[j])).append(" ");
+			}
+			sb.append("\n");
+		}
+		bw.write(sb.toString());
+		
+		bw.flush();
+		bw.close();
 	}
 }
+
