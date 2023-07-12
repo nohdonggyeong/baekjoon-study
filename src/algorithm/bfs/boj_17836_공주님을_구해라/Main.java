@@ -11,60 +11,47 @@ import java.util.StringTokenizer;
 
 public class Main {
 	static int N, M, T;
-	
 	static int[][] map;
-	static boolean[][][] visit;
-	
-	static int[] dx = {-1, 0, 1, 0};
-	static int[] dy = {0, 1, 0, -1};
-	
-	static class Node {
-		private int x;
-		private int y;
-		private int gram;
-		private int dist;
-		
-		public Node(int x, int y, int gram, int dist) {
-			this.x = x;
-			this.y = y;
-			this.gram = gram;
-			this.dist = dist;
-		}
-	}
+	static boolean[][][] visited;
+	static int[] dr = {0, -1, 0, 1};
+	static int[] dc = {-1, 0, 1, 0};
 	
 	static int bfs() {
 		Queue<Node> queue = new LinkedList<>();
-		
-		queue.offer(new Node(0, 0, 0, 0));
-		visit[0][0][0] = true;
+		queue.add(new Node(0, 0, false, 0));
+		visited[0][0][0] = true;
 		
 		while (!queue.isEmpty()) {
 			Node node = queue.poll();
 			
-			if (node.x == N - 1 && node.y == M - 1) {
-				return node.dist;
+			if (node.r == N - 1 && node.c == M - 1) {
+				return node.distance;
 			}
 			
 			for (int i = 0; i < 4; i++) {
-				int nx = node.x + dx[i];
-				int ny = node.y + dy[i];
+				int nr = node.r + dr[i];
+				int nc = node.c + dc[i];
 				
-				if (nx < 0 || ny < 0 || nx >= N || ny >= M) {
+				if (nr < 0 || nc < 0 || nr >= N || nc >= M) {
 					continue;
 				}
 				
-				if (node.gram == 0) {
-					if (!visit[nx][ny][0] && map[nx][ny] == 0) {
-						queue.offer(new Node(nx, ny, 0, node.dist + 1));
-						visit[nx][ny][0] = true;
-					} else if(!visit[nx][ny][0] && map[nx][ny] == 2) {
-						queue.offer(new Node(nx, ny, 1, node.dist + 1));
-						visit[nx][ny][0] = true;
+				if (node.hasGram) {
+					if (!visited[nr][nc][1]) {
+						visited[nr][nc][1] = true;
+						queue.offer(new Node(nr, nc, true, node.distance + 1));
 					}
 				} else {
-					if (!visit[nx][ny][1]) {
-						queue.offer(new Node(nx, ny, 1, node.dist + 1));
-						visit[nx][ny][1] = true;
+					if (visited[nr][nc][0] || map[nr][nc] == 1) {
+						continue;
+					}
+					
+					if (map[nr][nc] == 2) {
+						visited[nr][nc][0] = true;
+						queue.offer(new Node(nr, nc, true, node.distance + 1));
+					} else {
+						visited[nr][nc][0] = true;
+						queue.offer(new Node(nr, nc, false, node.distance + 1));
 					}
 				}
 			}
@@ -73,26 +60,41 @@ public class Main {
 		return Integer.MAX_VALUE;
 	}
 	
+	static class Node {
+		private int r;
+		private int c;
+		private boolean hasGram;
+		private int distance;
+		
+		public Node(int r, int c, boolean hasGram, int distance) {
+			this.r = r;
+			this.c = c;
+			this.hasGram = hasGram;
+			this.distance = distance;
+		}
+	}
+	
 	public static void main(String args[]) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		StringTokenizer st = new StringTokenizer(br.readLine());
+		
 		N = Integer.parseInt(st.nextToken());
 		M = Integer.parseInt(st.nextToken());
 		T = Integer.parseInt(st.nextToken());
-		
+
 		map = new int[N][M];
-		visit = new boolean[N][M][2];
+		visited = new boolean[N][M][2];
 		
-		for (int i = 0; i < N; i++) {
+		for (int n = 0; n < N; n++) {
 			st = new StringTokenizer(br.readLine());
-			for (int j = 0 ; j < M; j++) {
-				map[i][j] = Integer.parseInt(st.nextToken());
+			for (int m = 0; m < M; m++) {
+				map[n][m] = Integer.parseInt(st.nextToken());
 			}
 		}
 		
-		int resultTime = bfs();
-		bw.write(resultTime <= T ? String.valueOf(resultTime) : "Fail");
+		int result = bfs();
+		bw.write(result > T ? "Fail" : String.valueOf(result));
 		
 		bw.flush();
 		bw.close();
