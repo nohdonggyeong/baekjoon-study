@@ -8,20 +8,20 @@ import java.util.List;
 
 public class Main {
 	static int n, r;
-	static int[] input, node;
+	static int[] input, temp;
 	static boolean[] visited;
 	static List<int[]> output;
 	
 	public static void permutation(int depth) {
 		if (depth == r) {
-			output.add(node.clone());
+			output.add(temp.clone());
 			return;
 		}
 		
 		for (int i = 0; i < n; i++) {
 			if (!visited[i]) {
 				visited[i] = true;
-				node[depth] = input[i];
+				temp[depth] = input[i];
 				permutation(depth + 1);
 				visited[i] = false;
 			}
@@ -36,7 +36,7 @@ public class Main {
 		r = 2;
 		
 		input = new int[] {1, 2, 3, 4, 5};
-		node = new int[r];
+		temp = new int[r];
 		visited = new boolean[n];
 		output = new ArrayList<>();
 		

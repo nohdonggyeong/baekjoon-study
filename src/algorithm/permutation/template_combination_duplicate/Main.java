@@ -1,4 +1,4 @@
-package algorithm.permutation.template_combination;
+package algorithm.permutation.template_combination_duplicate;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -14,29 +14,18 @@ import java.util.StringTokenizer;
 public class Main {
 	static int n, r;
 	static int[] input;
-	static boolean[] visit;
 	static int[] temp;
 	static List<int[]> output;
 	
-	static void combination(int start, int depth) {
+	static void combinationDuplicate (int start, int depth) {
 		if (depth == r) {
-			int index = 0;
-			temp = new int[r];
-			for (int i = 0; i < n; i++) {
-				if (visit[i]) {
-					temp[index++] = input[i];
-				}
-			}
-			output.add(temp);
+			output.add(temp.clone());
 			return;
 		}
 		
 		for (int i = start; i < n; i++) {
-			if (!visit[i]) {
-				visit[i] = true;
-				combination(i + 1, depth + 1);
-				visit[i] = false;
-			}
+			temp[depth] = input[i];
+			combinationDuplicate(i, depth + 1);
 		}
 	}
 	
@@ -45,10 +34,12 @@ public class Main {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		StringBuilder sb = new StringBuilder();
-		StringTokenizer st = new StringTokenizer(br.readLine());
+		StringTokenizer st;
 		
+		st = new StringTokenizer(br.readLine());
 		n = Integer.parseInt(st.nextToken());
 		r = Integer.parseInt(st.nextToken());
+		
 		input = new int[n];
 		
 		st = new StringTokenizer(br.readLine());
@@ -58,9 +49,9 @@ public class Main {
 		
 		Arrays.sort(input);
 		
-		visit = new boolean[n];
+		temp = new int[r];
 		output = new ArrayList<>();
-		combination(0, 0);
+		combinationDuplicate(0, 0);
 		
 		for (int[] el : output) {
 			for (int i = 0; i < el.length; i++) {

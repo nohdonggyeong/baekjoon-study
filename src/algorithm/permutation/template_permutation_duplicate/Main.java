@@ -1,4 +1,4 @@
-package algorithm.permutation.template_combination;
+package algorithm.permutation.template_permutation_duplicate;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -14,29 +14,18 @@ import java.util.StringTokenizer;
 public class Main {
 	static int n, r;
 	static int[] input;
-	static boolean[] visit;
 	static int[] temp;
 	static List<int[]> output;
 	
-	static void combination(int start, int depth) {
+	static void permutationDuplicate(int depth) {
 		if (depth == r) {
-			int index = 0;
-			temp = new int[r];
-			for (int i = 0; i < n; i++) {
-				if (visit[i]) {
-					temp[index++] = input[i];
-				}
-			}
-			output.add(temp);
+			output.add(temp.clone());
 			return;
 		}
 		
-		for (int i = start; i < n; i++) {
-			if (!visit[i]) {
-				visit[i] = true;
-				combination(i + 1, depth + 1);
-				visit[i] = false;
-			}
+		for (int i = 0; i < n; i++) {
+			temp[depth] = input[i];
+			permutationDuplicate(depth + 1);
 		}
 	}
 	
@@ -58,19 +47,17 @@ public class Main {
 		
 		Arrays.sort(input);
 		
-		visit = new boolean[n];
+		temp = new int[r];
 		output = new ArrayList<>();
-		combination(0, 0);
+		permutationDuplicate(0);
 		
 		for (int[] el : output) {
-			for (int i = 0; i < el.length; i++) {
-				sb.append(String.valueOf(el[i])).append(" ");
+			for (int e : el) {
+				sb.append(String.valueOf(e)).append(" ");
 			}
 			sb.append("\n");
 		}
-		
 		bw.write(sb.toString());
-		
 		bw.flush();
 		bw.close();
 		br.close();
