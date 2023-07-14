@@ -1,10 +1,15 @@
 package algorithm.permutation.template_permutation;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.StringTokenizer;
 
 public class Main {
 	static int n, r;
@@ -29,17 +34,27 @@ public class Main {
 	}
 	
 	public static void main(String args[]) throws IOException {
+		System.setIn(new FileInputStream("src\\algorithm\\permutation\\input.txt"));
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		StringBuilder sb = new StringBuilder();
+		StringTokenizer st = new StringTokenizer(br.readLine());
+
+		n = Integer.parseInt(st.nextToken());
+		r = Integer.parseInt(st.nextToken());
 		
-		n = 5;
-		r = 2;
-		
-		input = new int[] {1, 2, 3, 4, 5};
-		temp = new int[r];
+		input = new int[n];
 		visited = new boolean[n];
-		output = new ArrayList<>();
 		
+		st = new StringTokenizer(br.readLine());
+		for (int i = 0; i < n; i++) {
+			input[i] = Integer.parseInt(st.nextToken());
+		}
+		
+		Arrays.sort(input);
+		
+		temp = new int[r];
+		output = new ArrayList<>();
 		permutation(0);
 		
 		for (int i = 0; i < output.size(); i++) {
