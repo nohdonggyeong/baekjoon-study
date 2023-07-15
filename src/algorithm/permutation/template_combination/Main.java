@@ -6,6 +6,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,9 +27,9 @@ public class Main {
 			for (int i = 0; i < n; i++) {
 				if (visit[i]) {
 					temp[index++] = input[i];
-				}
+				}				
 			}
-			output.add(temp);
+			output.add(temp.clone());
 			return;
 		}
 		
@@ -41,38 +43,41 @@ public class Main {
 	}
 	
 	public static void main(String args[]) throws IOException {
-		System.setIn(new FileInputStream("src\\algorithm\\permutation\\input.txt"));
+		LocalDateTime start = LocalDateTime.now();
+		
+		System.setIn(new FileInputStream("src/algorithm/permutation/input.txt"));
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		StringBuilder sb = new StringBuilder();
-		StringTokenizer st = new StringTokenizer(br.readLine());
+		StringTokenizer st;
 		
+		st = new StringTokenizer(br.readLine());
 		n = Integer.parseInt(st.nextToken());
 		r = Integer.parseInt(st.nextToken());
 		input = new int[n];
+		visit = new boolean[n];
 		
 		st = new StringTokenizer(br.readLine());
 		for (int i = 0; i < n; i++) {
 			input[i] = Integer.parseInt(st.nextToken());
 		}
-		
 		Arrays.sort(input);
 		
-		visit = new boolean[n];
-		output = new ArrayList<>();
+		temp = new int[r];
+		output=  new ArrayList<>();
 		combination(0, 0);
 		
 		for (int[] el : output) {
-			for (int i = 0; i < el.length; i++) {
-				sb.append(String.valueOf(el[i])).append(" ");
+			for (int e : el) {
+				sb.append(String.valueOf(e)).append(" ");
 			}
 			sb.append("\n");
 		}
-		
 		bw.write(sb.toString());
-		
 		bw.flush();
-		bw.close();
-		br.close();
+		
+		LocalDateTime end = LocalDateTime.now();
+		System.out.println();
+		System.out.println(Duration.between(start, end).getSeconds());
 	}
 }

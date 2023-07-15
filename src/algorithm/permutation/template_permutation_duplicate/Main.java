@@ -6,6 +6,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,21 +32,24 @@ public class Main {
 	}
 	
 	public static void main(String args[]) throws IOException {
-		System.setIn(new FileInputStream("src\\algorithm\\permutation\\input.txt"));
+		LocalDateTime start = LocalDateTime.now();
+		
+		System.setIn(new FileInputStream("src/algorithm/permutation/input.txt"));
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		StringBuilder sb = new StringBuilder();
-		StringTokenizer st = new StringTokenizer(br.readLine());
+		StringTokenizer st;
 		
+		st = new StringTokenizer(br.readLine());
 		n = Integer.parseInt(st.nextToken());
 		r = Integer.parseInt(st.nextToken());
+		
 		input = new int[n];
 		
 		st = new StringTokenizer(br.readLine());
 		for (int i = 0; i < n; i++) {
 			input[i] = Integer.parseInt(st.nextToken());
 		}
-		
 		Arrays.sort(input);
 		
 		temp = new int[r];
@@ -59,6 +64,11 @@ public class Main {
 		}
 		bw.write(sb.toString());
 		bw.flush();
+		
+		LocalDateTime end = LocalDateTime.now();
+		System.out.println();
+		System.out.println(Duration.between(start, end).getSeconds());
+		
 		bw.close();
 		br.close();
 	}
