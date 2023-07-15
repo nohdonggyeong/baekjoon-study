@@ -27,7 +27,7 @@ public class Main {
 			for (int i = 0; i < n; i++) {
 				if (visit[i]) {
 					temp[index++] = input[i];
-				}				
+				}
 			}
 			output.add(temp.clone());
 			return;
@@ -36,7 +36,7 @@ public class Main {
 		for (int i = start; i < n; i++) {
 			if (!visit[i]) {
 				visit[i] = true;
-				combination(i + 1, depth + 1);
+				combination(i + 1, depth +1);
 				visit[i] = false;
 			}
 		}
@@ -63,8 +63,7 @@ public class Main {
 		}
 		Arrays.sort(input);
 		
-		temp = new int[r];
-		output=  new ArrayList<>();
+		output = new ArrayList<>();
 		combination(0, 0);
 		
 		for (int[] el : output) {
@@ -78,6 +77,9 @@ public class Main {
 		
 		LocalDateTime end = LocalDateTime.now();
 		System.out.println();
-		System.out.println(Duration.between(start, end).getSeconds());
+		System.out.println("[Elapsed seconds: " + Duration.between(start, end).getSeconds() + "]");
+		
+		bw.close();
+		br.close();
 	}
 }

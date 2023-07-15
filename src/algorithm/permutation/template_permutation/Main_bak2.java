@@ -1,4 +1,4 @@
-package algorithm.permutation.template_combination_duplicate;
+package algorithm.permutation.template_permutation;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -7,31 +7,37 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main_bak2 {
 	static int n, r;
 	static int[] input;
+	static boolean[] visit;
 	static int[] temp;
 	static List<int[]> output;
 	
-	static void combinationDuplicate(int start, int depth) {
+	static void permutation(int depth) {
 		if (depth == r) {
 			output.add(temp.clone());
 			return;
 		}
 		
-		for (int i = start; i < n; i++) {
-			temp[depth] = input[i];
-			combinationDuplicate(i, depth +1);
+		for (int i = 0; i < n; i++) {
+			if (!visit[i]) {
+				visit[i] = true;
+				temp[depth] = input[i];
+				permutation(depth + 1);
+				visit[i] = false;
+			}
 		}
 	}
 	
-	public static void main(String arg[]) throws IOException {
+	public static void main(String args[]) throws IOException {
 		LocalDateTime start = LocalDateTime.now();
 		
 		System.setIn(new FileInputStream("src/algorithm/permutation/input.txt"));
@@ -43,7 +49,9 @@ public class Main {
 		st = new StringTokenizer(br.readLine());
 		n = Integer.parseInt(st.nextToken());
 		r = Integer.parseInt(st.nextToken());
+		
 		input = new int[n];
+		visit = new boolean[n];
 		
 		st = new StringTokenizer(br.readLine());
 		for (int i = 0; i < n; i++) {
@@ -52,8 +60,9 @@ public class Main {
 		Arrays.sort(input);
 		
 		temp = new int[r];
-		output = new ArrayList<>();
-		combinationDuplicate(0, 0);
+		output= new ArrayList<>();
+		
+		permutation(0);
 		
 		for (int[] el : output) {
 			for (int e : el) {
@@ -63,11 +72,11 @@ public class Main {
 		}
 		bw.write(sb.toString());
 		bw.flush();
-		
+
 		LocalDateTime end = LocalDateTime.now();
 		System.out.println();
-		System.out.println(Duration.between(start, end).getSeconds());
-		
+		System.out.println("time: " + String.valueOf(Duration.between(start, end).getSeconds()));
+
 		bw.close();
 		br.close();
 	}

@@ -2,197 +2,284 @@ package 삼성SW역량테스트.ad_230517_사격_게임_2;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
 public class Main {
+	static int T, R, C, answer;
+	static int[][] map;
+	static int[][] visit;
 	
-	static int T, H, W, maxScore;
-	static int[][] D;
-	static boolean[][] visit;
-	static List<Node> startList;
-	static boolean[] startListVisit;
-	static List<List<Node>> listCombination;
-	
-	static void shootRightUp(int i, int j) {
-		visit[i][j] = true;
-		if (i - 1 >= 0 && j < W) {
-			shootRightUp(i - 1, j + 1);
+	static int combN, combR;
+	static List<int[]> input;
+	static int[] inputNumber;
+	static int[] temp;
+	static List<int[]> outputNumber;
+
+	static void shootRight(int r, int c, boolean clear) {
+		if (!clear) {
+			visit[r][c] += 1;
+			int nc = c + 1;
+			if (nc < C) {
+				shootRight(r, nc, false);
+			}
+		} else {
+			visit[r][c] -= 1;
+			int nc = c + 1;
+			if (nc < C) {
+				shootRight(r, nc, true);
+			}
 		}
 	}
 	
-	static void shootRightStraight(int i, int j) {
-		visit[i][j] = true;
-		if (j + 1 < W) {
-			shootRightStraight(i, j + 1);
+	static void shootRightUp(int r, int c, boolean clear) {
+		if (!clear) {
+			visit[r][c] += 1;
+			int nr = r - 1;
+			int nc = c + 1;
+			if (nr >= 0 && nc < C) {
+				shootRightUp(nr, nc, false);
+			}
+		} else {
+			visit[r][c] -= 1;
+			int nr = r - 1;
+			int nc = c + 1;
+			if (nr >= 0 && nc < C) {
+				shootRightUp(nr, nc, true);
+			}
 		}
 	}
 	
-	static void shootRightDown(int i, int j) { // == shootDownRight.
-		visit[i][j] = true;
-		if (i + 1 < H && j + 1 < W) {
-			shootRightDown(i + 1, j + 1);
+	static void shootRightDown(int r, int c, boolean clear) {
+		if (!clear) {
+			visit[r][c] += 1;
+			int nr = r + 1;
+			int nc = c + 1;
+			if (nr < R && nc < C) {
+				shootRightDown(nr, nc, false);
+			}
+		} else {
+			visit[r][c] -= 1;
+			int nr = r + 1;
+			int nc = c + 1;
+			if (nr < R && nc < C) {
+				shootRightDown(nr, nc, true);
+			}
+		}
+	}
+
+	static void shootDown(int r, int c, boolean clear) {
+		if (!clear) {
+			visit[r][c] += 1;
+			int nr = r + 1;
+			if (nr < R) {
+				shootDown(nr, c, false);
+			}
+		} else {
+			visit[r][c] -= 1;
+			int nr = r + 1;
+			if (nr < R) {
+				shootDown(nr, c, true);
+			}
 		}
 	}
 	
-	static void shootDownLeft(int i, int j) {
-		visit[i][j] = true;
-		if (j - 1 >= 0 && i + 1 < H) {
-			shootDownLeft(i + 1, j - 1);
+	static void shootDownLeft(int r, int c, boolean clear) {
+		if (!clear) {
+			visit[r][c] += 1;
+			int nr = r + 1;
+			int nc = c - 1;
+			if (nr < R && nc >= 0) {
+				shootDownLeft(nr, nc, false);
+			}
+		} else {
+			visit[r][c] -= 1;
+			int nr = r + 1;
+			int nc = c - 1;
+			if (nr < R && nc >= 0) {
+				shootDownLeft(nr, nc, true);
+			}
 		}
 	}
 	
-	static void shootDownStraight(int i, int j) {
-		visit[i][j] = true;
-		if (i + 1 < H) {
-			shootDownStraight(i + 1, j);
-		}
-	}
-	
-	static void combinateList(int depth, int r) {
-		if (r == 0) {
-			List<Node> tempList = new ArrayList<>();
-			for (int i = 0; i < startListVisit.length; i++) {
-	            if (startListVisit[i]) {
-	            	tempList.add(startList.get(i));
-	            }
-	        }
-			listCombination.add(tempList);
-			return;
-		}
-		
-		for (int i = depth; i < startListVisit.length; i++) {
-			startListVisit[i] = true;
-			combinateList(i + 1, r - 1);
-			startListVisit[i] = false;
-		}
-	}
-	
-	static int getTotalScore() {
-		int total = 0;
-		for (int i = 0; i < H; i++) {
-			for (int j = 0; j < W; j++) {
-				if (visit[i][j]) {
-					total += D[i][j];
+	static int getSum() {
+		int sum = 0;
+		for (int r = 0; r < R; r++) {
+			for (int c = 0; c < C; c++) {
+				if (visit[r][c] > 0) {
+					sum += map[r][c];
 				}
 			}
 		}
-		return total;
+		return sum;
 	}
 	
-	static class Node {
-		private int i;
-		private int j;
+	static void combinationRepetition(int start, int depth) {
+		if (depth == combR) {
+			outputNumber.add(temp.clone());
+			return;
+		}
 		
-		public Node(int i, int j) {
-			this.i = i;
-			this.j = j;
+		for (int i = start; i < combN; i++) {
+			temp[depth] = inputNumber[i];
+			combinationRepetition(i, depth + 1);
+		}
+	}
+	
+	static void dfs(int depth, int[] el, int t) {
+		if (depth == combR) {
+//			if (t == 3) {
+//				System.out.println();
+//				for (int e : el) {
+//					for (int i = 0; i < 2; i++) {
+//						System.out.print(String.valueOf(input.get(e)[i]) + " ");
+//					}
+//					System.out.println();
+//				}
+//				
+//				for (int r = 0; r < R; r++) {
+//					for (int c = 0; c < C; c++) {
+//						System.out.print(visit[r][c] > 0 ?  "O " : "X ");
+//					}
+//					System.out.println();
+//				}				
+//			}
+			
+			answer = Math.max(answer, getSum());
+			return;
+		}
+		
+		for (int i = 0; i < 3; i++) {
+			int[] shotPlace = input.get(el[depth]);
+			if (shotPlace[0] == 0 && shotPlace[1] != 0) {
+				switch(i) {
+				case 0:
+					shootDown(0, shotPlace[1], false);
+					dfs(depth + 1, el, t);
+					shootDown(0, shotPlace[1], true);
+					break;
+				case 1:
+					shootDownLeft(0, shotPlace[1], false);
+					dfs(depth + 1, el, t);
+					shootDownLeft(0, shotPlace[1], true);
+					break;
+				case 2:
+					shootRightDown(0, shotPlace[1], false);
+					dfs(depth + 1, el, t);
+					shootRightDown(0, shotPlace[1], true);
+					break;
+				default:
+					break;
+				}
+			} else if (shotPlace[0] != 0 && shotPlace[1] == 0) {
+				switch(i) {
+				case 0:
+					shootRight(shotPlace[0], 0, false);
+					dfs(depth + 1, el, t);
+					shootRight(shotPlace[0], 0, true);
+					break;
+				case 1:
+					shootRightUp(shotPlace[0], 0, false);
+					dfs(depth + 1, el, t);
+					shootRightUp(shotPlace[0], 0, true);
+					break;
+				case 2:
+					shootRightDown(shotPlace[0], 0, false);
+					dfs(depth + 1, el, t);
+					shootRightDown(shotPlace[0], 0, true);
+					break;
+				default:
+					break;
+				}
+			} else if (shotPlace[0] == 0 && shotPlace[1] == 0) {
+				switch(i) {
+				case 0:
+					shootRight(0, 0, false);
+					dfs(depth + 1, el, t);
+					shootRight(0, 0, true);
+					break;
+				case 1:
+					shootDown(0, 0, false);
+					dfs(depth + 1, el, t);
+					shootDown(0, 0, true);
+					break;
+				case 2:
+					shootRightDown(0, 0, false);
+					dfs(depth + 1, el, t);
+					shootRightDown(0, 0, true);
+					break;
+				default:
+					break;
+				}
+			}
 		}
 	}
 	
 	public static void main(String args[]) throws IOException {
-		// Input
+//		LocalDateTime start = LocalDateTime.now();
+		
+		System.setIn(new FileInputStream("src/삼성SW역량테스트/ad_230517_사격_게임_2/input.txt"));
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+		StringBuilder sb = new StringBuilder();
 		StringTokenizer st;
 		
-		T = Integer.parseInt(br.readLine()); // T: The number of Test case.
-		for (int t = 1; t <= T; t++) {
+		T = Integer.parseInt(br.readLine());
+		for (int t = 0; t < T; t++) {
 			st = new StringTokenizer(br.readLine());
-			H = Integer.parseInt(st.nextToken());  // H: Height.
-			W = Integer.parseInt(st.nextToken());  // W: Width.
+			R = Integer.parseInt(st.nextToken());
+			C = Integer.parseInt(st.nextToken());
+			map = new int[R][C];
 			
-			D = new int[H][W];
-			visit = new boolean[H][W];
-			maxScore = Integer.MIN_VALUE;
-			
-			for (int i = 0; i < H; i++) {
+			for (int r = 0; r < R; r++) {
 				st = new StringTokenizer(br.readLine());
-				for (int j = 0; j < W; j++) {
-					D[i][j] = Integer.parseInt(st.nextToken());
+				for (int c = 0; c < C; c++) {
+					map[r][c] = Integer.parseInt(st.nextToken());
 				}
 			}
+			visit = new int[R][C];
 			
-			startList = new ArrayList<>();
-			for (int i = 0; i < H; i++) {
-				startList.add(new Node(i, 0));
+			input = new ArrayList<>();
+			for (int r = 0; r < R; r++) {
+				input.add(new int[] {r, 0});
 			}
-			for (int j = 1; j < W; j++) {
-				startList.add(new Node(0, j));
-			}
-
-			startListVisit = new boolean[startList.size()];
-			listCombination = new ArrayList<>();
-			combinateList(0, 3);
-			
-			// Process
-			for (List<Node> list : listCombination) {
-				for (Node node : list) {
-					visit = new boolean[H][W];
-					
-					for (int k = 0; k < 3; k++) {
-						switch (k) {
-						case 0:
-							if (node.i == 0 && node.j == 0) {
-								shootRightStraight(node.i, node.j);
-							} else if (node.i == 0) {
-								shootDownLeft(node.i, node.j);
-							} else if (node.j == 0) {
-								shootRightUp(node.i, node.j);
-							}
-							break;
-						case 1:
-							if (node.i == 0 && node.j == 0) {
-								shootDownStraight(node.i, node.j);
-							} else if (node.i == 0) {
-								shootDownStraight(node.i, node.j);
-							} else if (node.j == 0) {
-								shootRightStraight(node.i, node.j);
-							}
-							break;
-						case 2:
-							if (node.i == 0 && node.j == 0) {
-								shootRightDown(node.i, node.j);
-							} else if (node.i == 0) {
-								shootRightDown(node.i, node.j);
-							} else if (node.j == 0) {
-								shootRightDown(node.i, node.j);
-							}
-							break;
-						default:
-							break;
-						}
-					}
-					maxScore = Math.max(maxScore, getTotalScore());
-				}
+			for (int c = 0; c < C; c++) {
+				input.add(new int[] {0, c});
 			}
 			
-			// Output
-			StringBuilder sb = new StringBuilder();
-			sb.append("#");
-			sb.append(String.valueOf(t));
-			sb.append(" ");
-			sb.append(String.valueOf(maxScore));
+			combN = input.size();
+			combR = 3;
 			
-			bw.write(sb.toString());
-			bw.newLine();
+			inputNumber = new int[combN];
+			for (int i = 0; i < combN; i++) {
+				inputNumber[i] = i;
+			}
 			
-//			bw.newLine();
-//			bw.write("[Input check: " + String.valueOf(t) + "]");
-//			bw.newLine();
-//			for (int i = 0; i < H; i++) {
-//				for (int j = 0; j < W; j++) {
-//					bw.write(String.valueOf(D[i][j])+ " ");
-//				}
-//				bw.newLine();
-//			}
+			temp = new int[combR];
+			outputNumber = new ArrayList<>();
+			combinationRepetition(0, 0);
+	
+			answer = 0;
+			for (int[] el : outputNumber) {
+				dfs(0, el, t);
+			}
+			
+			sb.append("#").append(String.valueOf(t + 1)).append(" ").append(String.valueOf(answer)).append("\n");
 		}
-
+		bw.write(sb.toString());
 		bw.flush();
+		
+//		LocalDateTime end = LocalDateTime.now();
+//		System.out.println();
+//		System.out.println("[Elapsed seconds: " + Duration.between(start, end).getSeconds() + "]");
+		
 		bw.close();
 		br.close();
 	}

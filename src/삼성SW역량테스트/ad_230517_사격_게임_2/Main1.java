@@ -6,7 +6,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Scanner;
-public class Main2 {
+public class Main1 {
          
         static int H; //세로
         static int W; //가로
@@ -15,10 +15,8 @@ public class Main2 {
         static int total; // 최대 점수
          
         public static void main(String[] args) throws FileNotFoundException {
-                String path = "C:\\Users\\User\\Documents\\workspace-spring-tool-suite-4-4.11.0.RELEASE\\shooting\\src\\input.txt";
-                File file = new File(path);
-                System.setIn(new FileInputStream(file));
-                 
+
+    			System.setIn(new FileInputStream("src/삼성SW역량테스트/ad_230517_사격_게임_2/input.txt"));
                 Scanner sc = new Scanner(System.in);
                  
                 int T = sc.nextInt(); //testcase
@@ -114,7 +112,16 @@ public class Main2 {
                                                 }
                                         }
                                         if (tmpTotal >= total) {
-                                                total = tmpTotal;
+                                        	
+                            				System.out.println();
+                            				for (int r = 0; r < H; r++) {
+                            					for (int c = 0; c < W; c++) {
+                            						System.out.print(check[r][c] == 0 ?  "O " : "X ");
+                            					}
+                            					System.out.println();
+                            				}	
+                            				
+                                            total = tmpTotal;
                                         }
                                 } else {
                                  

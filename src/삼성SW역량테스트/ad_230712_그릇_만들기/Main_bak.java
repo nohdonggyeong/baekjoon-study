@@ -6,14 +6,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main_bak {
 	static int T, N, M;
 	static int[] input;
 	static boolean[] visit;
@@ -30,14 +28,15 @@ public class Main {
 				}
 			}
 			
-			boolean exists = false;
-			for (int i = 0; i < output.size(); i++) {
-				if (Arrays.equals(temp, output.get(i))) {
-					exists = true;
+			boolean isContained = false;
+			Arrays.sort(temp);
+			for (int[] el : output) {
+				if (Arrays.equals(el, temp)) {
+					isContained = true;
 				}
 			}
-			if (!exists) {
-				output.add(temp.clone());				
+			if (!isContained) {
+				output.add(temp);
 			}
 			return;
 		}
@@ -52,9 +51,7 @@ public class Main {
 	}
 	
 	public static void main(String args[]) throws IOException {
-//		LocalDateTime start = LocalDateTime.now();
-		
-		System.setIn(new FileInputStream("src/삼성SW역량테스트/ad_230712_그릇_만들기/input.txt"));
+		System.setIn(new FileInputStream("src\\삼성SW역량테스트\\ad_230712_그릇_만들기\\input.txt"));
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		StringBuilder sb = new StringBuilder();
@@ -66,26 +63,30 @@ public class Main {
 			N = Integer.parseInt(st.nextToken());
 			M = Integer.parseInt(st.nextToken());
 			input = new int[N];
-			visit = new boolean[N];
-			
+
 			st = new StringTokenizer(br.readLine());
 			for (int n = 0; n < N; n++) {
 				input[n] = Integer.parseInt(st.nextToken());
 			}
+			
 			Arrays.sort(input);
 			
+			visit = new boolean[N];
 			output = new ArrayList<>();
+			
 			combination(0, 0);
 			
 			sb.append("#").append(String.valueOf(t + 1)).append(" ").append(String.valueOf(output.size())).append("\n");
+			
+			for (int[] el : output) {
+				for (int e : el) {
+					sb.append(String.valueOf(e)).append(" ");
+				}
+				sb.append("\n");
+			}
 		}
 		bw.write(sb.toString());
 		bw.flush();
-		
-//		LocalDateTime end = LocalDateTime.now();
-//		System.out.println();
-//		System.out.println("[Elapsed seconds: " + Duration.between(start, end).getSeconds() + "]");
-		
 		bw.close();
 		br.close();
 	}

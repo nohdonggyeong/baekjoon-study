@@ -1,4 +1,4 @@
-package algorithm.permutation.template_permutation_duplicate;
+package algorithm.permutation.template_permutation_repetition;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main_bak2 {
 	static int n, r;
 	static int[] input;
 	static int[] temp;

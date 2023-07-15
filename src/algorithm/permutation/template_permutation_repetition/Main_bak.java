@@ -1,4 +1,4 @@
-package algorithm.permutation.template_permutation;
+package algorithm.permutation.template_permutation_repetition;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -6,59 +6,50 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main_bak {
 	static int n, r;
 	static int[] input;
-	static boolean[] visit;
 	static int[] temp;
 	static List<int[]> output;
 	
-	static void permutation(int depth) {
+	static void permutationDuplicate(int depth) {
 		if (depth == r) {
 			output.add(temp.clone());
 			return;
 		}
 		
 		for (int i = 0; i < n; i++) {
-			if (!visit[i]) {
-				visit[i] = true;
-				temp[depth] = input[i];
-				permutation(depth + 1);
-				visit[i] = false;
-			}
+			temp[depth] = input[i];
+			permutationDuplicate(depth + 1);
 		}
 	}
 	
 	public static void main(String args[]) throws IOException {
-		LocalDateTime start = LocalDateTime.now();
-		System.setIn(new FileInputStream("src/algorithm/permutation/input.txt"));
+		System.setIn(new FileInputStream("src\\algorithm\\permutation\\input.txt"));
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		StringBuilder sb = new StringBuilder();
-		StringTokenizer st;
+		StringTokenizer st = new StringTokenizer(br.readLine());
 		
-		st = new StringTokenizer(br.readLine());
 		n = Integer.parseInt(st.nextToken());
 		r = Integer.parseInt(st.nextToken());
 		input = new int[n];
-		visit = new boolean[n];
 		
 		st = new StringTokenizer(br.readLine());
 		for (int i = 0; i < n; i++) {
 			input[i] = Integer.parseInt(st.nextToken());
 		}
+		
 		Arrays.sort(input);
 		
 		temp = new int[r];
 		output = new ArrayList<>();
-		permutation(0);
+		permutationDuplicate(0);
 		
 		for (int[] el : output) {
 			for (int e : el) {
@@ -68,11 +59,6 @@ public class Main {
 		}
 		bw.write(sb.toString());
 		bw.flush();
-		
-		LocalDateTime end = LocalDateTime.now();
-		System.out.println();
-		System.out.println("[Elapsed seconds: " + Duration.between(start, end).getSeconds() + "]");
-		
 		bw.close();
 		br.close();
 	}
