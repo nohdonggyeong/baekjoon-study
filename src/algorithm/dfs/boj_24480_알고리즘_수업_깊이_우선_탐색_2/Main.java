@@ -1,4 +1,4 @@
-package algorithm.dfs.boj_24479_알고리즘_수업_깊이_우선_탐색_1;
+package algorithm.dfs.boj_24480_알고리즘_수업_깊이_우선_탐색_2;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -51,16 +51,16 @@ public class Main {
 			int v = Integer.parseInt(st.nextToken());
 			graph.get(u).add(v);
 			graph.get(v).add(u);
-		}		
+		}
 		for (int n = 1; n <= N; n++) {
-			Collections.sort(graph.get(n));
+			Collections.sort(graph.get(n), Collections.reverseOrder());
 		}
 		
 		cnt = 1;
 		dfs(R);
 		
-		for (int n = 1; n <= N; n++) {
-			bw.write(String.valueOf(checked[n]));
+		for (int i = 1; i <= N; i++) {
+			bw.write(String.valueOf(checked[i]));
 			bw.newLine();
 		}
 		bw.flush();
