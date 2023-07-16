@@ -216,14 +216,14 @@ public class Main {
 	}
 	
 	public static void main(String args[]) throws IOException {
-		LocalDateTime start = LocalDateTime.now();
+//		LocalDateTime start = LocalDateTime.now();
 		System.setIn(new FileInputStream("src/삼성SW역량테스트/ad_230517_사격_게임_2/input.txt"));
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		StringBuilder sb = new StringBuilder();
 		StringTokenizer st;
 		
-		// repetition: test case
+		// test case
 		T = Integer.parseInt(br.readLine());
 		for (int t = 0; t < T; t++) {
 			// setting: map, visit
