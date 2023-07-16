@@ -84,7 +84,7 @@ public class Main {
 		
 //		LocalDateTime end = LocalDateTime.now();
 //		System.out.println();
-//		System.out.println("[Elapsed seconds: " + Duration.between(start, end).getSeconds() + "]");
+//		System.out.println("[Elapsed time: " + Duration.between(start, end).getSeconds() + " sec]");
 		
 		bw.close();
 		br.close();

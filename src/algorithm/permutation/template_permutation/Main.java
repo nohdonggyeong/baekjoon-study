@@ -38,6 +38,7 @@ public class Main {
 	
 	public static void main(String args[]) throws IOException {
 		LocalDateTime start = LocalDateTime.now();
+		
 		System.setIn(new FileInputStream("src/algorithm/permutation/input.txt"));
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
@@ -71,9 +72,6 @@ public class Main {
 		
 		LocalDateTime end = LocalDateTime.now();
 		System.out.println();
-		System.out.println("[Elapsed seconds: " + Duration.between(start, end).getSeconds() + "]");
-		
-		bw.close();
-		br.close();
+		System.out.println("[Elapsed time: " + Duration.between(start, end).getSeconds() + " sec]");
 	}
 }

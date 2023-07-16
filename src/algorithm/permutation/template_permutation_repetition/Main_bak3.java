@@ -1,4 +1,4 @@
-package algorithm.permutation.template_combination;
+package algorithm.permutation.template_permutation_repetition;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -13,37 +13,27 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main_bak3 {
 	static int n, r;
 	static int[] input;
-	static boolean[] visit;
 	static int[] temp;
 	static List<int[]> output;
 	
-	static void combination(int start, int depth) {
+	static void permutationRepetition(int depth) {
 		if (depth == r) {
-			int index = 0;
-			temp = new int[r];
-			for (int i = 0; i < n; i++) {
-				if (visit[i]) {
-					temp[index++] = input[i];
-				}
-			}
 			output.add(temp.clone());
 			return;
 		}
 		
-		for (int i = start; i < n; i++) {
-			if (!visit[i]) {
-				visit[i] = true;
-				combination(i + 1, depth + 1);
-				visit[i] = false;
-			}
+		for (int i = 0; i < n; i++) {
+			temp[depth] = input[i];
+			permutationRepetition(depth + 1);
 		}
 	}
 	
 	public static void main(String args[]) throws IOException {
 		LocalDateTime start = LocalDateTime.now();
+		
 		System.setIn(new FileInputStream("src/algorithm/permutation/input.txt"));
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
@@ -54,7 +44,6 @@ public class Main {
 		n = Integer.parseInt(st.nextToken());
 		r = Integer.parseInt(st.nextToken());
 		input = new int[n];
-		visit = new boolean[n];
 		
 		st = new StringTokenizer(br.readLine());
 		for (int i = 0; i < n; i++) {
@@ -62,8 +51,10 @@ public class Main {
 		}
 		Arrays.sort(input);
 		
+		temp = new int[r];
 		output = new ArrayList<>();
-		combination(0, 0);
+		
+		permutationRepetition(0);
 		
 		for (int[] el : output) {
 			for (int e : el) {
@@ -76,6 +67,9 @@ public class Main {
 		
 		LocalDateTime end = LocalDateTime.now();
 		System.out.println();
-		System.out.println("[Elapsed time: " + Duration.between(start, end).getSeconds() + " sec]");
+		System.out.println("[Elapsed seconds: " + Duration.between(start, end).getSeconds() + "]");
+		
+		bw.close();
+		br.close();
 	}
 }

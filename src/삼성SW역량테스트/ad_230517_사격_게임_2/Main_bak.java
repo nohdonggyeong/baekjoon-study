@@ -12,17 +12,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class Main {
-	static int T, R, C;
+public class Main_bak {
+	static int T, R, C, answer;
 	static int[][] map;
 	static int[][] visit;
-	static int combN, combR;
-	static List<int[]> inputCandidateList;
-	static int[] inputCandidateIndex;
-	static int[] inputIndexTemp;
-	static List<int[]> inputIndexList;
-	static int answer;
 	
+	static int combN, combR;
+	static List<int[]> input;
+	static int[] inputNumber;
+	static int[] temp;
+	static List<int[]> outputNumber;
+
 	static void shootRight(int r, int c, boolean clear) {
 		if (!clear) {
 			visit[r][c] += 1;
@@ -74,7 +74,7 @@ public class Main {
 			}
 		}
 	}
-	
+
 	static void shootDown(int r, int c, boolean clear) {
 		if (!clear) {
 			visit[r][c] += 1;
@@ -123,89 +123,96 @@ public class Main {
 	
 	static void combinationRepetition(int start, int depth) {
 		if (depth == combR) {
-			inputIndexList.add(inputIndexTemp.clone());
+			outputNumber.add(temp.clone());
 			return;
 		}
 		
 		for (int i = start; i < combN; i++) {
-			inputIndexTemp[depth] = inputCandidateIndex[i];
+			temp[depth] = inputNumber[i];
 			combinationRepetition(i, depth + 1);
 		}
 	}
 	
-	static void dfs(int depth, int[] inputIndex) {
+	static void dfs(int depth, int[] el, int t) {
 		if (depth == combR) {
-//			if (getSum() > answer) {
+//			if (t == 3) {
 //				System.out.println();
-//				for (int r = 0; r < R; r++) {
-//					for (int c = 0; c < C; c++) {
-//						System.out.print(visit[r][c] > 0 ? "O " : "X ");
+//				for (int e : el) {
+//					for (int i = 0; i < 2; i++) {
+//						System.out.print(String.valueOf(input.get(e)[i]) + " ");
 //					}
 //					System.out.println();
 //				}
+//				
+//				for (int r = 0; r < R; r++) {
+//					for (int c = 0; c < C; c++) {
+//						System.out.print(visit[r][c] > 0 ?  "O " : "X ");
+//					}
+//					System.out.println();
+//				}				
 //			}
 			
 			answer = Math.max(answer, getSum());
 			return;
 		}
 		
-		for (int i = 0; i < combR; i ++) {
-			int[] input = inputCandidateList.get(inputIndex[depth]);
-			if (input[0] == 0 && input[1] != 0) {
+		for (int i = 0; i < 3; i++) {
+			int[] shotPlace = input.get(el[depth]);
+			if (shotPlace[0] == 0 && shotPlace[1] != 0) {
 				switch(i) {
 				case 0:
-					shootDown(0, input[1], false);
-					dfs(depth + 1, inputIndex);
-					shootDown(0, input[1], true);
+					shootDown(0, shotPlace[1], false);
+					dfs(depth + 1, el, t);
+					shootDown(0, shotPlace[1], true);
 					break;
 				case 1:
-					shootDownLeft(0, input[1], false);
-					dfs(depth + 1, inputIndex);
-					shootDownLeft(0, input[1], true);
+					shootDownLeft(0, shotPlace[1], false);
+					dfs(depth + 1, el, t);
+					shootDownLeft(0, shotPlace[1], true);
 					break;
 				case 2:
-					shootRightDown(0,  input[1], false);
-					dfs(depth + 1, inputIndex);
-					shootRightDown(0, input[1], true);
+					shootRightDown(0, shotPlace[1], false);
+					dfs(depth + 1, el, t);
+					shootRightDown(0, shotPlace[1], true);
 					break;
 				default:
 					break;
 				}
-			} else if (input[0] != 0 && input[1] == 0) {
+			} else if (shotPlace[0] != 0 && shotPlace[1] == 0) {
 				switch(i) {
 				case 0:
-					shootRight(input[0], 0, false);
-					dfs(depth + 1, inputIndex);
-					shootRight(input[0], 0, true);
+					shootRight(shotPlace[0], 0, false);
+					dfs(depth + 1, el, t);
+					shootRight(shotPlace[0], 0, true);
 					break;
 				case 1:
-					shootRightUp(input[0], 0, false);
-					dfs(depth + 1, inputIndex);
-					shootRightUp(input[0], 0, true);
+					shootRightUp(shotPlace[0], 0, false);
+					dfs(depth + 1, el, t);
+					shootRightUp(shotPlace[0], 0, true);
 					break;
 				case 2:
-					shootRightDown(input[0], 0, false);
-					dfs(depth + 1, inputIndex);
-					shootRightDown(input[0], 0, true);
+					shootRightDown(shotPlace[0], 0, false);
+					dfs(depth + 1, el, t);
+					shootRightDown(shotPlace[0], 0, true);
 					break;
 				default:
 					break;
 				}
-			} else if (input[0] == 0 && input[0] == 0) {
+			} else if (shotPlace[0] == 0 && shotPlace[1] == 0) {
 				switch(i) {
 				case 0:
 					shootRight(0, 0, false);
-					dfs(depth + 1, inputIndex);
+					dfs(depth + 1, el, t);
 					shootRight(0, 0, true);
 					break;
 				case 1:
 					shootDown(0, 0, false);
-					dfs(depth + 1, inputIndex);
+					dfs(depth + 1, el, t);
 					shootDown(0, 0, true);
 					break;
 				case 2:
 					shootRightDown(0, 0, false);
-					dfs(depth + 1, inputIndex);
+					dfs(depth + 1, el, t);
 					shootRightDown(0, 0, true);
 					break;
 				default:
@@ -216,57 +223,54 @@ public class Main {
 	}
 	
 	public static void main(String args[]) throws IOException {
-		LocalDateTime start = LocalDateTime.now();
+//		LocalDateTime start = LocalDateTime.now();
+		
 		System.setIn(new FileInputStream("src/삼성SW역량테스트/ad_230517_사격_게임_2/input.txt"));
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		StringBuilder sb = new StringBuilder();
 		StringTokenizer st;
 		
-		// repetition: test case
 		T = Integer.parseInt(br.readLine());
 		for (int t = 0; t < T; t++) {
-			// setting: map, visit
 			st = new StringTokenizer(br.readLine());
 			R = Integer.parseInt(st.nextToken());
 			C = Integer.parseInt(st.nextToken());
 			map = new int[R][C];
-			visit = new int[R][C];
 			
 			for (int r = 0; r < R; r++) {
 				st = new StringTokenizer(br.readLine());
-				for(int c = 0; c < C; c++) {
+				for (int c = 0; c < C; c++) {
 					map[r][c] = Integer.parseInt(st.nextToken());
 				}
 			}
+			visit = new int[R][C];
 			
-			// setting: input list
-			inputCandidateList = new ArrayList<>();
+			input = new ArrayList<>();
 			for (int r = 0; r < R; r++) {
-				inputCandidateList.add(new int[] {r, 0});
+				input.add(new int[] {r, 0});
 			}
 			for (int c = 0; c < C; c++) {
-				inputCandidateList.add(new int[] {0, c});
+				input.add(new int[] {0, c});
 			}
 			
-			combN = inputCandidateList.size();
+			combN = input.size();
 			combR = 3;
-			inputCandidateIndex = new int[combN];
+			
+			inputNumber = new int[combN];
 			for (int i = 0; i < combN; i++) {
-				inputCandidateIndex[i] = i;
+				inputNumber[i] = i;
 			}
 			
-			inputIndexTemp = new int[3];
-			inputIndexList = new ArrayList<>();
+			temp = new int[combR];
+			outputNumber = new ArrayList<>();
 			combinationRepetition(0, 0);
-			
-			// operation: dfs
+	
 			answer = 0;
-			for (int i = 0; i < inputIndexList.size(); i++) {
-				dfs(0, inputIndexList.get(i));
+			for (int[] el : outputNumber) {
+				dfs(0, el, t);
 			}
 			
-			// print: answer
 			sb.append("#").append(String.valueOf(t + 1)).append(" ").append(String.valueOf(answer)).append("\n");
 		}
 		bw.write(sb.toString());
