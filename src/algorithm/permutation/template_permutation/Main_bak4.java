@@ -1,4 +1,4 @@
-package algorithm.permutation.template_combination_repetition;
+package algorithm.permutation.template_permutation;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -13,27 +13,33 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main_bak4 {
 	static int n, r;
 	static int[] input;
+	static boolean[] visit;
 	static int[] temp;
 	static List<int[]> output;
 	
-	static void combinationRepetition(int start, int depth) {
+	static void permutation(int depth) {
 		if (depth == r) {
 			output.add(temp.clone());
 			return;
 		}
 		
-		for (int i = start; i < n; i++) {
-			temp[depth] = input[i];
-			combinationRepetition(i, depth + 1);
+		for (int i = 0; i < n; i++) {
+			if (!visit[i]) {
+				visit[i] = true;
+				temp[depth] = input[i];
+				permutation(depth + 1);
+				visit[i] = false;
+			}
 		}
 	}
 	
 	public static void main(String args[]) throws IOException {
 		LocalDateTime start = LocalDateTime.now();
-		System.setIn(new FileInputStream("src\\algorithm\\permutation\\input.txt"));
+		
+		System.setIn(new FileInputStream("src/algorithm/permutation/input.txt"));
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		StringBuilder sb = new StringBuilder();
@@ -43,6 +49,7 @@ public class Main {
 		n = Integer.parseInt(st.nextToken());
 		r = Integer.parseInt(st.nextToken());
 		input = new int[n];
+		visit = new boolean[n];
 		
 		st = new StringTokenizer(br.readLine());
 		for (int i = 0; i < n; i++) {
@@ -52,7 +59,7 @@ public class Main {
 		
 		temp = new int[r];
 		output = new ArrayList<>();
-		combinationRepetition(0, 0);
+		permutation(0);
 		
 		for (int[] el : output) {
 			for (int e : el) {

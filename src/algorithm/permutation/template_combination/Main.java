@@ -44,7 +44,7 @@ public class Main {
 	
 	public static void main(String args[]) throws IOException {
 		LocalDateTime start = LocalDateTime.now();
-		System.setIn(new FileInputStream("src/algorithm/permutation/input.txt"));
+		System.setIn(new FileInputStream("src\\algorithm\\permutation\\input.txt"));
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		StringBuilder sb = new StringBuilder();
@@ -54,7 +54,6 @@ public class Main {
 		n = Integer.parseInt(st.nextToken());
 		r = Integer.parseInt(st.nextToken());
 		input = new int[n];
-		visit = new boolean[n];
 		
 		st = new StringTokenizer(br.readLine());
 		for (int i = 0; i < n; i++) {
@@ -62,11 +61,12 @@ public class Main {
 		}
 		Arrays.sort(input);
 		
+		visit = new boolean[n];
 		output = new ArrayList<>();
 		combination(0, 0);
 		
 		for (int[] el : output) {
-			for (int e : el) {
+			for (int e : el ) {
 				sb.append(String.valueOf(e)).append(" ");
 			}
 			sb.append("\n");
