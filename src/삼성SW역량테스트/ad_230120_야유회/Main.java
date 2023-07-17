@@ -30,30 +30,37 @@ public class Main {
 	}
 	
 	static int getR() {
+		visit = new boolean[N][M][2];
 		Queue<Node> queue = new LinkedList<>();
 		
+		// 0, 0 시작
 		queue.offer(new Node(0, 0, 0));
 		visit[0][0][0] = true;
 		
 		while (!queue.isEmpty()) {
 			Node node = queue.poll();
 			
+			// R 도착하면 그 때까지 최소 이동시간
 			if (map[node.r][node.c] == 'R') {
 				return node.cnt;
 			}
 			
+			// 동, 서 , 남, 북  탐색
 			for (int i = 0; i < 4; i++) {
 				int nr = node.r + dr[i];
 				int nc = node.c + dc[i];
 				
+				// map 벗어나는가
 				if (nr < 0 || nc < 0 || nr >= N || nc >= M) {
 					continue;
 				}
 				
+				// 이미 방문했거나 X인가
 				if (visit[nr][nc][0] || map[nr][nc] == 'X') {
 					continue;
 				}
 				
+				// 이동, 방문처리
 				queue.offer(new Node(nr, nc, node.cnt + 1));
 				visit[nr][nc][0] = true;
 			}
@@ -65,32 +72,38 @@ public class Main {
 		visit = new boolean[N][M][2];
 		Queue<Node> queue = new LinkedList<>();
 		
+		// Red 위치 시작
 		queue.offer(Red);
 		visit[Red.r][Red.c][0] = true;
 		
 		while (!queue.isEmpty()) {
 			Node node = queue.poll();
 			
+			// 바깥으로 Red 던지고 B 도착하면 그 때까지 최소 이동시간
 			if (visit[node.r][node.c][1] && map[node.r][node.c] == 'B') {
 				return node.cnt;
 			}
 			
+			// 동, 서 , 남, 북  탐색
 			for (int i = 0; i < 4; i++) {
 				int nr = node.r + dr[i];
 				int nc = node.c + dc[i];
 				
+				// map 벗어나는가
 				if (nr < 0 || nc < 0 || nr >= N || nc >= M) {
 					continue;
 				}
 				
+				// 이미 방문했거나 X인가
 				if (visit[nr][nc][1] || map[nr][nc] == 'X') {
 					continue;
 				}
 				
-				if (nr == 0 || nc == 0 || nr == N - 1 || nc == M - 1 || visit[node.r][node.c][1]) {
+				// 이동, 방문처리
+				if (nr == 0 || nc == 0 || nr == N - 1 || nc == M - 1 || visit[node.r][node.c][1]) { // 바깥 도착했거나 이미 바깥으로 던진 경우
 					queue.offer(new Node(nr, nc, node.cnt + 1));
 					visit[nr][nc][1] = true;
-				} else {
+				} else { // 바깥 도착 못한 경우
 					queue.offer(new Node(nr, nc, node.cnt + 1));
 					visit[nr][nc][0] = true;
 				}
@@ -103,32 +116,38 @@ public class Main {
 		visit = new boolean[N][M][2];
 		Queue<Node> queue = new LinkedList<>();
 		
+		// Blue 위치 시작
 		queue.offer(Blue);
 		visit[Blue.r][Blue.c][0] = true;
 		
 		while (!queue.isEmpty()) {
 			Node node = queue.poll();
 			
+			// 바깥으로 Blue 던지고  목적지를 도착하면 그 때까지 최소 이동시간
 			if (visit[node.r][node.c][1] && node.r == N - 1 && node.c == M - 1) {
 				return node.cnt;
 			}
 			
+			// 동, 서 , 남, 북  탐색
 			for (int i = 0; i < 4; i++) {
 				int nr = node.r + dr[i];
 				int nc = node.c + dc[i];
 				
+				// map 벗어나는가
 				if (nr < 0 || nc < 0 || nr >= N || nc >= M) {
 					continue;
 				}
 				
+				// 이미 방문했거나 X인가
 				if (visit[nr][nc][1] || map[nr][nc] == 'X') {
 					continue;
 				}
 				
-				if (nr == 0 || nc == 0 || nr == N - 1 || nc == M - 1 || visit[node.r][node.c][1]) {
+				// 이동, 방문처리
+				if (nr == 0 || nc == 0 || nr == N - 1 || nc == M - 1 || visit[node.r][node.c][1]) { // 바깥 도착했거나 이미 바깥으로 던진 경우
 					queue.offer(new Node(nr, nc, node.cnt + 1));
 					visit[nr][nc][1] = true;
-				} else {
+				} else { // 바깥 도착 못한 경우
 					queue.offer(new Node(nr, nc, node.cnt + 1));
 					visit[nr][nc][0] = true;
 				}
@@ -143,14 +162,14 @@ public class Main {
 		StringTokenizer st;
 		StringBuilder sb = new StringBuilder();
 		
+		// test case 반복
 		T = Integer.parseInt(br.readLine());
 		for (int t = 0; t < T; t++) {
+			// map, visit, Red 위치, Blue 위치 세팅
 			st = new StringTokenizer(br.readLine());
 			N = Integer.parseInt(st.nextToken());
 			M = Integer.parseInt(st.nextToken());
-			
 			map = new char[N][M];
-			visit = new boolean[N][M][2];
 			
 			for (int i = 0; i < N; i++) {
 				String str = br.readLine();
@@ -169,10 +188,10 @@ public class Main {
 			// R까지 이동
 			int distR = getR();
 			
-			// 벽 짚고 B까지 이동
+			// 바깥 던지고 B까지 이동
 			int distB = getB();
 			
-			// 벽 짚고 종료까지 이동
+			// 바깥 던지고 종료까지 이동
 			int distEnd = goToEnd();
 			
 			sb.append("#");
