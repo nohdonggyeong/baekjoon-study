@@ -14,15 +14,14 @@ import java.util.StringTokenizer;
 
 public class Main {
 	static int T, R, C;
-	static int[][] map;
-	static int[][] visit;
+	static int[][] map, visit;
 	static int combN, combR;
 	static List<int[]> inputCandidateList;
-	static int[] inputCandidateIndex;
-	static int[] inputIndexTemp;
+	static int[] inputCandidateIndex, inputIndexTemp;
 	static List<int[]> inputIndexList;
 	static int answer;
 	
+	// 오른쪽으로 직선 사격
 	static void shootRight(int r, int c, boolean clear) {
 		if (!clear) {
 			visit[r][c] += 1;
@@ -30,7 +29,7 @@ public class Main {
 			if (nc < C) {
 				shootRight(r, nc, false);
 			}
-		} else {
+		} else { // 리셋
 			visit[r][c] -= 1;
 			int nc = c + 1;
 			if (nc < C) {
@@ -39,6 +38,7 @@ public class Main {
 		}
 	}
 	
+	// 오른쪽 위로 사격
 	static void shootRightUp(int r, int c, boolean clear) {
 		if (!clear) {
 			visit[r][c] += 1;
@@ -47,7 +47,7 @@ public class Main {
 			if (nr >= 0 && nc < C) {
 				shootRightUp(nr, nc, false);
 			}
-		} else {
+		} else { // 리셋
 			visit[r][c] -= 1;
 			int nr = r - 1;
 			int nc = c + 1;
@@ -57,6 +57,7 @@ public class Main {
 		}
 	}
 	
+	// 오른쪽 아래로 사격
 	static void shootRightDown(int r, int c, boolean clear) {
 		if (!clear) {
 			visit[r][c] += 1;
@@ -65,7 +66,7 @@ public class Main {
 			if (nr < R && nc < C) {
 				shootRightDown(nr, nc, false);
 			}
-		} else {
+		} else { // 리셋
 			visit[r][c] -= 1;
 			int nr = r + 1;
 			int nc = c + 1;
@@ -75,6 +76,7 @@ public class Main {
 		}
 	}
 	
+	// 아래로 직선 사격
 	static void shootDown(int r, int c, boolean clear) {
 		if (!clear) {
 			visit[r][c] += 1;
@@ -82,7 +84,7 @@ public class Main {
 			if (nr < R) {
 				shootDown(nr, c, false);
 			}
-		} else {
+		} else { // 리셋
 			visit[r][c] -= 1;
 			int nr = r + 1;
 			if (nr < R) {
@@ -91,6 +93,7 @@ public class Main {
 		}
 	}
 	
+	// 아래 왼쪽으로 사격
 	static void shootDownLeft(int r, int c, boolean clear) {
 		if (!clear) {
 			visit[r][c] += 1;
@@ -99,7 +102,7 @@ public class Main {
 			if (nr < R && nc >= 0) {
 				shootDownLeft(nr, nc, false);
 			}
-		} else {
+		} else { // 리셋
 			visit[r][c] -= 1;
 			int nr = r + 1;
 			int nc = c - 1;
@@ -109,6 +112,7 @@ public class Main {
 		}
 	}
 	
+	// 명중된 곳 합계
 	static int getSum() {
 		int sum = 0;
 		for (int r = 0; r < R; r++) {
@@ -121,6 +125,7 @@ public class Main {
 		return sum;
 	}
 	
+	// 사격 위치 3곳 중복 조합
 	static void combinationRepetition(int start, int depth) {
 		if (depth == combR) {
 			inputIndexList.add(inputIndexTemp.clone());
@@ -133,6 +138,7 @@ public class Main {
 		}
 	}
 	
+	// 사격
 	static void dfs(int depth, int[] inputIndex) {
 		if (depth == combR) {
 //			if (getSum() > answer) {
@@ -149,9 +155,10 @@ public class Main {
 			return;
 		}
 		
+		// 발사 3번 반복
 		for (int i = 0; i < combR; i ++) {
 			int[] input = inputCandidateList.get(inputIndex[depth]);
-			if (input[0] == 0 && input[1] != 0) {
+			if (input[0] == 0 && input[1] != 0) { // 발사하는 곳이 (0, c)인 경우
 				switch(i) {
 				case 0:
 					shootDown(0, input[1], false);
@@ -171,7 +178,7 @@ public class Main {
 				default:
 					break;
 				}
-			} else if (input[0] != 0 && input[1] == 0) {
+			} else if (input[0] != 0 && input[1] == 0) { // 발사하는 곳이 (r, 0)인 경우
 				switch(i) {
 				case 0:
 					shootRight(input[0], 0, false);
@@ -191,7 +198,7 @@ public class Main {
 				default:
 					break;
 				}
-			} else if (input[0] == 0 && input[0] == 0) {
+			} else if (input[0] == 0 && input[0] == 0) { // 발사하는 곳이 (0, 0)인 경우
 				switch(i) {
 				case 0:
 					shootRight(0, 0, false);
@@ -217,16 +224,17 @@ public class Main {
 	
 	public static void main(String args[]) throws IOException {
 //		LocalDateTime start = LocalDateTime.now();
+
 		System.setIn(new FileInputStream("src/삼성SW역량테스트/ad_230517_사격_게임_2/input.txt"));
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		StringBuilder sb = new StringBuilder();
 		StringTokenizer st;
 		
-		// test case
+		// 테스트케이스
 		T = Integer.parseInt(br.readLine());
 		for (int t = 0; t < T; t++) {
-			// setting: map, visit
+			// map, visit 세팅
 			st = new StringTokenizer(br.readLine());
 			R = Integer.parseInt(st.nextToken());
 			C = Integer.parseInt(st.nextToken());
@@ -240,7 +248,7 @@ public class Main {
 				}
 			}
 			
-			// setting: input list
+			// input list 세팅
 			inputCandidateList = new ArrayList<>();
 			for (int r = 0; r < R; r++) {
 				inputCandidateList.add(new int[] {r, 0});
@@ -260,13 +268,13 @@ public class Main {
 			inputIndexList = new ArrayList<>();
 			combinationRepetition(0, 0);
 			
-			// operation: dfs
+			// 사격 dfs
 			answer = 0;
 			for (int i = 0; i < inputIndexList.size(); i++) {
 				dfs(0, inputIndexList.get(i));
 			}
 			
-			// print: answer
+			// answer 출력
 			sb.append("#").append(String.valueOf(t + 1)).append(" ").append(String.valueOf(answer)).append("\n");
 		}
 		bw.write(sb.toString());

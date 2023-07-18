@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main_bak5 {
 	static int n, r;
 	static int[] input;
 	static boolean[] visit;
@@ -38,12 +38,13 @@ public class Main {
 	
 	public static void main(String args[]) throws IOException {
 		LocalDateTime start = LocalDateTime.now();
+		
 		System.setIn(new FileInputStream("src\\algorithm\\permutation\\input.txt"));
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		StringBuilder sb = new StringBuilder();
 		StringTokenizer st;
-
+		
 		st = new StringTokenizer(br.readLine());
 		n = Integer.parseInt(st.nextToken());
 		r = Integer.parseInt(st.nextToken());
@@ -66,12 +67,11 @@ public class Main {
 			}
 			sb.append("\n");
 		}
-		
 		bw.write(sb.toString());
 		bw.flush();
 		
 		LocalDateTime end = LocalDateTime.now();
 		System.out.println();
-		System.out.println("Elapsed time: " + Duration.between(start, end).getSeconds() + " sec]");
+		System.out.println("[Elapsed time: " + Duration.between(start, end).getSeconds() + " sec]");
 	}
 }
