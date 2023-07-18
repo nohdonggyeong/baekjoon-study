@@ -9,6 +9,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -53,7 +54,7 @@ public class Main {
 			graph.get(v).add(u);
 		}
 		for (int n = 1; n <= N; n++) {
-			Collections.sort(graph.get(n), Collections.reverseOrder());
+			Collections.sort(graph.get(n), Comparator.reverseOrder());
 		}
 		
 		cnt = 1;
