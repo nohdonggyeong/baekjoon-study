@@ -23,7 +23,6 @@ public class Main {
 	static void combination(int start, int depth) {
 		if (depth == r) {
 			int index = 0;
-			temp = new int[r];
 			for (int i = 0; i < n; i++) {
 				if (visit[i]) {
 					temp[index++] = input[i];
@@ -44,6 +43,7 @@ public class Main {
 	
 	public static void main(String args[]) throws IOException {
 		LocalDateTime start = LocalDateTime.now();
+		
 		System.setIn(new FileInputStream("src\\algorithm\\permutation\\input.txt"));
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
@@ -62,11 +62,12 @@ public class Main {
 		Arrays.sort(input);
 		
 		visit = new boolean[n];
+		temp = new int[r];
 		output = new ArrayList<>();
 		combination(0, 0);
 		
 		for (int[] el : output) {
-			for (int e : el ) {
+			for (int e : el) {
 				sb.append(String.valueOf(e)).append(" ");
 			}
 			sb.append("\n");
