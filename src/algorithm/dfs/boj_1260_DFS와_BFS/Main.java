@@ -5,81 +5,112 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.util.Arrays;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
-	private static int N, M, V;
-	private static boolean[] visited;
-	private static boolean[][] edges;
-	private static StringBuilder sb;
+	static int N, M, V;
+	static List<List<Integer>> graph;
+	static boolean[] visit;
+	static List<Integer> resultList;
 	
-	private static void dfs(int V) {
-		visited[V] = true;
-		sb.append(String.valueOf(V));
-		sb.append(" ");
-		for (int i = 0; i <= N; i++) {
-			if (edges[V][i] && !visited[i]) {
-				dfs(i);
+	static void dfs(int vertex) {
+		List<Integer> nextList = graph.get(vertex);
+		Collections.sort(nextList);
+		
+		for (int el : nextList) {
+			if (!visit[el]) {
+				visit[el] = true;
+				resultList.add(el);
+				dfs(el);
 			}
 		}
 	}
 	
-	private static String bfs(int V) {
-		Queue<Integer> queue = new LinkedList<Integer>();
-		queue.add(V);
-		visited[V] = true;
-		sb.append(String.valueOf(V));
-		sb.append(" ");
+	static void bfs(int vertex) {
+		Queue<Integer> queue = new LinkedList<>();
+		queue.offer(vertex);
 		
 		while (!queue.isEmpty()) {
-			int vertex = queue.poll();
+			int v = queue.poll();
+			List<Integer> nextList = graph.get(v);
+			Collections.sort(nextList);
 			
-			for (int i = 0; i < edges.length; i++) {
-				if (edges[vertex][i] && !visited[i]) {
-					queue.add(i);
-					visited[i] = true;
-					sb.append(String.valueOf(i));
-					sb.append(" ");
+			for (int el : nextList) {
+				if (!visit[el]) {
+					visit[el] = true;
+					resultList.add(el);
+					queue.offer(el);
 				}
 			}
 		}
-		
-		return sb.toString().trim();
 	}
 	
 	public static void main(String args[]) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+		StringBuilder sb;
+		StringTokenizer st;
 		
-		StringTokenizer st = new StringTokenizer(br.readLine(), " ");
+		st = new StringTokenizer(br.readLine());
 		N = Integer.parseInt(st.nextToken());
 		M = Integer.parseInt(st.nextToken());
 		V = Integer.parseInt(st.nextToken());
 		
-		edges = new boolean[1001][1001];
-		visited = new boolean[1001];
-		
-		for(int i = 0; i < M; i++) {
-			st = new StringTokenizer(br.readLine(), " ");
-			int a = Integer.parseInt(st.nextToken());
-			int b = Integer.parseInt(st.nextToken());
-			edges[a][b] = edges[b][a] = true;
+		graph = new ArrayList<>();
+		for (int i = 0; i <= N; i++) {
+			graph.add(new ArrayList<>());
 		}
 		
-		sb = new StringBuilder();
+		for (int i = 0; i < M; i++) {
+			st = new StringTokenizer(br.readLine());
+			int u = Integer.parseInt(st.nextToken());
+			int v = Integer.parseInt(st.nextToken());
+			graph.get(u).add(v);
+			graph.get(v).add(u);
+		}
+		
+//		LocalDateTime startDFS = LocalDateTime.now();
+		visit = new boolean[N + 1];
+		resultList = new ArrayList<>();
+		visit[V] = true;
+		resultList.add(V);
 		dfs(V);
+		
+		sb = new StringBuilder();
+		for (int el : resultList) {
+			sb.append(String.valueOf(el)).append(" ");
+		}
 		bw.write(sb.toString().trim());
 		bw.newLine();
+//		LocalDateTime endDFS = LocalDateTime.now();
 		
-		Arrays.fill(visited, false);
-		sb = new StringBuilder();
+//		LocalDateTime startBFS = LocalDateTime.now();
+		visit = new boolean[N + 1];
+		resultList = new ArrayList<>();
+		visit[V] = true;
+		resultList.add(V);
 		bfs(V);
+		
+		sb = new StringBuilder();
+		for (int el : resultList) {
+			sb.append(String.valueOf(el)).append(" ");
+		}
 		bw.write(sb.toString().trim());
+		bw.newLine();
+//		LocalDateTime endBFS = LocalDateTime.now();
 		
 		bw.flush();
+		
+//		System.out.println();
+//		System.out.println("[Elapsed DFS time: " + Duration.between(startDFS, endDFS).getNano() + " ns]");
+//		System.out.println("[Elapsed BFS time: " + Duration.between(startBFS, endBFS).getNano() + " ns]");
 		
 		bw.close();
 		br.close();
