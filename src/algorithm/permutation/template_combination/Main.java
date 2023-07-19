@@ -23,6 +23,7 @@ public class Main {
 	static void combination(int start, int depth) {
 		if (depth == r) {
 			int index = 0;
+			temp = new int[r];
 			for (int i = 0; i < n; i++) {
 				if (visit[i]) {
 					temp[index++] = input[i];
@@ -40,11 +41,10 @@ public class Main {
 			}
 		}
 	}
-	
 	public static void main(String args[]) throws IOException {
 		LocalDateTime start = LocalDateTime.now();
 		
-		System.setIn(new FileInputStream("src\\algorithm\\permutation\\input.txt"));
+		System.setIn(new FileInputStream("src/algorithm/permutation/input.txt"));
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		StringBuilder sb = new StringBuilder();
@@ -54,6 +54,7 @@ public class Main {
 		n = Integer.parseInt(st.nextToken());
 		r = Integer.parseInt(st.nextToken());
 		input = new int[n];
+		visit = new boolean[n];
 		
 		st = new StringTokenizer(br.readLine());
 		for (int i = 0; i < n; i++) {
@@ -61,8 +62,6 @@ public class Main {
 		}
 		Arrays.sort(input);
 		
-		visit = new boolean[n];
-		temp = new int[r];
 		output = new ArrayList<>();
 		combination(0, 0);
 		
@@ -78,5 +77,8 @@ public class Main {
 		LocalDateTime end = LocalDateTime.now();
 		System.out.println();
 		System.out.println("[Elapsed time: " + Duration.between(start, end).getSeconds() + " sec]");
+		
+		bw.close();
+		br.close();
 	}
 }

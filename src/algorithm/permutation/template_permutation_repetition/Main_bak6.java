@@ -1,4 +1,4 @@
-package algorithm.permutation.template_permutation;
+package algorithm.permutation.template_permutation_repetition;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -13,33 +13,27 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main_bak6 {
 	static int n, r;
 	static int[] input;
-	static boolean[] visit;
 	static int[] temp;
 	static List<int[]> output;
 	
-	static void permutation(int depth) {
+	static void permutationRepetition(int depth) {
 		if (depth == r) {
 			output.add(temp.clone());
 			return;
 		}
 		
 		for (int i = 0; i < n; i++) {
-			if (!visit[i]) {
-				visit[i] = true;
-				temp[depth] = input[i];
-				permutation(depth + 1);
-				visit[i] = false;
-			}
+			temp[depth] = input[i];
+			permutationRepetition(depth + 1);
 		}
 	}
 	
 	public static void main(String args[]) throws IOException {
 		LocalDateTime start = LocalDateTime.now();
-		
-		System.setIn(new FileInputStream("src/algorithm/permutation/input.txt"));
+		System.setIn(new FileInputStream("src\\algorithm\\permutation\\input.txt"));
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		StringBuilder sb = new StringBuilder();
@@ -49,7 +43,6 @@ public class Main {
 		n = Integer.parseInt(st.nextToken());
 		r = Integer.parseInt(st.nextToken());
 		input = new int[n];
-		visit = new boolean[n];
 		
 		st = new StringTokenizer(br.readLine());
 		for (int i = 0; i < n; i++) {
@@ -59,7 +52,7 @@ public class Main {
 		
 		temp = new int[r];
 		output = new ArrayList<>();
-		permutation(0);
+		permutationRepetition(0);
 		
 		for (int[] el : output) {
 			for (int e : el) {
@@ -72,9 +65,6 @@ public class Main {
 		
 		LocalDateTime end = LocalDateTime.now();
 		System.out.println();
-		System.out.println("[Elapsed time: " + Duration.between(start, end).getSeconds() + " sec]");
-		
-		bw.close();
-		br.close();
+		System.out.println("[Elapsed: " + Duration.between(start, end).getSeconds() + " sec]");
 	}
 }
