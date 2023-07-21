@@ -12,11 +12,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main_bak8 {
 	static int n, r;
 	static Integer[] input;
 	static int[] temp;
-	static List<int[]> output;
+	static List<int []> output;
 	
 	static void combinationRepetition(int start, int depth) {
 		if (depth == r) {
@@ -30,7 +30,7 @@ public class Main {
 		}
 	}
 	
-	public void main(String args[]) throws IOException {
+	public static void main(String args[]) throws IOException {
 		System.setIn(new FileInputStream("src/algorithm/permutation/input.txt"));
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
