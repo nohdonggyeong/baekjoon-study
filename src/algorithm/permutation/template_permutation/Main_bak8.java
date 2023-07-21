@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main_bak8 {
 	static int n, r;
 	static Integer[] input;
 	static boolean[] visit;
@@ -45,15 +45,15 @@ public class Main {
 		st = new StringTokenizer(br.readLine());
 		n = Integer.parseInt(st.nextToken());
 		r = Integer.parseInt(st.nextToken());
-		input= new Integer[n];
+		input = new Integer[n];
 		
 		st = new StringTokenizer(br.readLine());
 		for (int i = 0; i < n; i++) {
 			input[i] = Integer.parseInt(st.nextToken());
 		}
 		Arrays.sort(input, Collections.reverseOrder());
-		
 		visit = new boolean[n];
+		
 		temp = new int[r];
 		output = new ArrayList<>();
 		permutation(0);
