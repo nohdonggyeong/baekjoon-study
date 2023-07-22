@@ -151,16 +151,17 @@ public class Main {
 	
 	// 사격 경우마다 score 얻기
 	static void shootingDFS(int depth, int[] shootingPositionIndex) {
-		if (depth == 3) {
-			
-//			System.out.println();
-//			for (int h = 0; h < H; h++) {
-//				for (int w = 0; w < W; w++) {
-//					System.out.print(shot[h][w] > 0 ? "O " : "X ");
+		if (depth == 3) {			
+//			if (maxScore < getScore()) {
+//				System.out.println();
+//				for (int h = 0; h < H; h++) {
+//					for (int w = 0; w < W; w++) {
+//						System.out.print(shot[h][w] > 0 ? "O " : "X ");
+//					}
+//					System.out.println();
 //				}
 //				System.out.println();
 //			}
-//			System.out.println();
 			
 			maxScore = Math.max(maxScore, getScore());
 			return;
