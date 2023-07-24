@@ -8,13 +8,14 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import javax.management.StringValueExp;
+
 public class Main {
 	static int n, r;
-	static Integer[] input;
+	static int[] input;
 	static int[] temp;
 	static List<int[]> output;
 	
@@ -30,8 +31,8 @@ public class Main {
 		}
 	}
 	
-	public void main(String args[]) throws IOException {
-		System.setIn(new FileInputStream("src/algorithm/permutation/input.txt"));
+	public static void main(String args[]) throws IOException {
+		System.setIn(new FileInputStream("src\\algorithm\\permutation\\input.txt"));
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		StringBuilder sb = new StringBuilder();
@@ -40,13 +41,13 @@ public class Main {
 		st = new StringTokenizer(br.readLine());
 		n = Integer.parseInt(st.nextToken());
 		r = Integer.parseInt(st.nextToken());
-		input = new Integer[n];
+		input = new int[n];
 		
 		st = new StringTokenizer(br.readLine());
 		for (int i = 0; i < n; i++) {
 			input[i] = Integer.parseInt(st.nextToken());
 		}
-		Arrays.sort(input, Collections.reverseOrder());
+		Arrays.sort(input);
 		
 		temp = new int[r];
 		output = new ArrayList<>();
