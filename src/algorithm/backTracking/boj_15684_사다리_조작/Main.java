@@ -13,18 +13,16 @@ public class Main {
 	static int minResult;
 	
 	static void backTracking(int depth) {
-		if (depth > 3) {
-			minResult = -1;
-			return;
-		}
 		if (checkResult()) {
 			minResult = Math.min(minResult, depth);
+		}
+		if (depth > 3) {
 			return;
 		}
 		
-		for (int i = 1; i <= M; i++) {
-			for (int j = 1; j <= N; j++) {
-				if (!map[i][j] && !map[i - 1][j]) {
+		for (int i = 1; i <= H; i++) {
+			for (int j = 1; j < N; j++) {
+				if (!map[i][j] && !map[i][j - 1]) {
 					map[i][j] = true;
 					backTracking(depth + 1);
 					map[i][j] = false;
@@ -34,21 +32,20 @@ public class Main {
 	}
 	
 	static boolean checkResult() {
-		int checkSum = 0;
 		for (int i = 1; i <= N; i++) {
 			int temp = i;
-			for (int j = 1; j <= M; j++) {
-				if (map[j][i]) {
+			for (int j = 1; j <= H; j++) {
+				if (map[j][temp]) {
 					temp += 1;
-				} else if (map[j][i - 1]) {
+				} else if (map[j][temp - 1]) {
 					temp -= 1;
 				}
 			}
-			if (i == temp) {
-				checkSum++;
+			if (i != temp) {
+				return false;
 			}
 		}
-		return checkSum == N ? true : false;
+		return true;
 	}
 	
 	public static void main(String args[]) throws IOException {
@@ -58,7 +55,7 @@ public class Main {
 		N = Integer.parseInt(st.nextToken());
 		M = Integer.parseInt(st.nextToken());
 		H = Integer.parseInt(st.nextToken());
-		map = new boolean[M + 1][N + 1];
+		map = new boolean[H + 1][N + 1];
 		
 		for (int i = 0; i < M; i++) {
 			st = new StringTokenizer(br.readLine());
@@ -68,7 +65,7 @@ public class Main {
 		minResult = Integer.MAX_VALUE;
 		backTracking(0);
 		
-		bw.write(String.valueOf(minResult));
+		bw.write(String.valueOf(minResult > 3 ? -1 : minResult));
 		bw.flush();
 		
 		bw.close();
