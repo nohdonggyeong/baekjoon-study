@@ -5,6 +5,8 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.StringTokenizer;
 
 public class Main {
@@ -12,19 +14,20 @@ public class Main {
 	static boolean[][] map;
 	static int minResult;
 	
-	static void backTracking(int depth) {
-		if (checkResult()) {
-			minResult = Math.min(minResult, depth);
-		}
+	static void backTracking(int r, int depth) {
 		if (depth > 3) {
 			return;
 		}
+		if (checkResult()) {
+			minResult = Math.min(minResult, depth);
+			return;
+		}
 		
-		for (int i = 1; i <= H; i++) {
+		for (int i = r; i <= H; i++) {
 			for (int j = 1; j < N; j++) {
 				if (!map[i][j] && !map[i][j - 1]) {
 					map[i][j] = true;
-					backTracking(depth + 1);
+					backTracking(i, depth + 1);
 					map[i][j] = false;
 				}
 			}
@@ -49,6 +52,8 @@ public class Main {
 	}
 	
 	public static void main(String args[]) throws IOException {
+		LocalDateTime start = LocalDateTime.now();
+		
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		StringTokenizer st = new StringTokenizer(br.readLine());
@@ -63,11 +68,14 @@ public class Main {
 		}
 		
 		minResult = Integer.MAX_VALUE;
-		backTracking(0);
+		backTracking(1, 0);
 		
 		bw.write(String.valueOf(minResult > 3 ? -1 : minResult));
 		bw.flush();
 		
+		LocalDateTime end = LocalDateTime.now();
+		System.out.println();
+		System.out.println("[Elapsed time: " + Duration.between(start, end).getSeconds() + " sec]");
 		bw.close();
 		br.close();
 	}
