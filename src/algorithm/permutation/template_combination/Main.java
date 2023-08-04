@@ -8,22 +8,23 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 
 public class Main {
 	static int n, r;
-	static int[] input;
-	static boolean[] visited;
+	static Integer[] input;
+	static boolean[] visit;
 	static int[] temp;
 	static List<int[]> output;
 	
 	static void combination(int start, int depth) {
 		if (depth == r) {
-			int index = 0;
 			temp = new int[r];
+			int index = 0;
 			for (int i = 0; i < n; i++) {
-				if (visited[i]) {
+				if (visit[i]) {
 					temp[index++] = input[i];
 				}
 			}
@@ -32,10 +33,10 @@ public class Main {
 		}
 		
 		for (int i = start; i < n; i++) {
-			if (!visited[i]) {
-				visited[i] = true;
+			if (!visit[i]) {
+				visit[i] = true;
 				combination(i + 1, depth + 1);
-				visited[i] = false;
+				visit[i] = false;
 			}
 		}
 	}
@@ -50,15 +51,16 @@ public class Main {
 		st = new StringTokenizer(br.readLine());
 		n = Integer.parseInt(st.nextToken());
 		r = Integer.parseInt(st.nextToken());
-		input = new int[n];
+		input = new Integer[n];
 		
 		st = new StringTokenizer(br.readLine());
 		for (int i = 0; i < n; i++) {
 			input[i] = Integer.parseInt(st.nextToken());
 		}
 		Arrays.sort(input);
+//		Arrays.sort(input, Collections.reverseOrder());
 		
-		visited = new boolean[n];
+		visit = new boolean[n];
 		temp = new int[r];
 		output = new ArrayList<>();
 		combination(0, 0);

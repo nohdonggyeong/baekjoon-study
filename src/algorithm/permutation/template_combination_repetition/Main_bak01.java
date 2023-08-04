@@ -1,4 +1,4 @@
-package algorithm.permutation.template_permutation_repetition;
+package algorithm.permutation.template_combination_repetition;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -8,25 +8,24 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main_bak01 {
 	static int n, r;
-	static Integer[] input;
+	static int[] input;
 	static int[] temp;
 	static List<int[]> output;
 	
-	static void permutationRepetition(int depth) {
+	static void combinationDuplicate (int start, int depth) {
 		if (depth == r) {
 			output.add(temp.clone());
 			return;
 		}
 		
-		for (int i = 0; i < n; i++) {
+		for (int i = start; i < n; i++) {
 			temp[depth] = input[i];
-			permutationRepetition(depth + 1);
+			combinationDuplicate(i, depth + 1);
 		}
 	}
 	
@@ -37,31 +36,33 @@ public class Main {
 		StringBuilder sb = new StringBuilder();
 		StringTokenizer st;
 		
-		st =  new StringTokenizer(br.readLine());
+		st = new StringTokenizer(br.readLine());
 		n = Integer.parseInt(st.nextToken());
 		r = Integer.parseInt(st.nextToken());
-		input = new Integer[n];
 		
-		st =  new StringTokenizer(br.readLine());
+		input = new int[n];
+		
+		st = new StringTokenizer(br.readLine());
 		for (int i = 0; i < n; i++) {
 			input[i] = Integer.parseInt(st.nextToken());
 		}
+		
 		Arrays.sort(input);
-//		Arrays.sort(input, Collections.reverseOrder());
 		
 		temp = new int[r];
 		output = new ArrayList<>();
-		permutationRepetition(0);
+		combinationDuplicate(0, 0);
 		
 		for (int[] el : output) {
-			for (int e : el) {
-				sb.append(String.valueOf(e)).append(" ");
+			for (int i = 0; i < el.length; i++) {
+				sb.append(String.valueOf(el[i])).append(" ");
 			}
 			sb.append("\n");
 		}
-		bw.write(sb.toString());
-		bw.flush();
 		
+		bw.write(sb.toString());
+		
+		bw.flush();
 		bw.close();
 		br.close();
 	}

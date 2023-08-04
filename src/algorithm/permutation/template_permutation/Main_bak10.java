@@ -1,4 +1,4 @@
-package algorithm.permutation.template_permutation_repetition;
+package algorithm.permutation.template_permutation;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -8,25 +8,29 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main_bak10 {
 	static int n, r;
-	static Integer[] input;
+	static int[] input;
+	static boolean[] visited;
 	static int[] temp;
 	static List<int[]> output;
 	
-	static void permutationRepetition(int depth) {
+	static void permutation(int depth) {
 		if (depth == r) {
 			output.add(temp.clone());
 			return;
 		}
 		
 		for (int i = 0; i < n; i++) {
-			temp[depth] = input[i];
-			permutationRepetition(depth + 1);
+			if (!visited[i]) {
+				visited[i] = true;
+				temp[depth] = input[i];
+				permutation(depth + 1);
+				visited[i] = false;
+			}
 		}
 	}
 	
@@ -37,21 +41,21 @@ public class Main {
 		StringBuilder sb = new StringBuilder();
 		StringTokenizer st;
 		
-		st =  new StringTokenizer(br.readLine());
+		st = new StringTokenizer(br.readLine());
 		n = Integer.parseInt(st.nextToken());
 		r = Integer.parseInt(st.nextToken());
-		input = new Integer[n];
+		input = new int[n];
 		
-		st =  new StringTokenizer(br.readLine());
+		st = new StringTokenizer(br.readLine());
 		for (int i = 0; i < n; i++) {
 			input[i] = Integer.parseInt(st.nextToken());
 		}
 		Arrays.sort(input);
-//		Arrays.sort(input, Collections.reverseOrder());
-		
+
+		visited = new boolean[n];
 		temp = new int[r];
 		output = new ArrayList<>();
-		permutationRepetition(0);
+		permutation(0);
 		
 		for (int[] el : output) {
 			for (int e : el) {

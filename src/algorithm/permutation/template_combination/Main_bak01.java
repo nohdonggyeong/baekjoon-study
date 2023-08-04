@@ -1,4 +1,4 @@
-package algorithm.permutation.template_permutation_repetition;
+package algorithm.permutation.template_combination;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -8,25 +8,35 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main_bak01 {
 	static int n, r;
-	static Integer[] input;
+	static int[] input;
+	static boolean[] visit;
 	static int[] temp;
 	static List<int[]> output;
 	
-	static void permutationRepetition(int depth) {
+	static void combination(int start, int depth) {
 		if (depth == r) {
-			output.add(temp.clone());
+			int index = 0;
+			temp = new int[r];
+			for (int i = 0; i < n; i++) {
+				if (visit[i]) {
+					temp[index++] = input[i];
+				}
+			}
+			output.add(temp);
 			return;
 		}
 		
-		for (int i = 0; i < n; i++) {
-			temp[depth] = input[i];
-			permutationRepetition(depth + 1);
+		for (int i = start; i < n; i++) {
+			if (!visit[i]) {
+				visit[i] = true;
+				combination(i + 1, depth + 1);
+				visit[i] = false;
+			}
 		}
 	}
 	
@@ -35,33 +45,33 @@ public class Main {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		StringBuilder sb = new StringBuilder();
-		StringTokenizer st;
+		StringTokenizer st = new StringTokenizer(br.readLine());
 		
-		st =  new StringTokenizer(br.readLine());
 		n = Integer.parseInt(st.nextToken());
 		r = Integer.parseInt(st.nextToken());
-		input = new Integer[n];
+		input = new int[n];
 		
-		st =  new StringTokenizer(br.readLine());
+		st = new StringTokenizer(br.readLine());
 		for (int i = 0; i < n; i++) {
 			input[i] = Integer.parseInt(st.nextToken());
 		}
-		Arrays.sort(input);
-//		Arrays.sort(input, Collections.reverseOrder());
 		
-		temp = new int[r];
+		Arrays.sort(input);
+		
+		visit = new boolean[n];
 		output = new ArrayList<>();
-		permutationRepetition(0);
+		combination(0, 0);
 		
 		for (int[] el : output) {
-			for (int e : el) {
-				sb.append(String.valueOf(e)).append(" ");
+			for (int i = 0; i < el.length; i++) {
+				sb.append(String.valueOf(el[i])).append(" ");
 			}
 			sb.append("\n");
 		}
-		bw.write(sb.toString());
-		bw.flush();
 		
+		bw.write(sb.toString());
+		
+		bw.flush();
 		bw.close();
 		br.close();
 	}
