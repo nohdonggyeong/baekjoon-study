@@ -17,7 +17,7 @@ import java.util.StringTokenizer;
 public class Main {
 	static int N, M, K;
 	static int[][] map, A;
-	static PriorityQueue<Tree> treeQueue;
+	static Queue<Tree> treeQueue;
 	static Queue<Tree> deathQueue;
 	static int[] dx = {-1, -1, -1, 0, 1, 1, 1, 0};
 	static int[] dy = {-1, 0, 1, 1, 1, 0, -1, -1};
@@ -35,13 +35,16 @@ public class Main {
 
 		@Override
 		public int compareTo(Tree o) {
-			return age - o.age; // 오름 차순
-			// return o.age - age; // 내림차순
+			return age - o.age;
 		}
 	}
 	
+	// spring, summer, autumn, winter에서 while을 쓰면 infinite loop를 돌게 되니, for를 사용한다.
+	// for문에서 size를 고정하고 사용하지 않으면 offer하는대로 size가 커져 for문이 더 실행 된다.
 	static void spring() {
-		while (!treeQueue.isEmpty()) {
+		treeQueue = sortQueue(treeQueue);
+		int size = treeQueue.size();
+		for (int i = 0; i < size; i++) {
 			Tree tree = treeQueue.poll();
 			if (map[tree.x][tree.y] >= tree.age) {
 				map[tree.x][tree.y]-= tree.age;
@@ -53,24 +56,24 @@ public class Main {
 	}
 	
 	static void summer() {
-		while (!deathQueue.isEmpty()) {
+		while(!deathQueue.isEmpty()) {
 			Tree dead = deathQueue.poll();
 			map[dead.x][dead.y] += dead.age / 2;
 		}
 	}
 	
 	static void autumn() {
-		while (!treeQueue.isEmpty()) {
+		int size = treeQueue.size();
+		for (int i = 0; i < size; i++) {
 			Tree tree = treeQueue.poll();
 			if (tree.age % 5 == 0) {
-				for (int i = 0; i < 8; i++) {
-					int nx = tree.x + dx[i];
-					int ny = tree.y + dy[i];
+				for (int j = 0; j < 8; j++) {
+					int nx = tree.x + dx[j];
+					int ny = tree.y + dy[j];
 					
-					if (nx <= 0 || ny <= 0 || nx > N || ny > N) {
-						continue;
+					if (nx > 0 && ny > 0 && nx <= N && ny <= N) {
+						treeQueue.offer(new Tree(nx, ny, 1));
 					}
-					treeQueue.offer(new Tree(nx, ny, 1));
 				}
 			}
 			treeQueue.offer(tree);
@@ -83,6 +86,20 @@ public class Main {
 				map[x][y] += A[x][y];
 			}
 		}
+	}
+	
+	static Queue<Tree> sortQueue(Queue<Tree> queue) {
+		PriorityQueue<Tree> pq = new PriorityQueue<>();
+		while (!queue.isEmpty()) {
+			pq.offer(queue.poll());
+		}
+
+		Queue<Tree> resultQueue = new LinkedList<>();
+		while (!pq.isEmpty()) {
+			resultQueue.offer(pq.poll());
+		}
+		
+		return resultQueue;
 	}
 	
 	public static void main(String args[]) throws IOException {
@@ -109,7 +126,7 @@ public class Main {
 		}
 		
 		// 나무 초기화
-		treeQueue = new PriorityQueue<>();
+		treeQueue = new LinkedList<>();
 		for (int m = 0; m < M; m++) {
 			st = new StringTokenizer(br.readLine());
 			treeQueue.offer(new Tree(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken())));
