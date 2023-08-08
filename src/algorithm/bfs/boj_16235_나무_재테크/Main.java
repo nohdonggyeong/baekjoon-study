@@ -7,15 +7,20 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
 	static int N, M, K;
 	static int[][] map, A;
-	static List<Tree> treeList, deathList;
-	static int[] dr = {-1, -1, -1, 0, 1, 1, 1, 0};
-	static int[] dc = {-1, 0, 1, 1, 1, 0, -1, -1};
+	static PriorityQueue<Tree> treeQueue;
+	static Queue<Tree> deathQueue;
+	static int[] dx = {-1, -1, -1, 0, 1, 1, 1, 0};
+	static int[] dy = {-1, 0, 1, 1, 1, 0, -1, -1};
 
 	static class Tree implements Comparable<Tree> {
 		private int x;
@@ -36,55 +41,46 @@ public class Main {
 	}
 	
 	static void spring() {
-		List<Tree> addList = new ArrayList<>();
-		List<Tree> removeList = new ArrayList<>();
-		
-		Collections.sort(treeList);
-		
-		for (Tree el : treeList) {
-			if (map[el.x][el.y] >= el.age) {
-				map[el.x][el.y] -= el.age;
-				addList.add(new Tree(el.x, el.y, el.age + 1));
-				removeList.add(new Tree(el.x, el.y, el.age));
+		while (!treeQueue.isEmpty()) {
+			Tree tree = treeQueue.poll();
+			if (map[tree.x][tree.y] >= tree.age) {
+				map[tree.x][tree.y]-= tree.age;
+				treeQueue.offer(new Tree(tree.x, tree.y, tree.age + 1));
 			} else {
-				deathList.add(new Tree(el.x, el.y, el.age));
-				removeList.add(new Tree(el.x, el.y, el.age));
+				deathQueue.offer(new Tree(tree.x, tree.y, tree.age));
 			}
 		}
-		treeList.removeAll(removeList);
-		treeList.addAll(addList);
 	}
 	
 	static void summer() {
-		for (Tree el : deathList) {
-			map[el.x][el.y] += el.age / 2;
+		while (!deathQueue.isEmpty()) {
+			Tree dead = deathQueue.poll();
+			map[dead.x][dead.y] += dead.age / 2;
 		}
-		deathList.clear();
 	}
 	
 	static void autumn() {
-		List<Tree> newTreeList = new ArrayList<>();
-		for (Tree el : treeList) {
-			if (el.age % 5 == 0) {
+		while (!treeQueue.isEmpty()) {
+			Tree tree = treeQueue.poll();
+			if (tree.age % 5 == 0) {
 				for (int i = 0; i < 8; i++) {
-					int nx = el.x +	dr[i];
-					int ny = el.y + dr[i];
+					int nx = tree.x + dx[i];
+					int ny = tree.y + dy[i];
 					
 					if (nx <= 0 || ny <= 0 || nx > N || ny > N) {
 						continue;
 					}
-					
-					newTreeList.add(new Tree(nx, ny, 1));
+					treeQueue.offer(new Tree(nx, ny, 1));
 				}
 			}
+			treeQueue.offer(tree);
 		}
-		treeList.addAll(newTreeList);
 	}
 	
 	static void winter() {
-		for (int r = 1; r <= N; r++) {
-			for (int c = 1; c <= N; c++) {
-				map[r][c] += A[r][c];
+		for (int x = 1; x <= N; x++) {
+			for (int y = 1; y <= N; y++) {
+				map[x][y] += A[x][y];
 			}
 		}
 	}
@@ -102,25 +98,25 @@ public class Main {
 		map = new int[N + 1][N + 1];
 		A = new int[N + 1][N + 1];
 		
-		for (int r = 1; r <= N; r++) {
+		for (int x = 1; x <= N; x++) {
 			st = new StringTokenizer(br.readLine());
-			for (int c = 1; c <= N; c++) {
+			for (int y = 1; y <= N; y++) {
 				// 추가 양분 설정
-				A[r][c] = Integer.parseInt(st.nextToken());
+				A[x][y] = Integer.parseInt(st.nextToken());
 				// 시작 양분 초기화
-				map[r][c] = 5;
+				map[x][y] = 5;
 			}
 		}
 		
 		// 나무 초기화
-		treeList = new ArrayList<>();
+		treeQueue = new PriorityQueue<>();
 		for (int m = 0; m < M; m++) {
 			st = new StringTokenizer(br.readLine());
-			treeList.add(new Tree(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken())));
+			treeQueue.offer(new Tree(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken())));
 		}
 		
 		// 계절 반복
-		deathList = new ArrayList<>();
+		deathQueue = new LinkedList<>();
 		for (int k = 0; k < K; k++) {
 			spring();
 			summer();
@@ -128,7 +124,7 @@ public class Main {
 			winter();
 		}
 		
-		bw.write(String.valueOf(treeList.size()));
+		bw.write(String.valueOf(treeQueue.size()));
 		bw.flush();
 		
 		bw.close();
