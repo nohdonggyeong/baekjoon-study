@@ -47,17 +47,13 @@ public class Main {
 		
 		@Override
 		public int compareTo(Fish o) {
-			if (size > o.size) {
+			if (distance > o.distance) {
 				return 1;
-			} else if (size == o.size) {
-				if (distance > o.distance) {
+			} else if (distance == o.distance) {
+				if (r > o.r) {
 					return 1;
-				} else if (distance == o.distance) {
-					if (r > o.r) {
-						return 1;
-					} else if (r == o.r) {
-						return c - o.c;
-					}
+				} else if (r == o.r) {
+					return c - o.c;
 				}
 			}
 			return -1;
@@ -129,7 +125,20 @@ public class Main {
 		while (true) {
 			setDistance();
 			Collections.sort(fishList);
-			if (fishList.size() < 1 || fishList.get(0).size >= shark.size) {
+			
+			if (fishList.size() < 1) {
+				break;
+			}
+			
+			Fish food = null;
+			for (int i = 0; i < fishList.size(); i++) {
+				if (fishList.get(i).distance > 0 && fishList.get(i).size < shark.size) {
+					food = fishList.get(i);
+					break;
+				}
+			}
+			
+			if (food == null) {
 				break;
 			} else {
 				fishCount++;
@@ -138,16 +147,18 @@ public class Main {
 					fishCount = 0;
 					sharkSize++;
 				}
-				shark = new Fish(fishList.get(0).r, fishList.get(0).c, sharkSize, 0);
-				resultTime += fishList.get(0).distance;
+				shark = new Fish(food.r, food.c, sharkSize, 0);
+				resultTime += food.distance;
 				
-				System.out.println();
-				System.out.print(fishList.get(0).r + " " + fishList.get(0).c + " " + fishList.get(0).distance);
-				map[fishList.get(0).r][fishList.get(0).c] = 0;
-				fishList.remove(0);
+//				System.out.println();
+//				System.out.print(food.r + " " + food.c + " " + food.distance);
+				
+				map[food.r][food.c] = 0;
+				fishList.remove(food);
 			}
 		}
-		System.out.println();
+//		System.out.println();
+		
 		bw.write(String.valueOf(resultTime));
 		bw.flush();
 		
