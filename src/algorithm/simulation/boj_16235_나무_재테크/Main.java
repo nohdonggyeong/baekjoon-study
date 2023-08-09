@@ -1,4 +1,4 @@
-package algorithm.bfs.boj_16235_나무_재테크;
+package algorithm.simulation.boj_16235_나무_재테크;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
