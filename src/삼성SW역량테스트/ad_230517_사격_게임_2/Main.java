@@ -110,39 +110,79 @@ public class Main {
 		}
 		return point;
 	}
-	static void shootBackTracking(int r, int c, int depth) {
+	static void shoot(int[] positionIndexes, int depth) {
 		if (depth == 3) {
-			
+			maxPoint = Math.max(maxPoint, getPoint());
+			return;
 		}
+		
+		int positionIndex = positionIndexes[depth];
+		int[] position = positionList.get(positionIndex);
+		int r = position[0];
+		int c = position[1];
 		
 		for (int i = 0; i < 3; i++) {
 			if (r == 0 && c== 0) {
 				switch(i) {
 				case 0:
-					shootDown(r, c);
-					shootBackTracking()
+					shootDown(r, c, false);
+					shoot(positionIndexes, depth + 1);
+					shootDown(r, c, true);
 					break;
 				case 1:
-					shootRightDown(r, c);
+					shootRightDown(r, c, false);
+					shoot(positionIndexes, depth + 1);
+					shootRightDown(r, c, true);
 					break;
 				case 2:
-					shootRight(r, c);
+					shootRight(r, c, false);
+					shoot(positionIndexes, depth + 1);
+					shootRight(r, c, true);
 					break;
 				default:
 					break;
 				}
 			} else if (r == 0 && c != 0) {
-				
+				switch(i) {
+				case 0:
+					shootDown(r, c, false);
+					shoot(positionIndexes, depth + 1);
+					shootDown(r, c, true);
+					break;
+				case 1:
+					shootDownLeft(r, c, false);
+					shoot(positionIndexes, depth + 1);
+					shootDownLeft(r, c, true);
+					break;
+				case 2:
+					shootRight(r, c, false);
+					shoot(positionIndexes, depth + 1);
+					shootRight(r, c, true);
+					break;
+				default:
+					break;
+				}
 			} else if (r != 0 && c == 0) {
-				
+				switch(i) {
+				case 0:
+					shootRight(r, c, false);
+					shoot(positionIndexes, depth + 1);
+					shootRight(r, c, true);
+					break;
+				case 1:
+					shootRightUp(r, c, false);
+					shoot(positionIndexes, depth + 1);
+					shootRightUp(r, c, true);
+					break;
+				case 2:
+					shootRightDown(r, c, false);
+					shoot(positionIndexes, depth + 1);
+					shootRightDown(r, c, true);
+					break;
+				default:
+					break;
+				}
 			}
-		}
-	}
-	static void shoot(int[] positionIndexes) {
-		shotCount = new int[H][W];
-		for (int positionIndex : positionIndexes) {
-			int[] position = positionList.get(positionIndex);
-			shootBackTracking(position[0], position[1], 0);
 		}
 	}
 	
@@ -189,7 +229,8 @@ public class Main {
 			// 사격 수행
 			maxPoint = Integer.MIN_VALUE;
 			for (int[] el : output) {
-				shoot(el);
+				shotCount = new int[H][W];
+				shoot(el, 0);
 			}
 			
 			// 점수 출력
