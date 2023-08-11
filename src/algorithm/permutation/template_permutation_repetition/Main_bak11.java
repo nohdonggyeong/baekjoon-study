@@ -1,4 +1,4 @@
-package algorithm.permutation.template_combination_repetition;
+package algorithm.permutation.template_permutation_repetition;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -12,21 +12,21 @@ import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main_bak11 {
 	static int n, r;
 	static Integer[] input;
 	static int[] temp;
 	static List<int[]> output;
 	
-	static void combinationRepetition(int start, int depth) {
+	static void permutationRepetition(int depth) {
 		if (depth == r) {
 			output.add(temp.clone());
 			return;
 		}
 		
-		for (int i = start; i < n; i++) {
+		for (int i = 0; i < n; i++) {
 			temp[depth] = input[i];
-			combinationRepetition(i, depth + 1);
+			permutationRepetition(depth + 1);
 		}
 	}
 	
@@ -37,20 +37,21 @@ public class Main {
 		StringBuilder sb = new StringBuilder();
 		StringTokenizer st;
 		
-		st = new StringTokenizer(br.readLine());
+		st =  new StringTokenizer(br.readLine());
 		n = Integer.parseInt(st.nextToken());
 		r = Integer.parseInt(st.nextToken());
-		
 		input = new Integer[n];
-		st = new StringTokenizer(br.readLine());
+		
+		st =  new StringTokenizer(br.readLine());
 		for (int i = 0; i < n; i++) {
 			input[i] = Integer.parseInt(st.nextToken());
 		}
-		Arrays.sort(input, Collections.reverseOrder());
+		Arrays.sort(input);
+//		Arrays.sort(input, Collections.reverseOrder());
 		
 		temp = new int[r];
 		output = new ArrayList<>();
-		combinationRepetition(0, 0);
+		permutationRepetition(0);
 		
 		for (int[] el : output) {
 			for (int e : el) {

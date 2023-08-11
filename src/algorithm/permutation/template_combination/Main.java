@@ -15,7 +15,7 @@ import java.util.StringTokenizer;
 public class Main {
 	static int n, r;
 	static Integer[] input;
-	static boolean[] visit;
+	static boolean[] visited;
 	static int[] temp;
 	static List<int[]> output;
 	
@@ -24,7 +24,7 @@ public class Main {
 			temp = new int[r];
 			int index = 0;
 			for (int i = 0; i < n; i++) {
-				if (visit[i]) {
+				if (visited[i]) {
 					temp[index++] = input[i];
 				}
 			}
@@ -33,10 +33,10 @@ public class Main {
 		}
 		
 		for (int i = start; i < n; i++) {
-			if (!visit[i]) {
-				visit[i] = true;
+			if (!visited[i]) {
+				visited[i] = true;
 				combination(i + 1, depth + 1);
-				visit[i] = false;
+				visited[i] = false;
 			}
 		}
 	}
@@ -51,17 +51,15 @@ public class Main {
 		st = new StringTokenizer(br.readLine());
 		n = Integer.parseInt(st.nextToken());
 		r = Integer.parseInt(st.nextToken());
+
 		input = new Integer[n];
-		
 		st = new StringTokenizer(br.readLine());
 		for (int i = 0; i < n; i++) {
 			input[i] = Integer.parseInt(st.nextToken());
 		}
-		Arrays.sort(input);
-//		Arrays.sort(input, Collections.reverseOrder());
+		Arrays.sort(input, Collections.reverseOrder());
 		
-		visit = new boolean[n];
-		temp = new int[r];
+		visited = new boolean[n];
 		output = new ArrayList<>();
 		combination(0, 0);
 		
@@ -71,7 +69,7 @@ public class Main {
 			}
 			sb.append("\n");
 		}
-		bw.write(sb.toString());
+		bw.write(String.valueOf(sb.toString()));
 		bw.flush();
 		
 		bw.close();

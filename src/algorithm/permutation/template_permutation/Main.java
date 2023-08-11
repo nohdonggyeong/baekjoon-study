@@ -15,7 +15,7 @@ import java.util.StringTokenizer;
 public class Main {
 	static int n, r;
 	static Integer[] input;
-	static boolean[] visit;
+	static boolean[] visited;
 	static int[] temp;
 	static List<int[]> output;
 	
@@ -26,15 +26,14 @@ public class Main {
 		}
 		
 		for (int i = 0; i < n; i++) {
-			if (!visit[i]) {
-				visit[i] = true;
+			if (!visited[i]) {
+				visited[i] = true;
 				temp[depth] = input[i];
 				permutation(depth + 1);
-				visit[i] = false;
+				visited[i] = false;
 			}
 		}
 	}
-	
 	public static void main(String args[]) throws IOException {
 		System.setIn(new FileInputStream("src\\algorithm\\permutation\\input.txt"));
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -45,20 +44,15 @@ public class Main {
 		st = new StringTokenizer(br.readLine());
 		n = Integer.parseInt(st.nextToken());
 		r = Integer.parseInt(st.nextToken());
-		input = new Integer[n];
 		
+		input = new Integer[n];
 		st = new StringTokenizer(br.readLine());
 		for (int i = 0; i < n; i++) {
 			input[i] = Integer.parseInt(st.nextToken());
 		}
-		Arrays.sort(input);
-//		Arrays.sort(input, Collections.reverseOrder());
-//		for (int i = 0; i < n; i++) {
-//			System.out.print(String.valueOf(input[i]) + " ");
-//		}
-//		System.out.println();
+		Arrays.sort(input, Collections.reverseOrder());
 		
-		visit = new boolean[n];
+		visited = new boolean[n];
 		temp = new int[r];
 		output = new ArrayList<>();
 		permutation(0);

@@ -37,17 +37,17 @@ public class Main {
 		StringBuilder sb = new StringBuilder();
 		StringTokenizer st;
 		
-		st =  new StringTokenizer(br.readLine());
+		st = new StringTokenizer(br.readLine());
 		n = Integer.parseInt(st.nextToken());
 		r = Integer.parseInt(st.nextToken());
+		
 		input = new Integer[n];
 		
-		st =  new StringTokenizer(br.readLine());
+		st = new StringTokenizer(br.readLine());
 		for (int i = 0; i < n; i++) {
 			input[i] = Integer.parseInt(st.nextToken());
 		}
-		Arrays.sort(input);
-//		Arrays.sort(input, Collections.reverseOrder());
+		Arrays.sort(input, Collections.reverseOrder());
 		
 		temp = new int[r];
 		output = new ArrayList<>();

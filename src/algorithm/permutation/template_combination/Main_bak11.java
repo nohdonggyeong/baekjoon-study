@@ -1,4 +1,4 @@
-package algorithm.permutation.template_combination_repetition;
+package algorithm.permutation.template_combination;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -12,21 +12,32 @@ import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main_bak11 {
 	static int n, r;
 	static Integer[] input;
+	static boolean[] visit;
 	static int[] temp;
 	static List<int[]> output;
 	
-	static void combinationRepetition(int start, int depth) {
+	static void combination(int start, int depth) {
 		if (depth == r) {
+			temp = new int[r];
+			int index = 0;
+			for (int i = 0; i < n; i++) {
+				if (visit[i]) {
+					temp[index++] = input[i];
+				}
+			}
 			output.add(temp.clone());
 			return;
 		}
 		
 		for (int i = start; i < n; i++) {
-			temp[depth] = input[i];
-			combinationRepetition(i, depth + 1);
+			if (!visit[i]) {
+				visit[i] = true;
+				combination(i + 1, depth + 1);
+				visit[i] = false;
+			}
 		}
 	}
 	
@@ -40,17 +51,19 @@ public class Main {
 		st = new StringTokenizer(br.readLine());
 		n = Integer.parseInt(st.nextToken());
 		r = Integer.parseInt(st.nextToken());
-		
 		input = new Integer[n];
+		
 		st = new StringTokenizer(br.readLine());
 		for (int i = 0; i < n; i++) {
 			input[i] = Integer.parseInt(st.nextToken());
 		}
-		Arrays.sort(input, Collections.reverseOrder());
+		Arrays.sort(input);
+//		Arrays.sort(input, Collections.reverseOrder());
 		
+		visit = new boolean[n];
 		temp = new int[r];
 		output = new ArrayList<>();
-		combinationRepetition(0, 0);
+		combination(0, 0);
 		
 		for (int[] el : output) {
 			for (int e : el) {
