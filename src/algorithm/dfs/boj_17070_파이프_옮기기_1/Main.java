@@ -1,4 +1,4 @@
-package algorithm.bfs.boj_17070_파이프_옮기기_1;
+package algorithm.dfs.boj_17070_파이프_옮기기_1;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
