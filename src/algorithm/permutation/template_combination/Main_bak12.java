@@ -12,17 +12,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main_bak12 {
 	static int n, r;
 	static Integer[] input;
 	static boolean[] visited;
+	static int[] temp;
 	static List<int[]> output;
 	
 	static void combination(int start, int depth) {
 		if (depth == r) {
+			temp = new int[r];
 			int index = 0;
-			int[] temp = new int[r];
-			for (int i = 0 ; i < n; i++) {
+			for (int i = 0; i < n; i++) {
 				if (visited[i]) {
 					temp[index++] = input[i];
 				}
@@ -50,11 +51,11 @@ public class Main {
 		st = new StringTokenizer(br.readLine());
 		n = Integer.parseInt(st.nextToken());
 		r = Integer.parseInt(st.nextToken());
-		
+
 		input = new Integer[n];
 		st = new StringTokenizer(br.readLine());
 		for (int i = 0; i < n; i++) {
-			input[i] = i;
+			input[i] = Integer.parseInt(st.nextToken());
 		}
 		Arrays.sort(input, Collections.reverseOrder());
 		
@@ -64,11 +65,11 @@ public class Main {
 		
 		for (int[] el : output) {
 			for (int e : el) {
-				sb.append(e).append(" ");
+				sb.append(String.valueOf(e)).append(" ");
 			}
 			sb.append("\n");
 		}
-		bw.write(sb.toString());
+		bw.write(String.valueOf(sb.toString()));
 		bw.flush();
 		
 		bw.close();
