@@ -1,5 +1,9 @@
 package algorithm.permutation.template_permutation_repetition;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
@@ -7,12 +11,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileInputStream;
-import java.io.IOException;
 
-public class Main {
+public class Main_bak12 {
 	static int n, r;
 	static Integer[] input;
 	static int[] temp;
@@ -42,6 +42,7 @@ public class Main {
 		r = Integer.parseInt(st.nextToken());
 		
 		input = new Integer[n];
+		
 		st = new StringTokenizer(br.readLine());
 		for (int i = 0; i < n; i++) {
 			input[i] = Integer.parseInt(st.nextToken());
@@ -54,11 +55,10 @@ public class Main {
 		
 		for (int[] el : output) {
 			for (int e : el) {
-				sb.append(e).append(" ");
+				sb.append(String.valueOf(e)).append(" ");
 			}
 			sb.append("\n");
 		}
-		
 		bw.write(sb.toString());
 		bw.flush();
 		
