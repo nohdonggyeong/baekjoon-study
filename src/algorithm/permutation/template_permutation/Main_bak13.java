@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main_bak13 {
 	static int n, r;
 	static Integer[] input;
 	static boolean[] visited;
@@ -25,7 +25,7 @@ public class Main {
 			return;
 		}
 		
-		for (int i = 0; i < n; i++) {
+		for (int i = 0 ; i < n; i++) {
 			if (!visited[i]) {
 				visited[i] = true;
 				temp[depth] = input[i];
@@ -34,7 +34,8 @@ public class Main {
 			}
 		}
 	}
-	public static void main(String args[]) throws IOException {
+	
+	public static void main(String arg[]) throws IOException {
 		System.setIn(new FileInputStream("src\\algorithm\\permutation\\input.txt"));
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
@@ -46,9 +47,8 @@ public class Main {
 		r = Integer.parseInt(st.nextToken());
 		
 		input = new Integer[n];
-		st = new StringTokenizer(br.readLine());
 		for (int i = 0; i < n; i++) {
-			input[i] = Integer.parseInt(st.nextToken());
+			input[i] = i;
 		}
 		Arrays.sort(input, Collections.reverseOrder());
 		
@@ -59,10 +59,11 @@ public class Main {
 		
 		for (int[] el : output) {
 			for (int e : el) {
-				sb.append(String.valueOf(e)).append(" ");
+				sb.append(e).append(" ");
 			}
 			sb.append("\n");
 		}
+		
 		bw.write(sb.toString());
 		bw.flush();
 		
