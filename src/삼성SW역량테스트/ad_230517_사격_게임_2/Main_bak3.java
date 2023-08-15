@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main_bak3 {
 	static int T, H, W;
 	static int[][] D;
 	
@@ -19,9 +19,6 @@ public class Main {
 	static int[] input;
 	static int[] temp;
 	static List<int[]> output;
-	
-	static int[][] shotCount;
-	static int gamePoint, maxPoint;
 	
 	static void combinationRepetition(int start, int depth) {
 		if (depth == r) {
@@ -34,108 +31,22 @@ public class Main {
 			combinationRepetition(i, depth + 1);
 		}
 	}
-	
-	static void shoot(int depth, int[] el) {
-		if (depth == 3) {
-			int sum = 0;
-			for (int r = 0; r < H; r++) {
-				for (int c = 0; c < W; c++) {
-					if (shotCount[r][c] > 0) {
-						sum += D[r][c];
-					}
-				}
-			}
-			gamePoint = Math.max(gamePoint, sum);
-			return;
-		}
-		
-		int[] shootPosition = positionList.get(el[depth]);
-		int r = shootPosition[0];
-		int c = shootPosition[1];
-		
-		if (r == 0 && c == 0) {
-			for (int i = 0; i < 3; i++) {
-				switch(i) {
-				case 0:
-					shootDown(r, c, false);
-					shoot(depth + 1, el);
-					shootDown(r, c, true);
-					break;
-				case 1:
-					shootRightDown(r, c, false);
-					shoot(depth + 1, el);
-					shootRightDown(r, c, true);
-					break;
-				case 2:
-					shootRight(r, c, false);
-					shoot(depth + 1, el);
-					shootRight(r, c, true);
-					break;
-				default:
-					break;
-				}
-			}
-		} else if (r == 0 && c != 0) {
-			for (int i = 0; i < 3; i++) {
-				switch(i) {
-				case 0:
-					shootDownLeft(r, c, false);
-					shoot(depth + 1, el);
-					shootDownLeft(r, c, true);
-					break;
-				case 1:
-					shootDown(r, c, false);
-					shoot(depth + 1, el);
-					shootDown(r, c, true);
-					break;
-				case 2:
-					shootRightDown(r, c, false);
-					shoot(depth + 1, el);
-					shootRightDown(r, c, true);
-					break;
-				default:
-					break;
-				}
-			}
-		} else if (r != 0 && c == 0) {
-			for (int i = 0; i < 3; i++) {
-				switch(i) {
-				case 0:
-					shootRightUp(r, c, false);
-					shoot(depth + 1, el);
-					shootRightUp(r, c, true);
-					break;
-				case 1:
-					shootRight(r, c, false);
-					shoot(depth + 1, el);
-					shootRight(r, c, true);
-					break;
-				case 2:
-					shootRightDown(r, c, false);
-					shoot(depth + 1, el);
-					shootRightDown(r, c, true);
-					break;
-				default:
-					break;
-				}
-			}
-		}
-	}
-	
-	static void shootRight(int r ,int c, boolean reset) {
+
+	static int maxPoint;
+	static int[][] shotCount;
+	static void shootRight(int r, int c, boolean reset) {
 		if (!reset) {
 			shotCount[r][c] += 1;
 			if (c + 1 < W) {
 				shootRight(r, c + 1, false);
-			}	
+			}
 		} else {
 			shotCount[r][c] -= 1;
 			if (c + 1 < W) {
 				shootRight(r, c + 1, true);
-			}	
+			}
 		}
 	}
-	
 	static void shootRightUp(int r, int c, boolean reset) {
 		if (!reset) {
 			shotCount[r][c] += 1;
@@ -149,21 +60,19 @@ public class Main {
 			}
 		}
 	}
-	
 	static void shootRightDown(int r, int c, boolean reset) {
 		if (!reset) {
 			shotCount[r][c] += 1;
 			if (r + 1 < H && c + 1 < W) {
-				shootRightDown(r + 1,  c + 1, false);
-			}	
+				shootRightDown(r + 1, c + 1, false);
+			}
 		} else {
 			shotCount[r][c] -= 1;
 			if (r + 1 < H && c + 1 < W) {
-				shootRightDown(r + 1,  c + 1, true);
-			}		
+				shootRightDown(r + 1, c + 1, true);
+			}
 		}
 	}
-	
 	static void shootDown(int r, int c, boolean reset) {
 		if (!reset) {
 			shotCount[r][c] += 1;
@@ -177,17 +86,102 @@ public class Main {
 			}
 		}
 	}
-	
 	static void shootDownLeft(int r, int c, boolean reset) {
 		if (!reset) {
 			shotCount[r][c] += 1;
 			if (r + 1 < H && c - 1 >= 0) {
-				shootDownLeft(r + 1, c - 1, false);
-			}	
+				shootDownLeft(r + 1, c - 1, true);
+			}
 		} else {
 			shotCount[r][c] -= 1;
 			if (r + 1 < H && c - 1 >= 0) {
-				shootDownLeft(r + 1, c - 1, true);
+				shootDownLeft(r + 1, c - 1, false);
+			}
+		}
+	}
+	static int getPoint() {
+		int point = 0;
+		for (int h = 0; h < H; h++) {
+			for (int w = 0; w < W; w++) {
+				if (shotCount[h][w] > 0) {
+					point += D[h][w];
+				}
+			}
+		}
+		return point;
+	}
+	static void shoot(int[] positionIndexes, int depth) {
+		if (depth == 3) {
+			maxPoint = Math.max(maxPoint, getPoint());
+			return;
+		}
+		
+		int positionIndex = positionIndexes[depth];
+		int[] position = positionList.get(positionIndex);
+		int r = position[0];
+		int c = position[1];
+		
+		for (int i = 0; i < 3; i++) {
+			if (r == 0 && c== 0) {
+				switch(i) {
+				case 0:
+					shootDown(r, c, false);
+					shoot(positionIndexes, depth + 1);
+					shootDown(r, c, true);
+					break;
+				case 1:
+					shootRightDown(r, c, false);
+					shoot(positionIndexes, depth + 1);
+					shootRightDown(r, c, true);
+					break;
+				case 2:
+					shootRight(r, c, false);
+					shoot(positionIndexes, depth + 1);
+					shootRight(r, c, true);
+					break;
+				default:
+					break;
+				}
+			} else if (r == 0 && c != 0) {
+				switch(i) {
+				case 0:
+					shootDown(r, c, false);
+					shoot(positionIndexes, depth + 1);
+					shootDown(r, c, true);
+					break;
+				case 1:
+					shootDownLeft(r, c, false);
+					shoot(positionIndexes, depth + 1);
+					shootDownLeft(r, c, true);
+					break;
+				case 2:
+					shootRight(r, c, false);
+					shoot(positionIndexes, depth + 1);
+					shootRight(r, c, true);
+					break;
+				default:
+					break;
+				}
+			} else if (r != 0 && c == 0) {
+				switch(i) {
+				case 0:
+					shootRight(r, c, false);
+					shoot(positionIndexes, depth + 1);
+					shootRight(r, c, true);
+					break;
+				case 1:
+					shootRightUp(r, c, false);
+					shoot(positionIndexes, depth + 1);
+					shootRightUp(r, c, true);
+					break;
+				case 2:
+					shootRightDown(r, c, false);
+					shoot(positionIndexes, depth + 1);
+					shootRightDown(r, c, true);
+					break;
+				default:
+					break;
+				}
 			}
 		}
 	}
@@ -200,52 +194,48 @@ public class Main {
 		StringTokenizer st;
 		
 		T = Integer.parseInt(br.readLine());
-		for (int t = 1; t <= T; t++) {
+		for (int t = 0; t < T; t++) {
 			st = new StringTokenizer(br.readLine());
 			H = Integer.parseInt(st.nextToken());
 			W = Integer.parseInt(st.nextToken());
-			
 			D = new int[H][W];
-			for (int r = 0; r < H; r++) {
+			for (int h = 0; h < H; h++) {
 				st = new StringTokenizer(br.readLine());
-				for (int c = 0; c < W; c++) {
-					D[r][c] = Integer.parseInt(st.nextToken());
+				for (int w = 0; w < W; w++) {
+					D[h][w] = Integer.parseInt(st.nextToken());
 				}
 			}
 			
-			// 쏘는 장소 고르기
+			// 장소 선정
 			positionList = new ArrayList<>();
-			for (int r = 0; r < H; r++) {
-				positionList.add(new int[] {r, 0});
+			for (int h = 0; h < H; h++) {
+				positionList.add(new int[] {h, 0});
 			}
-			for (int c = 1; c < W; c++) {
-				positionList.add(new int[] {0, c});
+			for (int w = 1; w < W; w++) {
+				positionList.add(new int[] {0, w});
 			}
 			
-			n = positionList.size();
+			n = H + W - 1;
 			r = 3;
-			
 			input = new int[n];
 			for (int i = 0; i < n; i++) {
 				input[i] = i;
 			}
 			
 			temp = new int[r];
-			output = new ArrayList<>();
+			output = new ArrayList<>();	
 			combinationRepetition(0, 0);
 			
-			// 쏘고 가장 큰 점수 내기
+			// 사격 수행
 			maxPoint = Integer.MIN_VALUE;
-			for (int[] el : output) { // 쏘는 장소 3곳의 경우의 수
+			for (int[] el : output) {
 				shotCount = new int[H][W];
-				gamePoint = 0;
-				shoot(0, el);
-				maxPoint = Math.max(maxPoint, gamePoint);
+				shoot(el, 0);
 			}
 			
-			// 답 출력
-			sb.append("#").append(String.valueOf(t)).append(" ").append(String.valueOf(maxPoint));
-			if (t < T) {
+			// 점수 출력
+			sb.append("#").append(String.valueOf(t + 1)).append(" ").append(String.valueOf(maxPoint));
+			if (t < T - 1) {
 				sb.append("\n");
 			}
 		}
