@@ -11,39 +11,35 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main_bak5 {
 	static int T, N, M;
-	static int[] materials;
-	
-	static int n, r;
+	static int[] input;
 	static boolean[] visited;
+	static int[] temp;
 	static List<int[]> output;
 	
 	static void combination(int start, int depth) {
-		if (depth == r) {
+		if (depth == M) {
+			temp = new int[M];
 			int index = 0;
-			int[] temp = new int[r];
-			for (int i = 0; i < n; i++) {
+			for (int i = 0; i < N; i++) {
 				if (visited[i]) {
-					temp[index++] = materials[i];
+					temp[index++] = input[i];
 				}
 			}
-			
-			boolean checkContains = false;
+			boolean contains = false;
 			for (int[] el : output) {
-				Arrays.sort(el);
-				Arrays.sort(temp);
 				if (Arrays.equals(el, temp)) {
-					checkContains = true;
+					contains = true;
 				}
 			}
-			if (!checkContains) {
-				output.add(temp.clone());
+			if (!contains) {
+				output.add(temp);
 			}
 			return;
 		}
 		
-		for (int i = start; i < n; i++) {
+		for (int i = start; i < N; i++) {
 			if (!visited[i]) {
 				visited[i] = true;
 				combination(i + 1, depth + 1);
@@ -60,21 +56,19 @@ public class Main {
 		StringTokenizer st;
 		
 		T = Integer.parseInt(br.readLine());
-		for (int t = 1; t <= T; t++) {
+		for (int t = 1; t <= T; t++) {			
 			st = new StringTokenizer(br.readLine());
 			N = Integer.parseInt(st.nextToken());
 			M = Integer.parseInt(st.nextToken());
 			
-			materials = new int[N];
+			input = new int[N];
 			st = new StringTokenizer(br.readLine());
 			for (int n = 0; n < N; n++) {
-				materials[n] = Integer.parseInt(st.nextToken());
+				input[n] = Integer.parseInt(st.nextToken());
 			}
-			Arrays.sort(materials);
+			Arrays.sort(input);
 			
-			n = N;
-			r = M;
-			visited = new boolean[n];
+			visited = new boolean[N];
 			output = new ArrayList<>();
 			combination(0, 0);
 			
@@ -83,7 +77,6 @@ public class Main {
 				sb.append("\n");
 			}
 		}
-		
 		bw.write(sb.toString());
 		bw.flush();
 		
