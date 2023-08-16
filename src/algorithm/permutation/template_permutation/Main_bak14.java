@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main_bak14 {
 	static int n, r;
 	static Integer[] input;
 	static boolean[] visited;
@@ -34,7 +34,6 @@ public class Main {
 			}
 		}
 	}
-	
 	public static void main(String args[]) throws IOException {
 		System.setIn(new FileInputStream("src\\algorithm\\permutation\\input.txt"));
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
