@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main_bak14 {
 	static int n, r;
 	static Integer[] input;
 	static int[] temp;
@@ -29,7 +29,6 @@ public class Main {
 			combinationRepetition(i, depth + 1);
 		}
 	}
-	
 	public static void main(String args[]) throws IOException {
 		System.setIn(new FileInputStream("src\\algorithm\\permutation\\input.txt"));
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -52,16 +51,16 @@ public class Main {
 		output = new ArrayList<>();
 		combinationRepetition(0, 0);
 		
-		for (int[] el : output) {
-			for (int e : el) {
-				sb.append(String.valueOf(e)).append(" ");
-			}
-			sb.append("\n");
-		}
-		bw.write(sb.toString());
-		bw.flush();
-		
-		bw.close();
-		br.close();
+		 for (int[] el : output) {
+			 for (int e : el) {
+				 sb.append(String.valueOf(e)).append(" ");
+			 }
+			 sb.append("\n");
+		 }
+		 bw.write(sb.toString());
+		 bw.flush();
+		 
+		 bw.close();
+		 br.close();
 	}
 }
