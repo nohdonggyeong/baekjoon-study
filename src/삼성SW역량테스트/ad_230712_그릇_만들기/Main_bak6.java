@@ -11,9 +11,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main_bak6 {
 	static int T, N, M;
-	static int[] materials; // input
+	static int[] materials;
 	
 	static int n, r;
 	static boolean[] visited;
@@ -28,12 +28,12 @@ public class Main {
 					temp[index++] = materials[i];
 				}
 			}
-			// 포함 이미 된 것은 추가하지 않을 것
+			
 			boolean checkContains = false;
 			for (int[] el : output) {
 				Arrays.sort(el);
 				Arrays.sort(temp);
-				if (Arrays.equals(el, temp.clone())) {
+				if (Arrays.equals(el, temp)) {
 					checkContains = true;
 				}
 			}
@@ -67,8 +67,8 @@ public class Main {
 			
 			materials = new int[N];
 			st = new StringTokenizer(br.readLine());
-			for (int i = 0; i < N; i++) {
-				materials[i] = Integer.parseInt(st.nextToken());
+			for (int n = 0; n < N; n++) {
+				materials[n] = Integer.parseInt(st.nextToken());
 			}
 			Arrays.sort(materials);
 			
@@ -78,11 +78,12 @@ public class Main {
 			output = new ArrayList<>();
 			combination(0, 0);
 			
-			sb.append("#").append(t).append(" ").append(output.size());
+			sb.append("#").append(String.valueOf(t)).append(" ").append(String.valueOf(output.size()));
 			if (t < T) {
 				sb.append("\n");
 			}
 		}
+		
 		bw.write(sb.toString());
 		bw.flush();
 		
