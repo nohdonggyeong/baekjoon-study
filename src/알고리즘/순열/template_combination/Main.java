@@ -22,7 +22,7 @@ public class Main {
 		if (depth == r) {
 			int index = 0;
 			int[] temp = new int[r];
-			for (int i = 0 ; i < n; i++) {
+			for (int i = 0; i < n; i++) {
 				if (visited[i]) {
 					temp[index++] = input[i];
 				}
@@ -54,7 +54,7 @@ public class Main {
 		input = new Integer[n];
 		st = new StringTokenizer(br.readLine());
 		for (int i = 0; i < n; i++) {
-			input[i] = i;
+			input[i] = Integer.parseInt(st.nextToken());
 		}
 		Arrays.sort(input, Collections.reverseOrder());
 		
@@ -64,7 +64,7 @@ public class Main {
 		
 		for (int[] el : output) {
 			for (int e : el) {
-				sb.append(e).append(" ");
+				sb.append(String.valueOf(e)).append(" ");
 			}
 			sb.append("\n");
 		}

@@ -6,77 +6,81 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
 	static int N;
-	static int[] peopleCnt;
-	static boolean[] visited;
+	static int[] peoples;
 	static List<List<Integer>> graph;
-	static int minDiff;
-	
-	static void dfs(int node) {
-		if (isAllTrue(visited)) {
+	static boolean[] selected;
+	static boolean[] visited;
+	static int minDiffResult;
+
+	static void divide(int index) {
+		if (index == N) {
+			List<Integer> areaAList = new ArrayList<>();
+			List<Integer> areaBList = new ArrayList<>();
+			for (int i = 0; i < N; i++) {
+				if (selected[i]) {
+					areaAList.add(i);
+				} else {
+					areaBList.add(i);
+				}
+			}
+			if (areaAList.size() == 0 || areaBList.size() == 0) {
+				return;
+			}
+			
+			if (isLinked(areaAList) && isLinked(areaBList)) {
+				getDiff();
+			}
 			return;
 		}
 		
-		if (seperatable()) {
-			int total = 0;
-			int sum = 0;
-			for (int i = 1; i <= N; i++) {
-				total += peopleCnt[i];
-				if (visited[i]) {
-					sum += peopleCnt[i];
+		selected[index] = true;
+		divide(index + 1);
+		selected[index] = false;
+		divide(index + 1);
+	}
+	
+	static boolean isLinked(List<Integer> areaList) {
+		Queue<Integer> queue = new LinkedList<>();
+		visited = new boolean[N];
+		visited[areaList.get(0)] = true;
+		queue.offer(areaList.get(0));
+		
+		int cnt = 1;
+		while (!queue.isEmpty()) {
+			int cur = queue.poll();
+			for (int i = 0; i < graph.get(cur).size(); i++) {
+				int next = graph.get(cur).get(i);
+				if (areaList.contains(next) && !visited[next]) {
+					queue.offer(next);
+					visited[next] = true;
+					cnt++;
 				}
 			}
-			int diff = Math.abs(total - sum - sum);
-			minDiff = Math.min(minDiff, diff);
 		}
-		
-		for (int el : graph.get(node)) {
-			if (!visited[el]) {
-				visited[el] = true;
-				dfs(el);
-				visited[el] = false;
-			}
-		}
-	}
-	
-	static boolean isAllTrue(boolean[] checkVisited) {
-		for (int i = 1; i <= N; i++) {
-			if (!checkVisited[i]) {
-				return false;
-			}
-		}
-		return true;
-	}
-	
-	static boolean seperatable() {
-		boolean[] tempVisited = visited.clone();
-		int node = -1;
-		for (int i = 1; i <= N; i++) {
-			if (!tempVisited[i]) {
-				node = i;
-				break;
-			}
-		}
-		tempVisited[node] = true;
-		seperatableDfs(node, tempVisited);
-		
-		if (isAllTrue(tempVisited)) {
+		if (cnt == areaList.size()) {
 			return true;
 		}
 		return false;
 	}
 	
-	static void seperatableDfs(int node, boolean[] tempVisited) {
-		for (int el : graph.get(node)) {
-			if (!tempVisited[el]) {
-				tempVisited[el] = true;
-				seperatableDfs(el, tempVisited);
+	static void getDiff() {
+		int sumAreaA = 0;
+		int sumAreaB = 0;
+		for (int i = 0; i < N; i++) {
+			if (selected[i]) {
+				sumAreaA += peoples[i];
+			} else {
+				sumAreaB += peoples[i];
 			}
 		}
+		minDiffResult = Math.min(minDiffResult, Math.abs(sumAreaA - sumAreaB));
 	}
 	
 	public static void main(String args[]) throws IOException {
@@ -86,37 +90,33 @@ public class Main {
 		
 		N = Integer.parseInt(br.readLine());
 		
-		peopleCnt = new int[N + 1];
+		peoples = new int[N];
 		st = new StringTokenizer(br.readLine());
-		for (int n = 1; n <= N; n++) {
-			peopleCnt[n] = Integer.parseInt(st.nextToken());
+		for (int n = 0; n < N; n++) {
+			peoples[n] = Integer.parseInt(st.nextToken());
 		}
 		
 		graph = new ArrayList<>();
-		for (int i = 0; i <= N; i++) {
+		for (int n = 0; n < N; n++) {
 			graph.add(new ArrayList<>());
 		}
 		
-		for (int i = 1; i <= N; i++) {
+		for (int n = 0; n < N; n++) {
 			st = new StringTokenizer(br.readLine());
 			int linkedCnt = Integer.parseInt(st.nextToken());
-			for (int j = 0; j < linkedCnt; j++) {
-				graph.get(i).add(Integer.parseInt(st.nextToken()));
+			for (int lc = 0; lc < linkedCnt; lc++) {
+				graph.get(n).add(Integer.parseInt(st.nextToken()) - 1);
 			}
 		}
 		
-		minDiff = Integer.MAX_VALUE;
-		for (int i = 1; i <= N; i++) {
-			visited = new boolean[N + 1];
-			visited[i] = true;
-			dfs(i);
+		selected = new boolean[N];
+		minDiffResult = Integer.MAX_VALUE;
+		divide(0);
+		if (minDiffResult == Integer.MAX_VALUE) {
+			minDiffResult = -1;
 		}
 		
-		if (minDiff == Integer.MAX_VALUE) {
-			minDiff = -1;
-		}
-		
-		bw.write(String.valueOf(minDiff));
+		bw.write(String.valueOf(minDiffResult));
 		bw.flush();
 		
 		bw.close();

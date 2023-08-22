@@ -44,7 +44,7 @@ public class Main {
 		input = new Integer[n];
 		st = new StringTokenizer(br.readLine());
 		for (int i = 0; i < n; i++) {
-			input[i] = i;
+			input[i] = Integer.parseInt(st.nextToken());
 		}
 		Arrays.sort(input, Collections.reverseOrder());
 		
@@ -54,11 +54,10 @@ public class Main {
 		
 		for (int[] el : output) {
 			for (int e : el) {
-				sb.append(e).append(" ");
+				sb.append(String.valueOf(e)).append(" ");
 			}
 			sb.append("\n");
 		}
-		
 		bw.write(sb.toString());
 		bw.flush();
 		

@@ -2,6 +2,7 @@ package AD검정.ad_230712_그릇_만들기;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -12,7 +13,7 @@ import java.util.StringTokenizer;
 
 public class Main {
 	static int T, N, M;
-	static int[] materials;
+	static int[] materials; // input
 	
 	static int n, r;
 	static boolean[] visited;
@@ -27,18 +28,17 @@ public class Main {
 					temp[index++] = materials[i];
 				}
 			}
-			
+			// 포함 이미 된 것은 추가하지 않을 것
 			boolean checkContains = false;
 			for (int[] el : output) {
 				Arrays.sort(el);
 				Arrays.sort(temp);
 				if (Arrays.equals(el, temp.clone())) {
 					checkContains = true;
-					break;
 				}
 			}
 			if (!checkContains) {
-				output.add(temp.clone());	
+				output.add(temp.clone());
 			}
 			return;
 		}
@@ -53,6 +53,7 @@ public class Main {
 	}
 	
 	public static void main(String args[]) throws IOException {
+		System.setIn(new FileInputStream("src\\삼성SW역량테스트\\ad_230712_그릇_만들기\\input.txt"));
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		StringBuilder sb = new StringBuilder();
@@ -66,18 +67,18 @@ public class Main {
 			
 			materials = new int[N];
 			st = new StringTokenizer(br.readLine());
-			for (int n = 0; n < N; n++) {
-				materials[n] = Integer.parseInt(st.nextToken());
+			for (int i = 0; i < N; i++) {
+				materials[i] = Integer.parseInt(st.nextToken());
 			}
+			Arrays.sort(materials);
 			
 			n = N;
 			r = M;
-			
 			visited = new boolean[n];
 			output = new ArrayList<>();
 			combination(0, 0);
 			
-			sb.append("#").append(t).append(" ").append(String.valueOf(output.size()));
+			sb.append("#").append(t).append(" ").append(output.size());
 			if (t < T) {
 				sb.append("\n");
 			}
