@@ -9,13 +9,13 @@ import java.util.Queue;
 import java.util.LinkedList;
 import java.util.StringTokenizer;
 
-public class Main {
-	static int T, N, result;
+public class Main_bak {
+	static int T, N, result, testNum = 5;
 	static Queue<int[]> seedQueue;
 	static int[] mouse, cat;
 	static boolean breakFlag;
 	
-	static void chase(int[] nextDestination) {
+	static void chase(int[] nextDestination, int t, int count) {
 		while (true) {
 			// 생쥐가 1의 이동거리로 먼저 이동
 			// 생쥐는 좌우 우선 최단으로 이동
@@ -25,8 +25,17 @@ public class Main {
 				mouse[1] += nextDestination[1] - mouse[1] > 0 ? 1 : -1;
 			}
 			
+			if (t == testNum) {
+				System.out.println("#" + t + "-" + count + ": mouse " + mouse[0] + ", " + mouse[1]);
+			}
+			
 			// 생쥐가 고양이에게 잡혔나 확인
-			if (mouse[0] == cat[0] && mouse[1] == cat[1]) {				
+			if (mouse[0] == cat[0] && mouse[1] == cat[1]) {
+				if (t == testNum) {
+					System.out.println("#" + t + "-" + count + ": cat ate mouse.");
+					System.out.println("-----------------------");
+				}
+				
 				breakFlag = true;
 				result = 0;
 				return;
@@ -50,8 +59,18 @@ public class Main {
 				}
 			}
 			
+			if (t == testNum) {
+				System.out.println("#" + t + "-" + count + ": cat " + cat[0] + ", " + cat[1]);
+				System.out.println("-----------------------");
+			}
+			
 			// 고양이가 생쥐를 잡았나 확인
-			if (mouse[0] == cat[0] && mouse[1] == cat[1]) {				
+			if (mouse[0] == cat[0] && mouse[1] == cat[1]) {
+				if (t == testNum) {
+					System.out.println("#" + t + "-" + count + ": cat ate mouse.");
+					System.out.println("-----------------------");
+				}
+				
 				breakFlag = true;
 				result = 0;
 				return;
@@ -60,6 +79,11 @@ public class Main {
 			// 생쥐가 굴 앞인 1,1에 도착했나 확인
 			// 굴 앞으로 도착했다면 생쥐 탈출 성공
 			if (mouse[0] == 0 && mouse[1] == 1) {
+				if (t == testNum) {
+					System.out.println("#" + t + "-" + count + ": rat has arrived in cave.");
+					System.out.println("-----------------------");
+				}
+				
 				breakFlag = true;
 				return;
 			}
@@ -102,8 +126,15 @@ public class Main {
 			mouse = seedQueue.poll(); // 생쥐는 씨앗의 첫 입력 위치부터 시작
 			breakFlag = false;
 			
+			int count = 0;
+			if (t == testNum) {
+				System.out.println("-----------------------");
+				System.out.println("#" + t + "-" + count + ": mouse " + mouse[0] + ", " + mouse[1]);
+				System.out.println("#" + t + "-" + count + ": cat " + cat[0] + ", " + cat[1]);
+				System.out.println("-----------------------");
+			}
 			while (!breakFlag && !seedQueue.isEmpty()) {
-				chase(seedQueue.poll());
+				chase(seedQueue.poll(), t, ++count);
 			}
 			
 			sb.append("#").append(t).append(" ").append(result).append("\n");	
