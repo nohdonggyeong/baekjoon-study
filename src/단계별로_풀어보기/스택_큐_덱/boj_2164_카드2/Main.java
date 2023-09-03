@@ -1,10 +1,12 @@
-package 단계별로_풀어보기.약수_배수와_소수_2.boj_13909_창문_닫기;
+package 단계별로_풀어보기.스택_큐_덱.boj_2164_카드2;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class Main {
 	public static void main(String args[]) throws IOException {
@@ -12,13 +14,17 @@ public class Main {
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		
 		int n = Integer.parseInt(br.readLine());
-		
-		int result = 0;
-		for (int i = 1; i * i <= n; i++) {
-			result += 1;
+		Queue<Integer> queue = new LinkedList<>();
+		for (int i = 1; i <= n; i++) {
+			queue.offer(i);
 		}
 		
-		bw.write(String.valueOf(result));
+		while (queue.size() > 1) {
+			queue.poll();
+			queue.offer(queue.poll());
+		}
+		
+		bw.write(String.valueOf(queue.poll()));
 		bw.flush();
 		bw.close();
 		br.close();
