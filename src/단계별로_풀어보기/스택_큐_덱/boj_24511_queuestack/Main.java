@@ -5,6 +5,8 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.StringTokenizer;
 
 public class Main {
@@ -15,18 +17,19 @@ public class Main {
 		StringTokenizer st;
 		
 		int n = Integer.parseInt(br.readLine());
+		
 		int[] a = new int[n];
 		st = new StringTokenizer(br.readLine());
 		for (int i = 0; i < n; i++) {
 			a[i] = Integer.parseInt(st.nextToken());
 		}
-		int[] b = new int[n];
-		int index = 0;
+		
+		Deque<Integer> deque = new ArrayDeque<>();
 		st = new StringTokenizer(br.readLine());
 		for (int i = 0; i < n; i++) {
 			int num = Integer.parseInt(st.nextToken());
 			if (a[i] == 0) {
-				b[index++] = num;
+				deque.offerLast(num);
 			}
 		}
 		
@@ -34,15 +37,8 @@ public class Main {
 		st = new StringTokenizer(br.readLine());
 		for (int i = 0; i < m; i++) {
 			int input = Integer.parseInt(st.nextToken());
-			for (int j = 0; j < n; j++) {
-				if (b[j] == 0) {
-					break;
-				}
-				int temp = input;
-				input = b[j];
-				b[j] = temp;
-			}
-			sb.append(input).append(" ");
+			deque.offerFirst(input);
+			sb.append(deque.pollLast()).append(" ");
 		}
 		
 		bw.write(sb.toString());
