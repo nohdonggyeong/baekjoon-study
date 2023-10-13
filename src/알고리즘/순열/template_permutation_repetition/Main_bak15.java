@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main_bak15 {
 	static int n, r;
 	static Integer[] input;
 	static int[] temp;

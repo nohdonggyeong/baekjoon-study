@@ -1,4 +1,4 @@
-package 알고리즘.순열.template_combination;
+package 알고리즘.순열.template_permutation;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -12,29 +12,24 @@ import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main_bak15 {
 	static int n, r;
 	static Integer[] input;
 	static boolean[] visited;
+	static int[] temp;
 	static List<int[]> output;
 	
-	static void combination(int start, int depth) {
+	static void permutation(int depth) {
 		if (depth == r) {
-			int index = 0;
-			int[] temp = new int[r];
-			for (int i = 0; i < n; i++) {
-				if (visited[i]) {
-					temp[index++] = input[i];
-				}
-			}
 			output.add(temp.clone());
 			return;
 		}
 		
-		for (int i = start; i < n; i++) {
+		for (int i = 0; i < n; i++) {
 			if (!visited[i]) {
 				visited[i] = true;
-				combination(i + 1, depth + 1);
+				temp[depth] = input[i];
+				permutation(depth + 1);
 				visited[i] = false;
 			}
 		}
@@ -59,8 +54,9 @@ public class Main {
 		Arrays.sort(input, Collections.reverseOrder());
 		
 		visited = new boolean[n];
+		temp = new int[r];
 		output = new ArrayList<>();
-		combination(0, 0);
+		permutation(0);
 		
 		for (int[] el : output) {
 			for (int e : el) {
