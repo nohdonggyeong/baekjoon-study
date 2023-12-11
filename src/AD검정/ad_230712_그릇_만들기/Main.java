@@ -5,23 +5,66 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
 public class Main {
 	static int T;
 	static int N, M;
-	static int[] arr;
+	static int[] materials;
 	static boolean[] visited;
 	static int[] temp;
 	static List<int[]> output;
 	
-	static int combinationRepetition(int depth) {
-		return -1;
+	static boolean checkInclude() {
+		for (int[] el : output) {
+			if (Arrays.equals(el, temp)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	static void combination(int start, int depth) {
+		if (depth == M) {
+			int index = 0;
+			temp = new int[M];
+			for (int i = 0; i < N; i++) {
+				if (visited[i]) {
+					temp[index++] = materials[i];
+				}
+			}
+			
+			Arrays.sort(temp);
+			if (!checkInclude()) {
+				output.add(temp.clone());
+			}
+			return;
+		}
+		
+		for (int i = start; i < N; i++) {
+			if (!visited[i]) {
+				visited[i] = true;
+				combination(i + 1, depth + 1);
+				visited[i] = false;
+			}
+		}
 	}
 	
 	static int solution() {
-		return -1;
+		visited = new boolean[N];
+		output = new ArrayList<int[]>();
+		combination(0, 0);
+		
+		for (int[] el : output) {
+			for (int e : el) {
+				System.out.print(String.valueOf(e) + " ");
+			}
+			System.out.println();
+		}
+		return output.size();
 	}
 	
 	public static void main(String args[]) throws IOException {
@@ -36,10 +79,10 @@ public class Main {
 			N = Integer.parseInt(st.nextToken());
 			M = Integer.parseInt(st.nextToken());
 
-			arr = new int[N];
+			materials = new int[N];
 			st = new StringTokenizer(br.readLine());
 			for (int n = 0; n < N; n++) {
-				arr[n] = Integer.parseInt(st.nextToken());
+				materials[n] = Integer.parseInt(st.nextToken());
 			}
 			
 			int result = solution();
