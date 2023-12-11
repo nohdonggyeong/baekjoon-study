@@ -2,25 +2,25 @@ package 알고리즘.순열.template_combination;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+import java.util.StringTokenizer;
 
-public class Main {
+public class Main_bak16 {
 	static int n, r;
-	static Integer[] input;
+	static int[] input;
 	static boolean[] visited;
-	static int[] temp;
 	static List<int[]> output;
 	
 	static void combination(int start, int depth) {
 		if (depth == r) {
 			int index = 0;
-			temp = new int[r];
+			int[] temp = new int[r];
 			for (int i = 0; i < n; i++) {
 				if (visited[i]) {
 					temp[index++] = input[i];
@@ -38,30 +38,33 @@ public class Main {
 			}
 		}
 	}
+	
 	public static void main(String args[]) throws IOException {
+		System.setIn(new FileInputStream("src\\알고리즘\\순열\\input.txt"));
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		StringBuilder sb = new StringBuilder();
+		StringTokenizer st;
 		
-		n = 10;
-		r = 3;
-		input = new Integer[n];
+		st = new StringTokenizer(br.readLine());
+		n = Integer.parseInt(st.nextToken());
+		r = Integer.parseInt(st.nextToken());
+		
+		input = new int[n];
+		st = new StringTokenizer(br.readLine());
 		for (int i = 0; i < n; i++) {
-			input[i] = i + 1;
+			input[i] = Integer.parseInt(st.nextToken());
 		}
-//		Arrays.sort(input, Collections.reverseOrder());
-//		for (int el : input) {
-//			System.out.print(String.valueOf(el) + " ");
-//		}
+		Arrays.sort(input);
 		
 		visited = new boolean[n];
-		temp = new int[r];
-		output = new ArrayList<int[]>();
+		output = new ArrayList<>();
+		
 		combination(0, 0);
 		
 		for (int[] el : output) {
 			for (int e : el) {
-				sb.append(String.valueOf(e)).append(" ");
+				sb.append(e).append(" ");
 			}
 			sb.append("\n");
 		}
