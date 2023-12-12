@@ -7,21 +7,22 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-public class Main {
-	static int N, R;
+public class Main_bak17 {
+	static int n, r;
 	static int[] input, temp;
 	static boolean[] visited;
 	static List<int[]> output;
 	
 	static void permutation(int depth) {
-		if (depth == R) {
+		if (depth == r) {
 			output.add(temp.clone());
 			return;
 		}
 		
-		for (int i = 0; i < N; i++) {
+		for (int i = 0; i < n; i++) {
 			if (!visited[i]) {
 				visited[i] = true;
 				temp[depth] = input[i];
@@ -30,25 +31,25 @@ public class Main {
 			}
 		}
 	}
-	public static void main(String[] args) throws IOException{
+	public static void main(String args[]) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		StringBuilder sb = new StringBuilder();
 		
-		N = 10;
-		R = 4;
-		
-		input = new int[N];
-		temp = new int[R];
-		visited= new boolean[N];
+		n = 10;
+		r = 3;
+		input = new int[n];
+//		Integer[] input = new Integer[n];
+		temp = new int[r];
+		visited = new boolean[n];
 		output = new ArrayList<>();
 		
-		for (int i = 0; i < N; i++) {
+		for (int i = 0; i < n; i++) {
 			input[i] = i + 1;
 		}
-		Arrays.sort(input);
+//		Arrays.sort(input, Collections.reverseOrder());
 //		for (int el : input) {
-//			System.out.print(el + " ");
+//			System.out.print(String.valueOf(el) + " ");
 //		}
 		
 		permutation(0);
@@ -63,5 +64,4 @@ public class Main {
 		bw.close();
 		br.close();
 	}
-
 }
