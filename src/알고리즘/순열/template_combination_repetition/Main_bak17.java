@@ -7,47 +7,39 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-public class Main {
-	static int N, R;
-	static Integer[] input;
-	static int[] temp;
-	static boolean[] visited;
+public class Main_bak17 {
+	static int n, r;
+	static int[] input, temp;
 	static List<int[]> output;
 	
 	static void combinationWithRepetition(int start, int depth) {
-		if (depth == R) {
+		if (depth == r) {
 			output.add(temp.clone());
 			return;
 		}
 		
-		for (int i = start; i < N; i++) {
+		for (int i = start; i < n; i++) {
 			temp[depth] = input[i];
 			combinationWithRepetition(i, depth + 1);
 		}
 	}
-	
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		StringBuilder sb = new StringBuilder();
 		
-		N = 10;
-		R = 4;
-		input = new Integer[N];
-		temp = new int[R];
-		for (int i = 0; i < N; i++) {
+		n = 10;
+		r = 3;
+		input = new int[n];
+		for (int i = 0; i < n; i++) {
 			input[i] = i + 1;
 		}
-		Arrays.sort(input, Collections.reverseOrder());
-//		for (int el : input) {
-//			System.out.print(el + " ");
-//		}
+		Arrays.sort(input);
 		
-		visited = new boolean[N];
-		output = new ArrayList<>();
+		temp = new int[r];
+		output = new ArrayList<int[]>();
 		combinationWithRepetition(0, 0);
 		
 		for (int[] el : output) {
@@ -61,5 +53,4 @@ public class Main {
 		bw.close();
 		br.close();
 	}
-
 }
