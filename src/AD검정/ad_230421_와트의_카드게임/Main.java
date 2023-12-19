@@ -5,111 +5,144 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
-	static int T, K, Q, answer;
-	static Score nowScore;
-	static int[] deals;
+
+	static int T, K, Q;
+	static int[] points;
+	static Scores[] checkScores;
+	static boolean[] checkResult;
 	
-	static class Score {
+	static class Scores {
 		private int watt;
 		private int hans;
 		private int snow;
-		private int cnt;
 		
-		public Score(int watt, int hans, int snow, int cnt) {
+		Scores(int watt, int hans, int snow) {
 			this.watt = watt;
 			this.hans = hans;
 			this.snow = snow;
-			this.cnt = cnt;
 		}
 	}
 	
-	static void bfs(Score checkScore) {
-		Queue<Score> queue = new LinkedList<>();
-		queue.offer(nowScore);
+	public static void check(Scores scores) {
+		for (int i = 0; i < checkScores.length; i++) {
+			if (checkScores[i].watt == scores.watt
+					&& checkScores[i].hans == scores.hans
+					&& checkScores[i].snow == scores.snow) {
+				checkResult[i] = true;
+			}
+		}
+	}
+	
+	public static void dfs(Scores scores, int depth) {
+		if (depth == K) {
+			return;
+		}
 		
-		while (!queue.isEmpty()) {
-			Score s = queue.poll();
-			
-			if (s.cnt != 0
-					&& checkScore.watt == s.watt
-					&& checkScore.hans == s.hans
-					&& checkScore.snow == s.snow) {
-						answer = 1;
-						return;
-			}
-
-			if (s.cnt >= checkScore.cnt) {
-				continue;
-			}
-			
-			for (int i = 0; i < 3; i++) {
-				switch (i) {
-				case 0:
-					queue.offer(new Score(s.watt + deals[s.cnt] * 2,
-							s.hans - deals[s.cnt] < 0 ? 0 : s.hans - deals[s.cnt],
-							s.snow - deals[s.cnt] < 0 ? 0 : s.snow - deals[s.cnt],
-							s.cnt + 1));
-					break;
-				case 1:
-					queue.offer(new Score(s.watt - deals[s.cnt] < 0 ? 0 : s.watt - deals[s.cnt],
-							s.hans + deals[s.cnt] * 2,
-							s.snow - deals[s.cnt] < 0 ? 0 : s.snow - deals[s.cnt],
-							s.cnt + 1));
-					break;
-				case 2:
-					queue.offer(new Score(s.watt - deals[s.cnt] < 0 ? 0 : s.watt - deals[s.cnt], 
-							s.hans - deals[s.cnt] < 0 ? 0 : s.hans - deals[s.cnt], 
-							s.snow + deals[s.cnt] * 2, 
-							s.cnt + 1));
-					break;
-				default:
-					break;
+		for (int i = 0; i < 3; i++) {
+			// 0: watt win, 1: hans win, 2: snow win
+			switch (i) {
+			case 0:
+				if (scores.hans - points[depth] < 0) {
+					scores.watt += scores.hans;
+					scores.hans = 0;
+				} else {
+					scores.watt += points[depth];
+					scores.hans -= points[depth];
 				}
+
+				if (scores.snow - points[depth] < 0) {
+					scores.watt += scores.snow;
+					scores.snow = 0;
+				} else {
+					scores.watt += points[depth];
+					scores.snow -= points[depth];
+				}
+				break;
+			case 1:
+				if (scores.watt - points[depth] < 0) {
+					scores.hans += scores.watt;
+					scores.watt = 0;
+				} else {
+					scores.hans += points[depth];
+					scores.watt -= points[depth];
+				}
+
+				if (scores.snow - points[depth] < 0) {
+					scores.hans += scores.snow;
+					scores.snow = 0;
+				} else {
+					scores.hans += points[depth];
+					scores.snow -= points[depth];
+				}
+				break;
+			case 2:
+				if (scores.watt - points[depth] < 0) {
+					scores.snow += scores.watt;
+					scores.watt = 0;
+				} else {
+					scores.snow += points[depth];
+					scores.watt -= points[depth];
+				}
+
+				if (scores.hans - points[depth] < 0) {
+					scores.snow += scores.hans;
+					scores.hans = 0;
+				} else {
+					scores.snow += points[depth];
+					scores.hans -= points[depth];
+				}
+				break;
+			default:
+				break;
 			}
+			check(scores);
+			dfs(scores, depth + 1);
 		}
 	}
 	
-	public static void main(String args[]) throws IOException {
+	public static void main(String[] args) throws IOException {
+		
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-		StringTokenizer st;
 		StringBuilder sb = new StringBuilder();
+		StringTokenizer st;
 		
 		T = Integer.parseInt(br.readLine());
-		for (int i = 0; i < T; i++) {
+		for (int t = 0; t < T; t++) {
+			
 			st = new StringTokenizer(br.readLine());
-			nowScore = new Score(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), 0);
+			Scores scores = new Scores(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
 			K = Integer.parseInt(st.nextToken());
 			Q = Integer.parseInt(st.nextToken());
-
-			deals = new int[K];
+			
+			points = new int[K];
 			st = new StringTokenizer(br.readLine());
-			for (int j = 0; j < K; j++) {
-				deals[j] = Integer.parseInt(st.nextToken());
+			for (int k = 0; k < K; k++) {
+				points[k] = Integer.parseInt(st.nextToken());
 			}
 
-			sb.append("#");
-			sb.append(String.valueOf(i + 1));
-			for (int j = 0; j < Q; j++) {
-				answer = 0;
+			checkScores = new Scores[Q];
+			for (int q = 0; q < Q; q++) {
 				st = new StringTokenizer(br.readLine());
-				bfs(new Score(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), K));
-				sb.append(" ");
-				sb.append(String.valueOf(answer));
+				checkScores[q] = new Scores(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
+			}
+			
+			checkResult = new boolean[Q];
+			dfs(scores, 0);
+			
+			sb.append("#").append(t + 1);
+			for (boolean r : checkResult) {
+				sb.append(" ").append(r ? "1" : "0");
 			}
 			sb.append("\n");
-			
 		}
-		
 		bw.write(sb.toString());
-		
 		bw.flush();
 		bw.close();
 		br.close();
 	}
+
 }
