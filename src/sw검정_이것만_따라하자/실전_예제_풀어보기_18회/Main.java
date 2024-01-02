@@ -10,8 +10,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import sun.security.util.ArrayUtil;
-
 public class Main {
 	static int[] numbers = new int[] {7, 37, 38, 39, 40, 44};
 	static int T, N;
