@@ -10,50 +10,51 @@ import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
-	static int N, M, K, R, C;
-	static boolean[][] notebook;
-	static Queue<boolean[][]> stickerQueue;
+	static int N, M, K;
+	static int[][] notebook;
+	static int R, C;
+	static Queue<int[][]> stickerQueue;
 	
-	static boolean checkSticker(int r, int c, boolean[][] sticker) {
-		boolean[][] cp_notebook = notebook.clone();
-		
-		for (int h = r; h < r + sticker.length; h++ ) {
-			for (int w = c; w < c + sticker[0].length; w++) {
-				if (sticker[h - r][w - c] && cp_notebook[h][w]) {
+	// 내가 있으면 좋겠다고 생각한 함수를  pseudo code로 작성
+	static boolean checkStickerFit(int n, int m, int[][] sticker) {
+		// 영역을 넘어갔는지 확인
+		if (n + sticker.length > N || m + sticker[0].length > M) {
+			return false;
+		}
+		// 영역이 이미 1이 들어갔는지를 확인
+		for (int i = 0; i < sticker.length; i++) {
+			for (int j = 0; j < sticker[0].length; j++) {
+				if (sticker[i][j] == 1 && notebook[n + i][m + j] == 1) {
 					return false;
-				}
-				if (sticker[h - r][w - c]) {
-					cp_notebook[h][w] = true;
 				}
 			}
 		}
-		notebook = cp_notebook.clone();
+		
 		return true;
 	}
 	
-	static boolean[][] rotate(boolean[][] sticker) {
-		boolean[][] rotated = new boolean[sticker[0].length][sticker.length];
-		
+	static void markSticker(int n , int m, int[][] sticker) {
 		for (int i = 0; i < sticker.length; i++) {
 			for (int j = 0; j < sticker[0].length; j++) {
-				rotated[j][sticker.length - i - 1] = sticker[i][j];
+				if (sticker[i][j] == 1) {
+					notebook[n + i][m + j] = 1;
+				}
 			}
-		}
-		
-		return rotated;
+		}		
 	}
 	
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		StringTokenizer st;
+		StringBuilder sb = new StringBuilder();
 		
 		st = new StringTokenizer(br.readLine());
 		N = Integer.parseInt(st.nextToken());
 		M = Integer.parseInt(st.nextToken());
 		K = Integer.parseInt(st.nextToken());
 		
-		notebook = new boolean[N][M];
+		notebook = new int[N][M];
 		
 		stickerQueue = new LinkedList<>();
 		for (int k = 0; k < K; k++) {
@@ -61,54 +62,75 @@ public class Main {
 			R = Integer.parseInt(st.nextToken());
 			C = Integer.parseInt(st.nextToken());
 			
-			boolean[][] temp = new boolean[R][C];
+			int[][] tempArr = new int[R][C];
 			for (int r = 0; r < R; r++) {
 				st = new StringTokenizer(br.readLine());
 				for (int c = 0; c < C; c++) {
-					temp[r][c] = Integer.parseInt(st.nextToken()) == 1 ? true : false;
+					tempArr[r][c] = Integer.parseInt(st.nextToken());
 				}
 			}
-			
-			stickerQueue.add(temp);
+//			printArr(tempArr);
+			stickerQueue.offer(tempArr);
 		}
-		
-		while (!stickerQueue.isEmpty()) {
-			boolean[][] sticker = stickerQueue.poll();
-			
-			boolean flag = false;
-			int rotateCount = 0;
-			do {
-				loop: 
-				for (int r = 0; r <= notebook.length - sticker.length; r++) {
-					for (int c = 0; c <= notebook[0].length - sticker[0].length; c++) {
-						boolean possible = checkSticker(r, c, sticker);
-						if (possible) {
-							flag = false;
-							break loop;
-						} else {
-							sticker = rotate(sticker).clone();
-							rotateCount += 1;
-							flag = true;
+
+		for (int k = 0; k < K; k++) {
+			int[][] sticker = stickerQueue.poll();
+//			printArr(sticker);
+			loop:
+			for (int i = 0; i < 4; i++) {
+				boolean fitResult = false;
+				for (int n = 0; n < N; n++) {
+					for (int m = 0; m < M; m++) {
+//						printArr(sticker);
+						fitResult = checkStickerFit(n, m, sticker);
+						if (fitResult) {
+//							System.out.print("n, m: " + n + ", " + m);
+//							printArr(sticker);
+							
+							// notebook을 1로 체크
+							markSticker(n, m, sticker);
 							break loop;
 						}
 					}
 				}
-			} while (flag && rotateCount <= 3);
-		}
-		
-		int result = 0;
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < M; j++) {
-				if (notebook[i][j]) {
-					result += 1;
+
+				// 문제 제시된 대로 반복하고 안 된다면 버리기
+				int[][] stickerBak = sticker.clone();
+				R = sticker.length;
+				C = sticker[0].length;
+				sticker = new int[C][R];
+				
+				for (int r = 0; r < R; r++) {
+					for (int c = 0; c < C; c++) {
+						sticker[c][r] = stickerBak[R - 1 - r][c];
+					}
 				}
 			}
 		}
 		
-		bw.write(String.valueOf(result));
+		int count = 0;
+		// 노트북 스티커 붙인 영역 카운트 출력
+		for (int n = 0; n < N; n++) {
+			for (int m = 0; m < M; m++) {
+				if (notebook[n][m] == 1) {
+					count++;
+				}
+			}
+		}
+		
+		bw.write(String.valueOf(count));
 		bw.flush();
 		bw.close();
 		br.close();
 	}
-
+	
+	static void printArr(int[][] arr) {
+		System.out.println();
+		for (int i = 0; i < arr.length; i++) {
+			for (int j = 0; j < arr[0].length; j++) {
+				System.out.print(String.valueOf(arr[i][j]) + " ");
+			}
+			System.out.println();
+		}
+	}
 }
