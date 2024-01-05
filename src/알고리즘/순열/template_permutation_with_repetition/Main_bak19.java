@@ -1,4 +1,4 @@
-package 알고리즘.순열.template_permutation;
+package 알고리즘.순열.template_permutation_with_repetition;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -6,27 +6,24 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class Main {
-	static int n, r;
-	static int[] input, temp;
-	static boolean[] visited;
+public class Main_bak19 {
+	static int N, R;
+	static int[] input;
+	static int[] temp;
 	static List<int[]> output;
-	
-	static void permutation(int depth) {
-		if (depth == r) {
+
+	static void permutationWithRepetition(int depth) {
+		if (depth == R) {
 			output.add(temp.clone());
 			return;
 		}
 		
-		for (int i = 0; i < n; i++) {
-			if (!visited[i]) {
-				visited[i] = true;
-				temp[depth] = i;
-				permutation(depth + 1);
-				visited[i] = false;
-			}
+		for (int i = 0; i < N; i++) {
+			temp[depth] = input[i];
+			permutationWithRepetition(depth + 1);
 		}
 	}
 	
@@ -35,17 +32,23 @@ public class Main {
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		StringBuilder sb = new StringBuilder();
 		
-		n = 10;
-		r = 3;
-		input = new int[n];
-		for (int i = 0; i < n; i++) {
-			input[i] = i;
-		}
+		N = 10;
+		R = 3;
 		
-		temp = new int[r];
-		visited = new boolean[n];
+		input = new int[N];
+		for (int i = 0; i < N; i++) {
+			input[i] = i + 1;
+		}
+		Arrays.sort(input);
+		
+//		for (int el : input) {
+//			System.out.print(String.valueOf(el) + " ");
+//		}
+		
+		temp = new int[R];
 		output = new ArrayList<>();
-		permutation(0);
+		
+		permutationWithRepetition(0);
 		
 		for (int[] el : output) {
 			for (int e : el) {
@@ -58,4 +61,5 @@ public class Main {
 		bw.close();
 		br.close();
 	}
+
 }

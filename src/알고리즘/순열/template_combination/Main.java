@@ -3,32 +3,31 @@ package 알고리즘.순열.template_combination;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.InputStreamReader;
 
 public class Main {
-	static int N, R;
-	static int[] input;
-	static int[] temp;
+	static int n, r;
+	static int[] input, temp;
 	static boolean[] visited;
 	static List<int[]> output;
 	
 	static void combination(int start, int depth) {
-		if (depth == R) {
+		if (depth == r) {
+			temp = new int[r];
 			int index = 0;
-			temp = new int[R];
-			for (int i = 0; i < N; i++) {
+			for (int i = 0; i < n; i++) {
 				if (visited[i]) {
-					temp[index++] = input[i];
+					temp[index++] = i;
 				}
 			}
 			output.add(temp.clone());
 			return;
 		}
 		
-		for (int i = start; i < N; i++) {
+		for (int i = start; i < n; i++) {
 			if (!visited[i]) {
 				visited[i] = true;
 				combination(i + 1, depth + 1);
@@ -42,19 +41,16 @@ public class Main {
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		StringBuilder sb = new StringBuilder();
 		
-		N = 10;
-		R = 3;
-		input = new int[N];
-		for (int i = 0; i < N; i++) {
-			input[i] = i + 1;
+		n = 10;
+		r = 3;
+		
+		input = new int[n];
+		for (int i = 0; i < n; i++) {
+			input[i] = i;
 		}
 		
-//		for (int el : input) {
-//			System.out.print(String.valueOf(el) + " ");
-//		}
-		
-		visited = new boolean[N];
-		output = new ArrayList<>();
+		visited = new boolean[n];
+		output = new ArrayList<int[]>();
 		combination(0, 0);
 		
 		for (int[] el : output) {
@@ -68,5 +64,4 @@ public class Main {
 		bw.close();
 		br.close();
 	}
-
 }

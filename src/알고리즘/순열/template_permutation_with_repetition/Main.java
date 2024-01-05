@@ -6,23 +6,21 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Main {
-	static int N, R;
-	static int[] input;
-	static int[] temp;
+	static int n, r;
+	static int[] input, temp;
 	static List<int[]> output;
-
+	
 	static void permutationWithRepetition(int depth) {
-		if (depth == R) {
+		if (depth == r) {
 			output.add(temp.clone());
 			return;
 		}
 		
-		for (int i = 0; i < N; i++) {
-			temp[depth] = input[i];
+		for (int i = 0; i < n; i++) {
+			temp[depth] = i;
 			permutationWithRepetition(depth + 1);
 		}
 	}
@@ -32,22 +30,16 @@ public class Main {
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		StringBuilder sb = new StringBuilder();
 		
-		N = 10;
-		R = 3;
+		n = 10;
+		r = 3;
 		
-		input = new int[N];
-		for (int i = 0; i < N; i++) {
-			input[i] = i + 1;
+		input = new int[n];
+		for (int i = 0; i < n; i++) {
+			input[i] = i;
 		}
-		Arrays.sort(input);
 		
-//		for (int el : input) {
-//			System.out.print(String.valueOf(el) + " ");
-//		}
-		
-		temp = new int[R];
-		output = new ArrayList<>();
-		
+		temp = new int[r];
+		output = new ArrayList<int[]>();
 		permutationWithRepetition(0);
 		
 		for (int[] el : output) {
@@ -61,5 +53,4 @@ public class Main {
 		bw.close();
 		br.close();
 	}
-
 }
