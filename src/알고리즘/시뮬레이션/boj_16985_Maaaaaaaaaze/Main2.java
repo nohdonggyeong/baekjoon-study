@@ -11,11 +11,25 @@ import java.util.List;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main2 {
 	static List<int[][]> candidates;
 	
-	// 회전하는 함수. 뒤집기는 No
-	static int[][] rotate(int[][] map) {
+	static int[] input, temp, temp2;
+	static boolean[] visited;
+//	static List<int[]> output;
+	
+	static int[][] startPoints = {{0, 0, 0}, {0, 0, 4}, {0, 4, 0}, {0, 4, 4}, {4, 0, 0}, {4, 0, 4}, {4, 4, 0}, {4, 4, 4}};
+	static int[][] endPoints = {{4, 4, 4}, {4, 4, 0}, {4, 0, 4}, {4, 0, 0}, {0, 4, 4}, {0, 4, 0}, {0, 0, 4}, {0, 0, 0}};
+	
+	static int result;
+	static int[] dh = {0, 0, 0, 0, 1, -1};
+	static int[] dr = {-1, 0, 1, 0, 0, 0};
+	static int[] dc = {0, -1, 0, 1, 0, 0};
+	
+	static boolean finishFlag = false;
+	
+	// 판을 시계방향으로 회전하는 함수 (뒤집기는 없음)
+	static int[][] rotateMap(int[][] map) {
 		int[][] rotated = new int[5][5];
 		for (int r = 0; r < 5; r++) {
 			for (int c = 0; c < 5; c++) {
@@ -25,42 +39,121 @@ public class Main {
 		return rotated;
 	}
 	
-	static int[] input, temp, temp2;
-	static boolean[] visited;
-	static List<int[]> output;
-	
+	// 판을 쌓는 permutation 함수
 	static void permutation(int depth) {
 		if (depth == 5) {
 //			output.add(temp.clone());
 //			return;
 			
-			// 2. 각 판을 4개의 경우로 회전
 			temp2 = new int[5];
 			permutationWithRepetition(0);
 			if (finishFlag) {
 				return;
 			}
+			return;
 		}
 		
 		for (int i = 0; i < 5; i++) {
 			if (!visited[i]) {
 				visited[i] = true;
-				temp[depth] = input[i];
+				temp[depth] = i;
 				permutation(depth + 1);
 				visited[i] = false;
 			}
 		}
 	}
 	
-	static int[][][] cube;
-	static boolean[][][] cubeVisited;
-	static int[][] starts = {{0, 0, 0}, {0, 0, 4}, {0, 4, 0}, {0, 4, 4}, {4, 0, 0}, {4, 0, 4}, {4, 4, 0}, {4, 4, 4}};
-	static int[][] ends = {{4, 4, 4}, {4, 4, 0}, {4, 0, 4}, {4, 0, 0}, {0, 4, 4}, {0, 4, 0}, {0, 0, 4}, {0, 0, 0}};
-	static int[] dh = {0, 0, 0, 0, 1, -1};
-	static int[] dr = {-1, 0, 1, 0, 0, 0};
-	static int[] dc = {0, -1, 0, 1, 0, 0};
-	static int minResult;
-	static boolean finishFlag;
+	// 각 판을 회전하는 permutation with repetition 함수 
+	static void permutationWithRepetition(int depth) {
+		if (depth == 5) {
+			// 판 5개가 쌓아진 조합으로 cube 생성
+			int[][][] cube = new int[5][5][5];
+			for (int h = 0; h < 5; h++) {
+				int[][] map = candidates.get(temp[h]);
+				for (int r = 0; r < 5; r++) {
+					for (int c = 0; c < 5; c++) {
+						cube[h][r][c] = map[r][c];
+					}
+				}
+			}
+			
+			// cube 각 층 회전
+			for (int h = 0; h < 5; h++) {
+				int[][] map = cube[h];
+				for (int j = 0; j < temp2[h]; j++) {
+					int[][] rotated = rotateMap(map);
+					for (int r = 0; r < 5; r++) {
+						for (int c = 0; c < 5; c++) {
+							map[r][c] = rotated[r][c];
+						}
+					}
+				}
+				
+				for (int r = 0; r < 5; r++) {
+					for (int c = 0; c < 5; c++) {
+						cube[h][r][c] = map[r][c];
+					}
+				}
+			}
+			
+			// 입구를 찾는 반복
+			for (int j = 0; j < 8; j++) {
+				int[] start = startPoints[j];
+				int[] end = endPoints[j];
+				if (cube[start[0]][start[1]][start[2]] == 0 || cube[end[0]][end[1]][end[2]] == 0) {
+					continue;
+				}
+				
+				// 최단거리 탐색 bfs
+				bfs(start, end, cube);
+				if (finishFlag) {
+					return;
+				}
+			}
+			return;
+		}
+		
+		for (int i = 0; i < 4; i++) {
+			temp2[depth] = i;
+			permutationWithRepetition(depth + 1);
+		}
+	}
+	
+	static void bfs(int[] start, int[] end, int[][][] cube) {
+		Queue<Node> queue = new LinkedList<>();
+		queue.offer(new Node(start[0], start[1], start[2], 0));
+		
+		boolean[][][] visited = new boolean[5][5][5];
+		visited[start[0]][start[1]][start[2]] = true;
+		
+		while (!queue.isEmpty()) {
+			Node node = queue.poll();
+			if (node.h == end[0] && node.r == end[1] && node.c == end[2]) {
+				result = Math.min(result, node.steps);
+				if (result == 12) {
+					finishFlag = true;
+				}
+				return;
+			}
+			
+			for (int i = 0; i < 6; i++) {
+				int nh = node.h + dh[i];
+				int nr = node.r + dr[i];
+				int nc = node.c + dc[i];
+				
+				if (nh < 0 || nr < 0 || nc < 0
+						|| nh >= 5 || nr >= 5 | nc >= 5) {
+					continue;
+				}
+				if (cube[nh][nr][nc] == 0 || visited[nh][nr][nc]) {
+					continue;
+				}
+				
+				visited[nh][nr][nc] = true;
+				queue.offer(new Node(nh, nr, nc, node.steps + 1));
+			}
+		}
+	}
 	
 	static class Node {
 		private int h;
@@ -76,101 +169,11 @@ public class Main {
 		}
 	}
 	
-	static void permutationWithRepetition(int depth) {
-		if (depth == 5) {
-			// 판을 쌓는 경우의 수 -> 각 판을 회전하는 경우의 수
-			// 경우를 특정시킨 cube
-			cube = new int[5][5][5];
-			for (int h = 0; h < 5; h++) {
-				int[][] map = candidates.get(temp[h]);
-				for (int i = 0; i < temp2[h]; i++) {
-					int[][] rotated = rotate(map);
-					for (int r = 0; r < 5; r++) {
-						for (int c = 0; c < 5; c++) {
-							map[r][c] = rotated[r][c];
-						}
-					}
-				}
-				for (int r = 0; r < 5; r++) {
-					for (int c = 0; c < 5; c++) {
-						cube[h][r][c] = map[r][c];
-					}
-				}
-			}
-			
-			// 3. 꼭지점 8개 중 시작과 종료 가능한 경우의 수
-			for (int i = 0; i < 8; i++) {
-//				for (int h = 0; h < 5; h++) {
-//					for (int r = 0; r < 5; r++) {
-//						for (int c = 0; c < 5; c++) {
-//							System.out.print(cube[h][r][c] + " ");
-//						}
-//						System.out.println();
-//					}
-//				}
-//				System.out.println();
-				
-				if (cube[starts[i][0]][starts[i][1]][starts[i][2]] == 0 || cube[ends[i][0]][ends[i][1]][ends[i][2]] == 0) {
-					continue;
-				}
-				
-				// 4. 최단 거리 탐색 bfs
-				bfs(starts[i], ends[i]);
-				if (finishFlag) {
-					return;
-				}
-			}
-			
-			return;
-		}
-		
-		for (int i = 0; i < 4; i++) {
-			temp2[depth] = input[i];
-			permutationWithRepetition(depth + 1);
-		}
-	}
-	
-	static void bfs(int[] start, int[] end) {		
-		cubeVisited = new boolean[5][5][5];
-		cubeVisited[start[0]][start[1]][start[2]] = true;
-
-		Queue<Node> queue = new LinkedList<Main.Node>();
-		queue.offer(new Node(start[0], start[1], start[2], 0));
-		
-		while (!queue.isEmpty()) {
-			Node node = queue.poll();
-			
-			if (node.h == end[0] && node.r == end[1] && node.c == end[2]) {
-				minResult = Math.min(minResult, node.steps);
-				if (minResult == 12) {
-					finishFlag = true;
-				}
-				return;
-			}
-			
-			for (int i = 0; i < 6; i++) {
-				int nh = node.h + dh[i];
-				int nr = node.r + dr[i];
-				int nc = node.c + dc[i];
-				
-				if (nh < 0 || nr < 0 || nc < 0 || nh >= 5 || nr >= 5 || nc >= 5) {
-					continue;
-				}
-				if (cube[nh][nr][nc] != 1 || cubeVisited[nh][nr][nc]) {
-					continue;
-				}
-				
-				cubeVisited[nh][nr][nc] = true;
-				queue.offer(new Node(nh, nr, nc ,node.steps + 1));
-			}
-		}
-	}
-	
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		StringTokenizer st;
-	
+		
 		candidates = new ArrayList<int[][]>();
 		for (int h = 0; h < 5; h++) {
 			int[][] map = new int[5][5];
@@ -183,19 +186,16 @@ public class Main {
 			candidates.add(map);
 		}
 		
-//		System.out.println();
-//		for (int[][] el : candidates) {
+//		for (int h = 0; h < 5; h++) {
 //			for (int r = 0; r < 5; r++) {
 //				for (int c = 0; c < 5; c++) {
-//					System.out.print(el[r][c] + " ");
+//					System.out.print(candidates.get(h)[r][c] + " ");
 //				}
 //				System.out.println();
 //			}
 //		}
 		
-//		int[][] map = candidates.get(0);
-//		int[][] rotated = rotate(map);
-//		System.out.println();
+//		int[][] rotated = rotateMap(candidates.get(0));
 //		for (int r = 0; r < 5; r++) {
 //			for (int c = 0; c < 5; c++) {
 //				System.out.print(rotated[r][c] + " ");
@@ -203,8 +203,6 @@ public class Main {
 //			System.out.println();
 //		}
 		
-		// 판 5개 쌓는 경우의 수 -> 각 판을 4개의 경우로 회전 -> 꼭지점 8개 중 시작과 종료 가능한 곳에서 최단 거리 탐색 bfs
-		// 1. 판 5개 쌓는 경우의 수
 		input = new int[5];
 		for (int i = 0; i < 5; i++) {
 			input[i] = i;
@@ -212,13 +210,19 @@ public class Main {
 		
 		temp = new int[5];
 		visited = new boolean[5];
-		output = new ArrayList<int[]>();
-
-		minResult = Integer.MAX_VALUE;
-		finishFlag = false;
+//		output = new ArrayList<>();
+		
+		result = Integer.MAX_VALUE;
 		permutation(0);
 		
-		bw.write(minResult == Integer.MAX_VALUE ? "-1" : String.valueOf(minResult));
+//		for (int[] el : output) {
+//			for (int e : el) {
+//				System.out.print(e + " ");
+//			}
+//			System.out.println();
+//		}
+		
+		bw.write(result == Integer.MAX_VALUE ? "-1" : String.valueOf(result));
 		bw.flush();
 		bw.close();
 		br.close();
