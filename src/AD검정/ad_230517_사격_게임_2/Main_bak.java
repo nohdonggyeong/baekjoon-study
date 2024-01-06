@@ -135,22 +135,23 @@ public class Main_bak {
 	
 	static void dfs(int depth, int[] el, int t) {
 		if (depth == combR) {
-//			if (t == 3) {
-//				System.out.println();
-//				for (int e : el) {
-//					for (int i = 0; i < 2; i++) {
-//						System.out.print(String.valueOf(input.get(e)[i]) + " ");
-//					}
-//					System.out.println();
-//				}
-//				
-//				for (int r = 0; r < R; r++) {
-//					for (int c = 0; c < C; c++) {
-//						System.out.print(visit[r][c] > 0 ?  "O " : "X ");
-//					}
-//					System.out.println();
-//				}				
-//			}
+			int s = getSum();
+			if (s == 127) {
+				System.out.println();
+				for (int e : el) {
+					for (int i = 0; i < 2; i++) {
+						System.out.print(String.valueOf(input.get(e)[i]) + " ");
+					}
+					System.out.println();
+				}
+				
+				for (int r = 0; r < R; r++) {
+					for (int c = 0; c < C; c++) {
+						System.out.print(visit[r][c] > 0 ?  "O " : "X ");
+					}
+					System.out.println();
+				}				
+			}
 			
 			answer = Math.max(answer, getSum());
 			return;
@@ -225,7 +226,6 @@ public class Main_bak {
 	public static void main(String args[]) throws IOException {
 //		LocalDateTime start = LocalDateTime.now();
 		
-		System.setIn(new FileInputStream("src/삼성SW역량테스트/ad_230517_사격_게임_2/input.txt"));
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		StringBuilder sb = new StringBuilder();
