@@ -14,8 +14,7 @@ import java.util.StringTokenizer;
 public class Main {
 	static int w, h;
 	static char[][] map;
-	static List<Node> candidates;
-	static Node cleaner;
+	static Node[] nodeArr;
 	
 	static class Node {
 		private int r;
@@ -29,27 +28,7 @@ public class Main {
 		}
 	}
 	
-	static int n;
-	static int[] input, temp;
-	static boolean[] visited;
-	static List<int[]> output;
-	
-	static void permutation(int depth) {
-		if (depth == n) {
-			output.add(temp.clone());
-			return;
-		}
-		
-		for (int i = 0; i < n; i++) {
-			if (!visited[i]) {
-				visited[i] = true;
-				temp[depth] = input[i];
-				permutation(depth + 1);
-				visited[i] = false;
-			}
-		}
-	}
-	
+	static int[][] distArr;
 	static int[] dr = {0, -1, 0, 1};
 	static int[] dc = {-1, 0, 1, 0};
 	
@@ -74,7 +53,7 @@ public class Main {
 				if (nr < 0 || nc < 0 || nr >= h || nc >= w) {
 					continue;
 				}
-				if (map[nr][nc] == 'x' || visited[nr][nc]) {
+				if (visited[nr][nc] || map[nr][nc] == 'x') {
 					continue;
 				}
 				
@@ -82,95 +61,130 @@ public class Main {
 				visited[nr][nc] = true;
 			}
 		}
-		return 0;
+		
+		return -1;
 	}
+	
+	static int n, r;
+	static int[] input, temp;
+	static boolean[] visit;
+	static List<int[]> output;
+	
+	static void permutation(int depth) {
+		if (depth == r) {
+			output.add(temp.clone());
+			return;
+		}
+		
+		for (int i = 0; i < n; i++) {
+			if (!visit[i]) {
+				visit[i] = true;
+				temp[depth] = input[i];
+				permutation(depth + 1);
+				visit[i] = false;
+			}
+		}
+	}
+	
+	static int minDist;
 	
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		StringTokenizer st;
 		StringBuilder sb = new StringBuilder();
-
-		// 1. while로 입력 계속 받고 "0 0" 들어오면 break
+		
 		while (true) {
 			st = new StringTokenizer(br.readLine());
 			w = Integer.parseInt(st.nextToken());
 			h = Integer.parseInt(st.nextToken());
-
+			
 			if (w == 0 && h == 0) {
 				break;
 			}
+			
 			map = new char[h][w];
-			candidates = new ArrayList<Main.Node>();
-			for (int r = 0; r < h; r++) {
+			nodeArr = new Node[11];
+			int len = 1;
+			
+			for (int i = 0; i < h; i++) {
 				String str = br.readLine();
-				for (int c = 0; c < w; c++) {
-					map[r][c] = str.charAt(c);
-					if (map[r][c] == '*') {
-						// 2. 먼지 위치를 list에 담기
-						candidates.add(new Node(r, c, 0));
-					} else if (map[r][c] == 'o') {
-						cleaner = new Node(r, c, 0);
+				for (int j = 0; j < w; j++) {
+					map[i][j] = str.charAt(j);
+					if (map[i][j] == '*') {
+						nodeArr[len++] = new Node(i, j, 0);
+					} else if (map[i][j] == 'o') {
+						nodeArr[0] = new Node(i, j, 0);
 					}
 				}
 			}
 			
-			// 순열로 먼지 순서 case 가져오기
-			n = candidates.size();
-			input = new int[n];
-			for (int i = 0; i < n; i++) {
-				input[i] = i;
-			}
-			temp = new int[n];
-			visited = new boolean[n];
-			output = new ArrayList<>();
-			permutation(0);
+			// 청소기와 먼지들의 모든 거리를 담을 배열
+			distArr = new int[len][len];
 			
-			// case를 for문으로 돌면서 bfs로 최단 거리 구하기
-			int minDistance = Integer.MAX_VALUE;
+			// 청소기와 먼지들의 모든 거리를 bfs로 구하고 배열 담기
+			boolean isPossible = true;
 			loop:
-			for (int[] el : output) {
-				int sumDistance = 0;
-				
-				// 출발지
-				Node start = cleaner;
-				// 목적지
-				Node end = candidates.get(el[0]);
-				
-				int distance = 0;
-				distance = bfs(start, end);
-				// 목적지 도달 못한 경우를 체크한다.
-				if (distance == 0) {
-					minDistance = -1;
-					break loop;
-				}
-				sumDistance += distance;
-				
-				for (int i = 0; i < el.length - 1; i++) {
-					// 출발지
-					start = candidates.get(el[i]);
-					// 목적지
-					end = candidates.get(el[i + 1]);
-
-					distance = 0;
-					distance = bfs(start, end);
-					// 목적지 도달 못한 경우를 체크한다.
-					if (distance == 0) {
-						minDistance = -1;
+			for (int i = 0; i < len - 1; i++) {
+				for (int j = i + 1; j < len; j++) {
+					Node start = nodeArr[i];
+					Node end = nodeArr[j];
+					distArr[i][j] = bfs(start, end);
+					
+					if (distArr[i][j] == -1) {
+						isPossible = false;
 						break loop;
 					}
-					sumDistance += distance;
+					
+					distArr[j][i] = distArr[i][j];
 				}
-				minDistance = Math.min(minDistance, sumDistance);
 			}
-			// minResult로 최단거리 갱신
-			sb.append(minDistance).append("\n");
+			
+			if (!isPossible) {
+				sb.append("-1").append("\n");
+				continue;
+			}
+			
+//			System.out.println();
+//			for (int i = 0; i < len; i++) {
+//				for (int j = 0; j < len; j++) {
+//					System.out.print(distArr[i][j] + " ");
+//				}
+//				System.out.println();
+//			}
+			
+			
+			// 청소기인 0부터 시작해서 모든 먼지 순열 돌며 최소 거리 합계 비교
+			n = len - 1;
+			r = len - 1;
+			
+			input = new int[n];
+			for (int i = 0; i < n; i++) {
+				input[i] = i + 1;
+			}
+			
+			temp = new int[r];
+			visit = new boolean[n];
+			output = new ArrayList<int[]>();
+			permutation(0);
+			
+			minDist = Integer.MAX_VALUE;
+			for (int[] el : output) {
+				int sum = 0;
+				sum += distArr[0][el[0]];
+				
+				for (int i = 1; i < el.length; i++) {
+					sum += distArr[el[i - 1]][el[i]];
+				}
+				
+				minDist = Math.min(minDist, sum);
+			}
+			
+			sb.append(minDist).append("\n");
 		}
-		
 		bw.write(sb.toString().trim());
 		bw.flush();
 		bw.close();
 		br.close();
 	}
-
 }
