@@ -7,9 +7,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 
-public class Main {
+public class Main_bak20 {
 	static int n, r;
 	static int[] input, temp;
 	static List<int[]> output;
@@ -21,14 +20,14 @@ public class Main {
 		}
 		
 		for (int i = 0; i < n; i++) {
-			temp[depth] = input[i];
+			temp[depth] = i;
 			permutationWithRepetition(depth + 1);
 		}
 	}
+	
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-		StringTokenizer st;
 		StringBuilder sb = new StringBuilder();
 		
 		n = 10;
@@ -36,11 +35,11 @@ public class Main {
 		
 		input = new int[n];
 		for (int i = 0; i < n; i++) {
-			input[i] = i + 1;
+			input[i] = i;
 		}
 		
 		temp = new int[r];
-		output = new ArrayList<>();
+		output = new ArrayList<int[]>();
 		permutationWithRepetition(0);
 		
 		for (int[] el : output) {
@@ -49,7 +48,7 @@ public class Main {
 			}
 			sb.append("\n");
 		}
-		bw.write(sb.toString().trim());
+		bw.write(sb.toString());
 		bw.flush();
 		bw.close();
 		br.close();

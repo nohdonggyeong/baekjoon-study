@@ -1,34 +1,33 @@
-package 알고리즘.순열.template_permutation_with_repetition;
+package 알고리즘.순열.template_combination_with_repetition;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
 
-public class Main {
+public class Main_bak20 {
 	static int n, r;
 	static int[] input, temp;
 	static List<int[]> output;
 	
-	static void permutationWithRepetition(int depth) {
+	static void combinationWithRepetition(int start, int depth) {
 		if (depth == r) {
 			output.add(temp.clone());
 			return;
 		}
 		
-		for (int i = 0; i < n; i++) {
+		for (int i = start; i < n; i++) {
 			temp[depth] = input[i];
-			permutationWithRepetition(depth + 1);
+			combinationWithRepetition(i, depth + 1);
 		}
 	}
+	
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-		StringTokenizer st;
 		StringBuilder sb = new StringBuilder();
 		
 		n = 10;
@@ -36,12 +35,12 @@ public class Main {
 		
 		input = new int[n];
 		for (int i = 0; i < n; i++) {
-			input[i] = i + 1;
+			input[i] = i;
 		}
 		
 		temp = new int[r];
-		output = new ArrayList<>();
-		permutationWithRepetition(0);
+		output = new ArrayList<int[]>();
+		combinationWithRepetition(0, 0);
 		
 		for (int[] el : output) {
 			for (int e : el) {
@@ -49,7 +48,7 @@ public class Main {
 			}
 			sb.append("\n");
 		}
-		bw.write(sb.toString().trim());
+		bw.write(sb.toString());
 		bw.flush();
 		bw.close();
 		br.close();

@@ -3,10 +3,11 @@ package 알고리즘.순열.template_combination;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
 public class Main {
 	static int n, r;
@@ -20,7 +21,7 @@ public class Main {
 			int index = 0;
 			for (int i = 0; i < n; i++) {
 				if (visited[i]) {
-					temp[index++] = i;
+					temp[index++] = input[i];
 				}
 			}
 			output.add(temp.clone());
@@ -35,18 +36,17 @@ public class Main {
 			}
 		}
 	}
-	
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+		StringTokenizer st;
 		StringBuilder sb = new StringBuilder();
 		
 		n = 10;
 		r = 3;
-		
 		input = new int[n];
 		for (int i = 0; i < n; i++) {
-			input[i] = i;
+			input[i] = i + 1;
 		}
 		
 		visited = new boolean[n];
@@ -59,7 +59,7 @@ public class Main {
 			}
 			sb.append("\n");
 		}
-		bw.write(sb.toString());
+		bw.write(sb.toString().trim());
 		bw.flush();
 		bw.close();
 		br.close();

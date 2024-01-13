@@ -1,12 +1,13 @@
 package 알고리즘.순열.template_combination_with_repetition;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
+import java.util.StringTokenizer;
 
 public class Main {
 	static int n, r;
@@ -24,10 +25,10 @@ public class Main {
 			combinationWithRepetition(i, depth + 1);
 		}
 	}
-	
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+		StringTokenizer st;
 		StringBuilder sb = new StringBuilder();
 		
 		n = 10;
@@ -35,7 +36,7 @@ public class Main {
 		
 		input = new int[n];
 		for (int i = 0; i < n; i++) {
-			input[i] = i;
+			input[i] = i + 1;
 		}
 		
 		temp = new int[r];
@@ -48,7 +49,7 @@ public class Main {
 			}
 			sb.append("\n");
 		}
-		bw.write(sb.toString());
+		bw.write(sb.toString().trim());
 		bw.flush();
 		bw.close();
 		br.close();
