@@ -10,22 +10,31 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 public class Main {
+	// 중복 조합으로 사격 지점 3곳 선정(같은 곳에서 방향 다르게 3번 가능)
+	// 중복 조합의 끝에서 중복 순열로 사격 방향 선정(다른 사격지점에서 동일하게 사격 가능)
+	
 	static int T, H, W;
 	static int[][] D;
+	static int answer;
+	static boolean[][] visited;
 	
 	static List<int[]> candidates;
-	
 	static int n, r;
-	static int[] input, temp, temp2;
-
-	static boolean[][] visited;
-	static int maxPoint;
+	static int[] input, input2;
+	static int[] temp, temp2;
+	static List<int[]> output;
 	
-	// 쏘는 지점 3개를 구하는 함수
 	static void combinationWithRepetition(int start, int depth) {
 		if (depth == r) {
+//			output.add(temp.clone());
+//			return;
+			
+			input2 = new int[3];
+			for (int i = 0; i < 3; i++) {
+				input2[i] = i;
+			}
 			temp2 = new int[3];
-			combinationWithRepetition2(0);
+			permutationWithRepetition(0);
 			return;
 		}
 		
@@ -35,69 +44,53 @@ public class Main {
 		}
 	}
 	
-	// 쏘는 방향 3개를 구하는 함수
-	static void combinationWithRepetition2(int depth) {
+	static void permutationWithRepetition(int depth) {
 		if (depth == 3) {
-			// 사격
+			// temp.clone() -> {사격 장소 3곳}
+			// temp2.clone() -> {사격 3방향}
 			visited = new boolean[H][W];
-			for (int s = 0; s < temp.length; s++) {
-				int[] startPoint = candidates.get(temp[s]);
-				if (startPoint[0] == 0 && startPoint[1] == 0) {
-					switch (temp2[s]) {
-					case 0: // 오른쪽으로 사격
-						for (int i = 0; i < W; i++) {
-							visited[0][i] = true;
-						}
+			
+			for (int i = 0; i < temp.length; i++) {
+				int h = candidates.get(temp[i])[0];
+				int w = candidates.get(temp[i])[1];
+				if (h == 0 && w == 0) {
+					switch (temp2[i]) {
+					case 0: // 오른쪽
+						shootRight(h, w);
 						break;
-					case 1: // 오른쪽 아래로 사격
-						for (int i = 0; i < Math.min(H, W); i++) {
-							visited[i][i] = true;
-						}
+					case 1: // 오른쪽 아래
+						shootRightDown(h, w);
 						break;
-					case 2: // 아래로 사격
-						for (int i  = 0; i < H; i++) {
-							visited[i][0] = true;
-						}
+					case 2: // 아래
+						shootDown(h, w);
 						break;
 					default:
 						break;
 					}
-				} else if (startPoint[0] == 0 && startPoint[1] != 0) {
-					switch (temp2[s]) {
-					case 0: // 왼쪽 아래로 사격
-						for (int i = 0; i <= Math.min(H - 1, startPoint[1]); i++) {
-							visited[i][startPoint[1] - i] = true;
-						}
+				} else if (w == 0) {
+					switch (temp2[i]) {
+					case 0: // 오른쪽위
+						shootRightUp(h, w);
 						break;
-					case 1: // 아래로 사격
-						for (int i = 0; i <= H - 1; i++) {
-							visited[i][startPoint[1]] = true;
-						}
+					case 1: // 오른쪽
+						shootRight(h, w);
 						break;
-					case 2: // 오른쪽 아래로 사격
-						for (int i = 0; i <= Math.min(H - 1, W - 1 - startPoint[1]); i++) {
-							visited[i][startPoint[1] + i] = true;
-						}
+					case 2: // 오른쪽아래
+						shootRightDown(h, w);
 						break;
 					default:
 						break;
 					}
-				} else if (startPoint[0] != 0 && startPoint[1] == 0) {
-					switch (temp2[s]) {
-					case 0: // 오른쪽 위로 사격
-						for (int i = 0; i <= Math.min(startPoint[0], W - 1); i++) {
-							visited[startPoint[0] - i][i] = true;
-						}
+				} else if (h == 0) {
+					switch (temp2[i]) {
+					case 0: // 오른쪽아래
+						shootRightDown(h, w);
 						break;
-					case 1: // 오른쪽으로 사격
-						for (int i = 0; i <= W - 1; i++) {
-							visited[startPoint[0]][i] = true;
-						}
+					case 1: // 아래
+						shootDown(h, w);
 						break;
-					case 2: // 오른쪽 아래로 사격
-						for (int i  = 0; i <= Math.min(H - 1 - startPoint[0], W - 1); i++) {
-							visited[startPoint[0] + i][i] = true;
-						}
+					case 2: // 왼쪽아래
+						shootLeftDown(h, w);
 						break;
 					default:
 						break;
@@ -105,23 +98,68 @@ public class Main {
 				}
 			}
 			
-			// 계산
-			int score = 0;
+			// visited true -> sum
+			int sum = 0;
 			for (int h = 0; h < H; h++) {
-				for(int w = 0; w < W; w++) {
+				for (int w = 0; w < W; w++) {
 					if (visited[h][w]) {
-						score += D[h][w];
+						sum += D[h][w];
 					}
 				}
 			}
 			
-			maxPoint = Math.max(maxPoint, score);
+			answer = Math.max(answer, sum);
 			return;
 		}
 		
 		for (int i = 0; i < 3; i++) {
-			temp2[depth] = input[i];
-			combinationWithRepetition2(depth + 1);
+			temp2[depth] = input2[i];
+			permutationWithRepetition(depth + 1);
+		}
+	}
+	
+	static void shootRight(int h, int w) {
+		for (int i = 0; i < Math.max(H, W); i++) {
+			if (w + i >= W) {
+				return;
+			}
+			visited[h][w + i] = true;
+		}
+	}
+	
+	static void shootRightDown(int h, int w) {
+		for (int i = 0; i < Math.max(H, W); i++) {
+			if (h + i >= H || w + i >= W) {
+				return;
+			}
+			visited[h + i][w + i] = true;
+		}
+	}
+	
+	static void shootDown(int h, int w) {
+		for (int i = 0; i < Math.max(H, W); i++) {
+			if (h + i >= H) {
+				return;
+			}
+			visited[h + i][w] = true;
+		}
+	}
+	
+	static void shootRightUp(int h, int w) {
+		for (int i = 0; i < Math.max(H, W); i++) {
+			if (h - i < 0 || w + i >= W) {
+				return;
+			}
+			visited[h - i][w + i] = true;
+		}
+	}
+	
+	static void shootLeftDown(int h, int w) {
+		for (int i = 0; i < Math.max(H, W); i++) {
+			if (h + i >= H || w - i < 0) {
+				return;
+			}
+			visited[h + i][w - i] = true;
 		}
 	}
 	
@@ -145,6 +183,8 @@ public class Main {
 				}
 			}
 			
+			// 사격 장소 3곳 선정
+			// {h, 0}, {0, w} - {0, 0}
 			candidates = new ArrayList<int[]>();
 			for (int h = 0; h < H; h++) {
 				candidates.add(new int[] {h, 0});
@@ -153,6 +193,8 @@ public class Main {
 				candidates.add(new int[] {0, w});
 			}
 			
+			
+			// 사격 방향 선정
 			n = H + W - 1;
 			r = 3;
 			
@@ -161,17 +203,16 @@ public class Main {
 				input[i] = i;
 			}
 			
-			temp = new int[3];
-			maxPoint = Integer.MIN_VALUE;
-			
+			temp = new int[r];
+			answer = Integer.MIN_VALUE;
 			combinationWithRepetition(0, 0);
-			
-			sb.append("#").append(t).append(" ").append(maxPoint).append("\n");
+				
+			sb.append("#").append(t).append(" ").append(answer).append("\n");
 		}
+		
 		bw.write(sb.toString().trim());
 		bw.flush();
 		bw.close();
 		br.close();
 	}
-
 }

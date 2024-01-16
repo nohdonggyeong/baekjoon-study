@@ -5,144 +5,141 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.StringTokenizer;
 
 public class Main {
-
-	static int T, K, Q;
-	static int[] points;
-	static Scores[] checkScores;
-	static boolean[] checkResult;
+	static int T;
+	static int K, Q;
 	
-	static class Scores {
-		private int watt;
-		private int hans;
-		private int snow;
-		
-		Scores(int watt, int hans, int snow) {
-			this.watt = watt;
-			this.hans = hans;
-			this.snow = snow;
-		}
-	}
+	static int[] gamePoint;
+	static List<int[]> output;
+	static List<int[]> compareList;
 	
-	public static void check(Scores scores) {
-		for (int i = 0; i < checkScores.length; i++) {
-			if (checkScores[i].watt == scores.watt
-					&& checkScores[i].hans == scores.hans
-					&& checkScores[i].snow == scores.snow) {
-				checkResult[i] = true;
-			}
-		}
-	}
-	
-	public static void dfs(Scores scores, int depth) {
+	static void backTracking(int depth, int watt, int hans, int snow) {
 		if (depth == K) {
+			output.add(new int[] {watt, hans, snow});
 			return;
 		}
 		
+		int minusWatt = 0;
+		int minusSnow = 0;
+		int minusHans = 0;
 		for (int i = 0; i < 3; i++) {
-			// 0: watt win, 1: hans win, 2: snow win
-			switch (i) {
-			case 0:
-				if (scores.hans - points[depth] < 0) {
-					scores.watt += scores.hans;
-					scores.hans = 0;
-				} else {
-					scores.watt += points[depth];
-					scores.hans -= points[depth];
-				}
+			switch(i) {
+			case 0: // 와트 승리
+				minusSnow = snow >= gamePoint[depth] ? gamePoint[depth] : snow;
+				minusHans = hans >= gamePoint[depth] ? gamePoint[depth] : hans;
+				watt = watt + minusSnow + minusHans;
+				snow -= minusSnow;
+				hans -= minusHans;
 
-				if (scores.snow - points[depth] < 0) {
-					scores.watt += scores.snow;
-					scores.snow = 0;
-				} else {
-					scores.watt += points[depth];
-					scores.snow -= points[depth];
-				}
+//				System.out.println("depth: " + depth + ", i: " + i);
+//				System.out.println("watt: " + watt + ", hans: " + hans + ", snow: " + snow);
+				
+				backTracking(depth + 1, watt, hans, snow);
+				
+				watt = watt - minusSnow - minusHans;
+				snow += minusSnow;
+				hans += minusHans;
+				
 				break;
-			case 1:
-				if (scores.watt - points[depth] < 0) {
-					scores.hans += scores.watt;
-					scores.watt = 0;
-				} else {
-					scores.hans += points[depth];
-					scores.watt -= points[depth];
-				}
+			case 1: // 한스 승리
+				minusSnow = snow >= gamePoint[depth] ? gamePoint[depth] : snow;
+				minusWatt = watt >= gamePoint[depth] ? gamePoint[depth] : watt;
+				hans = hans + minusSnow + minusWatt;
+				snow -= minusSnow;
+				watt -= minusWatt;
 
-				if (scores.snow - points[depth] < 0) {
-					scores.hans += scores.snow;
-					scores.snow = 0;
-				} else {
-					scores.hans += points[depth];
-					scores.snow -= points[depth];
-				}
+//				System.out.println("depth: " + depth + ", i: " + i);
+//				System.out.println("watt: " + watt + ", hans: " + hans + ", snow: " + snow);
+				
+				backTracking(depth + 1, watt, hans, snow);
+				
+				hans = hans - minusSnow - minusWatt;
+				snow += minusSnow;
+				watt += minusWatt;
+				
 				break;
-			case 2:
-				if (scores.watt - points[depth] < 0) {
-					scores.snow += scores.watt;
-					scores.watt = 0;
-				} else {
-					scores.snow += points[depth];
-					scores.watt -= points[depth];
-				}
+			case 2: // 스노우 승리
+				minusWatt = watt >= gamePoint[depth] ? gamePoint[depth] : watt;
+				minusHans = hans >= gamePoint[depth] ? gamePoint[depth] : hans;
+				snow = snow + minusWatt + minusHans;
+				watt -= minusWatt;
+				hans -= minusHans;
 
-				if (scores.hans - points[depth] < 0) {
-					scores.snow += scores.hans;
-					scores.hans = 0;
-				} else {
-					scores.snow += points[depth];
-					scores.hans -= points[depth];
-				}
+//				System.out.println("depth: " + depth + ", i: " + i);
+//				System.out.println("watt: " + watt + ", hans: " + hans + ", snow: " + snow);
+				
+				backTracking(depth + 1, watt, hans, snow);
+				
+				snow = snow - minusWatt - minusHans;
+				watt += minusWatt;
+				hans += minusHans;
+				
 				break;
 			default:
 				break;
 			}
-			check(scores);
-			dfs(scores, depth + 1);
 		}
 	}
-	
 	public static void main(String[] args) throws IOException {
-		
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-		StringBuilder sb = new StringBuilder();
 		StringTokenizer st;
+		StringBuilder sb = new StringBuilder();
 		
 		T = Integer.parseInt(br.readLine());
-		for (int t = 0; t < T; t++) {
-			
+		for (int t = 1; t <= T; t++) {
 			st = new StringTokenizer(br.readLine());
-			Scores scores = new Scores(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
+			int watt = Integer.parseInt(st.nextToken());
+			int hans = Integer.parseInt(st.nextToken());
+			int snow = Integer.parseInt(st.nextToken());
+			
 			K = Integer.parseInt(st.nextToken());
 			Q = Integer.parseInt(st.nextToken());
 			
-			points = new int[K];
+			gamePoint = new int[K];
 			st = new StringTokenizer(br.readLine());
 			for (int k = 0; k < K; k++) {
-				points[k] = Integer.parseInt(st.nextToken());
+				gamePoint[k] = Integer.parseInt(st.nextToken());
 			}
-
-			checkScores = new Scores[Q];
+			
+			compareList = new ArrayList<int[]>();
 			for (int q = 0; q < Q; q++) {
 				st = new StringTokenizer(br.readLine());
-				checkScores[q] = new Scores(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
+				compareList.add(new int[] {Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken())});
 			}
 			
-			checkResult = new boolean[Q];
-			dfs(scores, 0);
+			// 와트 한스 스노우가 각각 이기는 백트래킹, boolean을 false로 되돌리는 작업
+			// dfs로 가능한 결과 조합을 구해보고 compareList를 포함하면 1 출력
+			output = new ArrayList<>();
+			backTracking(0, watt, hans, snow);
 			
-			sb.append("#").append(t + 1);
-			for (boolean r : checkResult) {
-				sb.append(" ").append(r ? "1" : "0");
+			sb.append("#").append(t);
+			for (int[] el : compareList) {
+				boolean flag = false;
+				for (int[] op : output) {
+					if (Arrays.equals(op, el)) {
+						flag = true;
+						break;
+					}
+				}
+				
+				if (flag) {
+					sb.append(" 1");
+				} else {
+					sb.append(" 0");
+				}
 			}
 			sb.append("\n");
 		}
-		bw.write(sb.toString());
+		
+		bw.write(sb.toString().trim());
 		bw.flush();
 		bw.close();
 		br.close();
 	}
-
 }

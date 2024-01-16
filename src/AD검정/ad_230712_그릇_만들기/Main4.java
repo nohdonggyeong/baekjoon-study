@@ -10,15 +10,22 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main4 {
 	static int T;
 	static int N, M;
-	static int answer;
-	
 	static int[] materials;
-	static int[] input, temp;
 	static boolean[] visited;
+	static int[] temp;
 	static List<int[]> output;
+	
+	static boolean checkInclude() {
+		for (int[] el : output) {
+			if (Arrays.equals(el, temp)) {
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	static void combination(int start, int depth) {
 		if (depth == M) {
@@ -26,18 +33,14 @@ public class Main {
 			temp = new int[M];
 			for (int i = 0; i < N; i++) {
 				if (visited[i]) {
-					temp[index++] = materials[input[i]];
+					temp[index++] = materials[i];
 				}
 			}
 			
-			int[] result = temp.clone();
-			Arrays.sort(result);
-			for (int[] el : output) {
-				if (Arrays.equals(el, result)) {
-					return;
-				}
+			Arrays.sort(temp);
+			if (!checkInclude()) {
+				output.add(temp.clone());
 			}
-			output.add(result);
 			return;
 		}
 		
@@ -50,41 +53,45 @@ public class Main {
 		}
 	}
 	
-	public static void main(String[] args) throws IOException {
+	static int solution() {
+		visited = new boolean[N];
+		output = new ArrayList<int[]>();
+		combination(0, 0);
+		
+		for (int[] el : output) {
+			for (int e : el) {
+				System.out.print(String.valueOf(e) + " ");
+			}
+			System.out.println();
+		}
+		return output.size();
+	}
+	
+	public static void main(String args[]) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		StringTokenizer st;
 		StringBuilder sb = new StringBuilder();
 		
 		T = Integer.parseInt(br.readLine());
-		for (int t = 1; t <= T; t++) {
+		for (int t = 0; t < T; t++) {
 			st = new StringTokenizer(br.readLine());
 			N = Integer.parseInt(st.nextToken());
 			M = Integer.parseInt(st.nextToken());
-			
+
 			materials = new int[N];
 			st = new StringTokenizer(br.readLine());
 			for (int n = 0; n < N; n++) {
 				materials[n] = Integer.parseInt(st.nextToken());
 			}
 			
-			input = new int[N];
-			for (int i = 0; i < N; i++) {
-				input[i] = i;
-			}
+			int result = solution();
 			
-			visited = new boolean[N];
-			output = new ArrayList<>();
-			combination(0, 0);
-			
-			answer = output.size();			
-			
-			sb.append("#").append(t).append(" ").append(answer).append("\n");
+			sb.append("#").append(t + 1).append(" ").append(result).append("\n");
 		}
-		bw.write(sb.toString().trim());
+		bw.write(sb.toString());
 		bw.flush();
 		bw.close();
 		br.close();
 	}
 }
-

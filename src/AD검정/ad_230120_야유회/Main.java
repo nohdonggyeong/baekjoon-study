@@ -10,30 +10,28 @@ import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
-	static int T, N, M;
+	static int T, answer;
+	static int N, M;
 	static char[][] map;
-	// 바깥으로 던졌으면 visited[r][c][1]을 true 처리하고 visited[r][c][0]은 false 유지하기
+	static Node red, blue;
 	static boolean[][][] visited;
 	
-	static int[] dr = {0, -1, 0, 1};
-	static int[] dc = {-1, 0, 1, 0};
+	static int[] dr = {-1, 0, 1, 0};
+	static int[] dc = {0, 1, 0, -1};
 	
 	static class Node {
 		private int r;
 		private int c;
 		private int steps;
-		private boolean thrown;
+		private int thrown;
 		
-		public Node (int r, int c, int steps, boolean thrown) {
+		public Node(int r, int c, int steps, int thrown) {
 			this.r = r;
 			this.c = c;
 			this.steps = steps;
 			this.thrown = thrown;
 		}
 	}
-	
-	static Node red, blue;
-	static int redSteps, blueSteps, finishSteps;
 	
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -51,39 +49,28 @@ public class Main {
 			for (int n = 0; n < N; n++) {
 				String str = br.readLine();
 				for (int m = 0; m < M; m++) {
-					switch (str.charAt(m)) {
-					case '.':
-					case 'X':
-						map[n][m] = str.charAt(m);
-						break;
-					case 'R':
-						map[n][m] = str.charAt(m);
-						red = new Node(n, m, 0, false);
-						break;
-					case 'B':
-						map[n][m] = str.charAt(m);
-						blue = new Node(n, m, 0, false);
-						break;
-					default:
-						 break;
+					map[n][m] = str.charAt(m);
+					if (map[n][m] == 'R') {
+						red = new Node(n, m, 0, 0);
+					} else if (map[n][m] == 'B') {
+						blue = new Node(n, m, 0, 0);
 					}
 				}
 			}
 			
-			// 0, 0에서 R까지
-			redSteps = 0;
-			
-			Queue<Node> queue = new LinkedList<Main.Node>();
-			queue.offer(new Node(0, 0, 0, false));
+			// 0, 0에서 R까지 이동
+			Queue<Node> queue = new LinkedList<>();
+			queue.offer(new Node(0, 0, 0, 0));
 			
 			visited = new boolean[N][M][2];
 			visited[0][0][0] = true;
 			
+			int minRedPath = 0;
 			while (!queue.isEmpty()) {
 				Node node = queue.poll();
 				
 				if (node.r == red.r && node.c == red.c) {
-					redSteps = node.steps;
+					minRedPath = node.steps;
 					break;
 				}
 				
@@ -94,29 +81,29 @@ public class Main {
 					if (nr < 0 || nc < 0 || nr >= N || nc >= M) {
 						continue;
 					}
-					if (map[nr][nc] == 'X' || visited[nr][nc][0]) {
+					
+					if (map[nr][nc] == 'X' || visited[nr][nc][node.thrown]) {
 						continue;
 					}
 					
-					queue.offer(new Node(nr, nc, node.steps + 1, false));
-					visited[nr][nc][0] = true;
+					queue.offer(new Node(nr, nc, node.steps + 1, node.thrown));
+					visited[nr][nc][node.thrown] = true;
 				}
 			}
 			
-			// R에서 바깥으로 던지고 B까지
-			blueSteps = 0;
-			
-			queue = new LinkedList<Main.Node>();
-			queue.offer(new Node(red.r, red.c, 0, false));
+			// R에서 B까지 이동
+			queue = new LinkedList<>();
+			queue.offer(new Node(red.r, red.c, 0, 0));
 			
 			visited = new boolean[N][M][2];
-			visited[red.r][red.c][0] = true;
+			visited[0][0][0] = true;
 			
+			int minBluePath = 0;
 			while (!queue.isEmpty()) {
 				Node node = queue.poll();
 				
-				if (node.r == blue.r && node.c == blue.c && node.thrown) {
-					blueSteps = node.steps;
+				if (node.r == blue.r && node.c == blue.c && node.thrown == 1) {
+					minBluePath = node.steps;
 					break;
 				}
 				
@@ -127,40 +114,34 @@ public class Main {
 					if (nr < 0 || nc < 0 || nr >= N || nc >= M) {
 						continue;
 					}
-					if (map[nr][nc] == 'X' || (!node.thrown && visited[nr][nc][0]) || (node.thrown && visited[nr][nc][1])) {
+					
+					if (map[nr][nc] == 'X' || visited[nr][nc][node.thrown]) {
 						continue;
 					}
 					
-					if (!node.thrown) {
-						if (nr == 0 || nc == 0 || nr == N -1 || nc == M - 1) {
-							queue.offer(new Node(nr, nc, node.steps + 1, true));
-							visited[nr][nc][1] = true;
-						} else {
-							queue.offer(new Node(nr, nc, node.steps + 1, false));
-							visited[nr][nc][0] = true;
-						}
-					} else {
-						queue.offer(new Node(nr, nc, node.steps + 1, true));
+					if (nr == 0 || nc == 0 || nr == N -1 || nc == M - 1) {
+						queue.offer(new Node(nr, nc, node.steps + 1, 1));
 						visited[nr][nc][1] = true;
+					} else {
+						queue.offer(new Node(nr, nc, node.steps + 1, node.thrown));
+						visited[nr][nc][node.thrown] = true;
 					}
-					
 				}
 			}
 			
-			// B에서 바깥으로 던지고 N - 1, M - 1까지
-			finishSteps = 0;
-			
-			queue = new LinkedList<Main.Node>();
-			queue.offer(new Node(blue.r, blue.c, 0, false));
+			// B에서 목적지까지 이동
+			queue = new LinkedList<>();
+			queue.offer(new Node(blue.r, blue.c, 0, 0));
 			
 			visited = new boolean[N][M][2];
-			visited[blue.r][blue.c][0] = true;
+			visited[0][0][0] = true;
 			
+			int minFinalPath = 0;
 			while (!queue.isEmpty()) {
 				Node node = queue.poll();
 				
-				if (node.r == N - 1 && node.c == M - 1 && node.thrown) {
-					finishSteps = node.steps;
+				if (node.r == N - 1 && node.c == M - 1 && node.thrown == 1) {
+					minFinalPath = node.steps;
 					break;
 				}
 				
@@ -171,35 +152,35 @@ public class Main {
 					if (nr < 0 || nc < 0 || nr >= N || nc >= M) {
 						continue;
 					}
-					if (map[nr][nc] == 'X' || (!node.thrown && visited[nr][nc][0]) || (node.thrown && visited[nr][nc][1])) {
+					
+					if (map[nr][nc] == 'X' || visited[nr][nc][node.thrown]) {
 						continue;
 					}
-					
-					if (!node.thrown) {
-						if (nr == 0 || nc == 0 || nr == N -1 || nc == M - 1) {
-							queue.offer(new Node(nr, nc, node.steps + 1, true));
-							visited[nr][nc][1] = true;
-						} else {
-							queue.offer(new Node(nr, nc, node.steps + 1, false));
-							visited[nr][nc][0] = true;
-						}
-					} else {
-						queue.offer(new Node(nr, nc, node.steps + 1, true));
+
+					if (nr == 0 || nc == 0 || nr == N -1 || nc == M - 1) {
+						queue.offer(new Node(nr, nc, node.steps + 1, 1));
 						visited[nr][nc][1] = true;
+					} else {
+						queue.offer(new Node(nr, nc, node.steps + 1, node.thrown));
+						visited[nr][nc][node.thrown] = true;
 					}
 				}
 			}
 			
-			if (redSteps == 0 || blueSteps == 0 || finishSteps == 0) {
-				sb.append("#").append(t).append(" ").append(-1).append("\n");
+//			System.out.println("redPath: " + minRedPath + ", bluePath: " + minBluePath + ", finalPath: " + minFinalPath);
+			
+			if (minRedPath == 0 || minBluePath == 0 || minFinalPath ==0) {
+				answer = -1;
 			} else {
-				sb.append("#").append(t).append(" ").append(redSteps + blueSteps + finishSteps).append("\n");				
+				answer = minRedPath + minBluePath + minFinalPath;
 			}
+			
+			sb.append("#").append(t).append(" ").append(answer).append("\n");
 		}
+		
 		bw.write(sb.toString().trim());
 		bw.flush();
 		bw.close();
 		br.close();
 	}
-
 }
