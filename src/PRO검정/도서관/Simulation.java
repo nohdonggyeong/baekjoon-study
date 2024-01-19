@@ -60,7 +60,7 @@ public class Simulation {
 		
 		long end = System.currentTimeMillis();
 		bw.newLine();
-		bw.write(String.valueOf((end - start) / 1000.0) + "초"); // 1.29초
+		bw.write(String.valueOf((end - start) / 1000.0) + "초"); // 2~3초
 		
 		bw.flush();
 		bw.close();

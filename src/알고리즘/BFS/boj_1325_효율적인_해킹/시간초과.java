@@ -11,13 +11,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
-public class 시간초과_신뢰순서_바꾸기_전 {
-// 방향 그래프(Directed Graph) 문제: A가 B를 신뢰 == B를 해킹하면, A도 해킹 가능
-// 그래프 구현 2가지 방법
-// 인접 행렬, 인접 리스트
-// 리스트, 배열 속도 차이
-// bfs, dfs 시간 비교
-// 연결관계가 뻗어나가는 개수를 배열이나 리스트에 적고 가장 큰 수를 출력
+public class 시간초과 {
 	static int N, M;
 	static List<List<Integer>> graph;
 	
@@ -45,6 +39,7 @@ public class 시간초과_신뢰순서_바꾸기_전 {
 	}
 	
 	public static void main(String[] args) {
+		long start = System.nanoTime();
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out))) {
 			StringTokenizer st;
@@ -71,7 +66,10 @@ public class 시간초과_신뢰순서_바꾸기_전 {
 				resultArr[n] = bfs(n);
 				maxCount = Math.max(maxCount, resultArr[n]);
 			}
-			
+
+//			for (int i = 1; i < resultArr.length; i++) {
+//				System.out.println("i: " + resultArr[i]);
+//			}
 			for (int i = 1; i < resultArr.length; i++) {
 				if (resultArr[i] == maxCount) {
 					sb.append(i).append(" ");
@@ -79,7 +77,10 @@ public class 시간초과_신뢰순서_바꾸기_전 {
 			}
 			bw.write(sb.toString().trim());
 			bw.flush();
-			
+
+			long end = System.nanoTime();
+			System.out.println();
+			System.out.println((end - start) / 1000000000.0 + "초");
 		} catch (IOException e) {
 			e.getStackTrace();
 		}

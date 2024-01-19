@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
-public class Main {
+public class DFS {
 	static int N, M;
 	static List<Integer>[] graph;
 	static int[] countArr;
@@ -19,24 +19,16 @@ public class Main {
 	static Queue<Integer> queue;
 	static boolean[] visited;
 	
-	static void bfs(int n) {
-		queue = new LinkedList<>();
-		queue.offer(n);
-		
-		visited = new boolean[N + 1];
-		visited[n] = true;
-		
-		while (!queue.isEmpty()) {
-			int num = queue.poll();
-			
-			for (int el : graph[num]) {
-				if (!visited[el]) {
-					queue.offer(el);
-					visited[el] = true;
-					
-					countArr[el] += 1;
-					maxCount = Math.max(maxCount, countArr[el]);
-				}
+	static void dfs(int n) {
+		for (int el : graph[n]) {
+			if (!visited[el]) {
+				visited[el] = true;
+				countArr[el] += 1;
+				maxCount = Math.max(maxCount, countArr[el]);
+				
+				dfs(el);
+				
+				visited[el] = false;
 			}
 		}
 	}
@@ -64,7 +56,9 @@ public class Main {
 			countArr = new int[N + 1];
 			maxCount = 0;
 			for (int n = 1; n <= N; n++) {
-				bfs(n);
+				visited = new boolean[N + 1];
+				visited[n] = true;
+				dfs(n);
 			}
 
 			for (int i = 1; i <= N; i++) {
