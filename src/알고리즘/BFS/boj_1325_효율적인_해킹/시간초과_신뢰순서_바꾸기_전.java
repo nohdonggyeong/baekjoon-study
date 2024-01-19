@@ -11,35 +11,39 @@ import java.util.List;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
-public class Main {
+public class 시간초과_신뢰순서_바꾸기_전 {
+// 방향 그래프(Directed Graph) 문제: A가 B를 신뢰 == B를 해킹하면, A도 해킹 가능
+// 그래프 구현 2가지 방법
+// 인접 행렬, 인접 리스트
+// 리스트, 배열 속도 차이
+// bfs, dfs 시간 비교
+// 연결관계가 뻗어나가는 개수를 배열이나 리스트에 적고 가장 큰 수를 출력
 	static int N, M;
-	static List<Integer>[] graph;
-	static int[] countArr;
-	static int maxCount;
-	static Queue<Integer> queue;
-	static boolean[] visited;
+	static List<List<Integer>> graph;
 	
-	static void bfs(int n) {
-		queue = new LinkedList<>();
+	static int bfs(int n) {
+		Queue<Integer> queue = new LinkedList<Integer>();
 		queue.offer(n);
 		
-		visited = new boolean[N + 1];
+		boolean[] visited = new boolean[N + 1];
 		visited[n] = true;
 		
+		int hackedCount = 0;
 		while (!queue.isEmpty()) {
-			int num = queue.poll();
+			Integer num = queue.poll();
 			
-			for (int el : graph[num]) {
+			List<Integer> nextList = graph.get(num);
+			for(Integer el : nextList) {
 				if (!visited[el]) {
 					queue.offer(el);
 					visited[el] = true;
-					
-					countArr[el] += 1;
-					maxCount = Math.max(maxCount, countArr[el]);
+					hackedCount += 1;
 				}
 			}
 		}
+		return hackedCount;
 	}
+	
 	public static void main(String[] args) {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out))) {
@@ -50,23 +54,26 @@ public class Main {
 			N = Integer.parseInt(st.nextToken());
 			M = Integer.parseInt(st.nextToken());
 			
-			graph = new ArrayList[N + 1];
-			for (int n = 1; n <= N; n++) {
-				graph[n] = new ArrayList<>();
+			graph = new ArrayList<List<Integer>>();
+			for (int n = 0; n < N + 1; n++) {
+				graph.add(new ArrayList<Integer>());
 			}
 			for (int m = 0; m < M; m++) {
 				st = new StringTokenizer(br.readLine());
-				graph[Integer.parseInt(st.nextToken())].add(Integer.parseInt(st.nextToken()));
+				int a = Integer.parseInt(st.nextToken());
+				int b = Integer.parseInt(st.nextToken());
+				graph.get(b).add(a);
 			}
 			
-			countArr = new int[N + 1];
-			maxCount = 0;
+			int maxCount = Integer.MIN_VALUE;
+			int[] resultArr = new int[N + 1];
 			for (int n = 1; n <= N; n++) {
-				bfs(n);
+				resultArr[n] = bfs(n);
+				maxCount = Math.max(maxCount, resultArr[n]);
 			}
 			
-			for (int i = 1; i <= N; i++) {
-				if (countArr[i] == maxCount) {
+			for (int i = 1; i < resultArr.length; i++) {
+				if (resultArr[i] == maxCount) {
 					sb.append(i).append(" ");
 				}
 			}
