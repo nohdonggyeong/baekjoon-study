@@ -25,10 +25,7 @@ public class DFS {
 				visited[el] = true;
 				countArr[el] += 1;
 				maxCount = Math.max(maxCount, countArr[el]);
-				
 				dfs(el);
-				
-				visited[el] = false;
 			}
 		}
 	}
