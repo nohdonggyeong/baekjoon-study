@@ -12,8 +12,8 @@ public class CreateEdgeCase {
 		StringBuilder sb = new StringBuilder();
 		try (BufferedOutputStream bs = new BufferedOutputStream(new FileOutputStream("/Users/donggyeong/develop/eclipse/eclipse-workspace/baekjoon-study/src/알고리즘/BFS/boj_1325_효율적인_해킹/edgeCase.txt"))) {
 			// N <= 10000, M <= 100000
-			int N = 10000;
-			int M = 100000;
+			int N = 5000;
+			int M = 50000;
 			sb.append(N).append(" ").append(M).append("\n");
 			
 			Random random = new Random();
