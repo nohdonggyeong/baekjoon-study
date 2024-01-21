@@ -14,36 +14,39 @@ public class Main {
 	static int V, E, K;
 	static List<Node>[] graph;
 	static int[] dist;
-	static final int INF = Integer.MAX_VALUE;
+	static final int INF = 3000000; // E * W: 오버플로우 나지 않기 위함
 	
 	static class Node implements Comparable<Node>{
-		private int v;
-		private int w;
+		private int end;
+		private int weight;
 		
-		public Node(int v, int w) {
-			this.v = v;
-			this.w = w;
+		public Node(int end, int weight) {
+			this.end = end;
+			this.weight = weight;
 		}
 		
 		@Override
 		public int compareTo(Node o) {
-			return w - o.w;
+			return weight - o.weight;
 		}
 	}
 	
 	// graph는 연결 관계와 가중치의 구현체
 	// queue와 Node는 다익스트라 알고리즘을 수행하는 작업물
-	// dist는 출발노드로부터 각 노드의 최단 거리 산출물 
+	// dist는 출발노드로부터 각 노드의 최단 거리 산출물
 	static void dijkstra(int start) {
 		PriorityQueue<Node> queue = new PriorityQueue<Main.Node>();
 		queue.offer(new Node(start, 0));
-		
+
 		boolean[] visited = new boolean[V + 1];
+		
+		dist = new int[V + 1];
+		Arrays.fill(dist, INF);
 		dist[start] = 0;
 		
 		while (!queue.isEmpty()) {
 			Node curNode = queue.poll();
-			int cur = curNode.v;
+			int cur = curNode.end;
 			
 			if (visited[cur]) {
 				continue;
@@ -51,9 +54,9 @@ public class Main {
 			
 			visited[cur] = true;
 			for (Node node : graph[cur]) {
-				if (dist[node.v] > dist[cur] + node.w) {
-					dist[node.v] = dist[cur] + node.w;
-					queue.offer(new Node(node.v, dist[node.v]));
+				if (dist[node.end] > dist[cur] + node.weight) {
+					dist[node.end] = dist[cur] + node.weight;
+					queue.offer(new Node(node.end, dist[node.end]));
 				}
 			}
 		}
@@ -78,9 +81,6 @@ public class Main {
 				st = new StringTokenizer(br.readLine());
 				graph[Integer.parseInt(st.nextToken())].add(new Node(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken())));
 			}
-			
-			dist = new int[V + 1];
-			Arrays.fill(dist, INF);
 			
 			dijkstra(K);
 			
