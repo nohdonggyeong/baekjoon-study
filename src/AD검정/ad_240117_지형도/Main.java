@@ -8,6 +8,17 @@ import java.io.OutputStreamWriter;
 import java.util.Arrays;
 import java.util.StringTokenizer;
 
+/**
+ * @author Noh Donggyeong
+ * 
+ * 문제 풀었던 내용 공유합니다.
+ * 1. 입력으로 주어지는 지형의 0, 0 지점부터 H, W 크기로 반복문을 돌며 모든 지역을 확인
+ * 2. H, W 크기 내의 지형의 높이를 1차원 배열로 가져와서 정렬
+ * 3. 정렬된 1차원 배열에서 가장 높은 값을 시작으로 깎고 쌓는 작업 수행 (높은 지형부터 깎아야 쌓을 때의 비용 절감 가능)
+ * 4. 최소 비용 도출
+ * 5. H와 W의 값을 바꿔 1~4 과정 동일하게 수행
+ * 
+ */
 public class Main {
 	static int T;
 	static int N;

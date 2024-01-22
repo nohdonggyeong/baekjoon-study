@@ -56,7 +56,7 @@ public class Main {
 			for (Node node : graph[cur]) {
 				if (dist[node.end] > dist[cur] + node.weight) {
 					dist[node.end] = dist[cur] + node.weight;
-					queue.offer(new Node(node.end, dist[node.end]));
+					queue.offer(new Node(node.end, dist[node.end] - dist[cur]));
 				}
 			}
 		}
