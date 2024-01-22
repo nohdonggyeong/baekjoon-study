@@ -10,11 +10,11 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main3 {
 	static int V, E, K;
 	static List<Node>[] graph;
 	static int[] dist;
-	static final int INF = 3000000;
+	static final int INF = 3000000; // E * W: 오버플로우 나지 않기 위함
 	
 	static class Node implements Comparable<Node>{
 		private int end;
@@ -31,32 +31,37 @@ public class Main {
 		}
 	}
 	
-	static void dijkstra(int k) {
-		PriorityQueue<Node> pq = new PriorityQueue<>();
-		pq.offer(new Node(k, 0));
+	// graph는 연결 관계와 가중치의 구현체
+	// queue와 Node는 다익스트라 알고리즘을 수행하는 작업물
+	// dist는 출발노드로부터 각 노드의 최단 거리 산출물
+	static void dijkstra(int start) {
+		PriorityQueue<Node> queue = new PriorityQueue<Main3.Node>();
+		queue.offer(new Node(start, 0));
+
+		boolean[] visited = new boolean[V + 1];
 		
-		dist[k] = 0;
+		dist = new int[V + 1];
+		Arrays.fill(dist, INF);
+		dist[start] = 0;
 		
-		boolean[] check = new boolean[V + 1];
-		
-		while (!pq.isEmpty()) {
-			Node curNode = pq.poll();
+		while (!queue.isEmpty()) {
+			Node curNode = queue.poll();
 			int cur = curNode.end;
 			
-			if (check[cur]) {
+			if (visited[cur]) {
 				continue;
 			}
 			
-			check[cur] = true;
-			
+			visited[cur] = true;
 			for (Node node : graph[cur]) {
 				if (dist[node.end] > dist[cur] + node.weight) {
 					dist[node.end] = dist[cur] + node.weight;
-					pq.offer(new Node(node.end, dist[node.end])); // priority queue에서 값이 작아 무한 루프 돌면 안되므로 dist[node.end]를 담아준다.
+					queue.offer(new Node(node.end, dist[node.end] - dist[cur]));
 				}
 			}
 		}
 	}
+	
 	public static void main(String[] args) {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringTokenizer st;
@@ -70,23 +75,21 @@ public class Main {
 			
 			graph = new ArrayList[V + 1];
 			for (int u = 1; u <= V; u++) {
-				graph[u]= new ArrayList<>();
+				graph[u] = new ArrayList<Main3.Node>();
 			}
-			
 			for (int e = 0; e < E; e++) {
 				st = new StringTokenizer(br.readLine());
-				int u = Integer.parseInt(st.nextToken());
-				int v = Integer.parseInt(st.nextToken());
-				int w = Integer.parseInt(st.nextToken());
-				graph[u].add(new Node(v, w));
+				graph[Integer.parseInt(st.nextToken())].add(new Node(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken())));
 			}
 			
-			dist = new int[V + 1];
-			Arrays.fill(dist, INF);
 			dijkstra(K);
 			
 			for (int u = 1; u <= V; u++) {
-				sb.append(dist[u] >= INF ? "INF" : dist[u]).append("\n");
+				if (INF == dist[u]) {
+					sb.append("INF").append("\n");
+				} else {
+					sb.append(dist[u]).append("\n");
+				}
 			}
 			bw.write(sb.toString().trim());
 			bw.flush();
