@@ -8,46 +8,38 @@ import java.util.StringTokenizer;
 
 public class Main {
 	static int N, M, K;
-	static long[] arr, tree;
+	static long[] tree;
 	
-	static long init(int start, int end, int node) {
-		if (start == end) {
-			tree[node] = arr[start];
-			return tree[node];
+	private static void setCache(int i) {
+		while (i > 1) {
+			tree[i / 2] += tree[i];
+			i--;
 		}
-		
-		int mid = (start + end) / 2;
-		tree[node] = init(start, mid, node * 2) + init(mid + 1, end, node * 2 + 1);
-		return tree[node];
 	}
 	
-	static void update(int start, int end, int node, int index, long diff) {
-		if (index < start || end < index) {
-			return;
+	private static void updateNumber(int index, long number) {
+		long diff = number - tree[index];
+		while (index > 0) {
+			tree[index] += diff;
+			index /= 2;
 		}
-		
-		tree[node] += diff;
-		if (start == end) {
-			arr[index] = tree[node];
-			return;
-		}
-		
-		int mid = (start + end) / 2;
-		update(start, mid, node * 2, index, diff);
-		update(mid + 1, end, node * 2 + 1, index, diff);
 	}
 	
-	static long sum(int start, int end, int node, int left, int right) {
-		if (right < start || end < left) {
-			return 0;
+	private static long getSum(int start, int end) {
+		long partSum = 0;
+		while (start <= end) {
+			if (start % 2 == 1) {
+				partSum += tree[start];
+				start++;
+			}
+			if (end % 2 == 0) {
+				partSum += tree[end];
+				end--;
+			}
+			start /= 2;
+			end /= 2;
 		}
-		
-		if (left <= start && end <= right) {
-			return tree[node];
-		}
-		
-		int mid = (start + end) / 2;
-		return sum(start, mid, node * 2, left, right) + sum(mid + 1, end, node * 2 + 1, left, right);
+		return partSum;
 	}
 	
 	public static void main(String[] args) {
@@ -57,32 +49,28 @@ public class Main {
 			StringBuilder sb = new StringBuilder();
 			
 			st = new StringTokenizer(br.readLine());
-			N = Integer.parseInt(st.nextToken()); // 입력받는 숫자
-			M = Integer.parseInt(st.nextToken()); // update 횟수
-			K = Integer.parseInt(st.nextToken()); // sum 횟수
+			N = Integer.parseInt(st.nextToken());
+			M = Integer.parseInt(st.nextToken());
+			K = Integer.parseInt(st.nextToken());
 			
-			arr = new long[N + 1]; // 1부터 N까지 입력받는 숫자
-			for (int i = 1; i <= N; i++) {
-				arr[i] = Long.parseLong(br.readLine());
+			int height = (int) Math.ceil(Math.log(N) / Math.log(2));
+			int size = (int) Math.pow(2, height + 1) - 1;
+			tree = new long[size + 1];
+			int endCache = size / 2;
+			for (int i = endCache + 1; i <= endCache + N; i++) {
+				tree[i] = Long.parseLong(br.readLine());
 			}
-			
-			int k = (int) Math.ceil(Math.log(N) / Math.log(2)); // 세그먼트 트리 생성
-			int size = (int) Math.pow(2, k + 1);
-			tree = new long[size];
-			init(1, N, 1);
+			setCache(size);
 			
 			for (int i = 0; i < M + K; i++) {
 				st = new StringTokenizer(br.readLine());
 				int a = Integer.parseInt(st.nextToken());
 				int b = Integer.parseInt(st.nextToken());
 				long c = Long.parseLong(st.nextToken());
-				
 				if (a == 1) {
-					long diff = c - arr[b];
-					arr[b] = c;
-					update(1, N, 1, b, diff);
+					updateNumber(endCache + b, c);
 				} else if (a == 2) {
-					sb.append(sum(1, N, 1, b, (int) c)).append("\n");
+					sb.append(getSum(endCache + b, endCache + (int) c)).append("\n");
 				}
 			}
 			

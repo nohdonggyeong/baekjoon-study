@@ -6,34 +6,29 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.StringTokenizer;
 
-public class Main2 {
+public class Main_v1 {
 	static int N, M, K;
 	static long[] arr, tree;
 	
-	// start: 시작 인덱스, end: 끝 인덱스
 	static long init(int start, int end, int node) {
 		if (start == end) {
-			return tree[node] = arr[start];
+			tree[node] = arr[start];
+			return tree[node];
 		}
 		
 		int mid = (start + end) / 2;
-		
-		// 재귀로 두 부분으로 나누고, 그 합을 현재 노드의 값으로 함
-		return tree[node] = init(start, mid, node * 2) + init(mid + 1, end, node * 2 + 1);
+		tree[node] = init(start, mid, node * 2) + init(mid + 1, end, node * 2 + 1);
+		return tree[node];
 	}
 	
-	// start: 시작 인덱스, end: 끝 인덱스
-	// index: 구간 합을 수정하고자 하는 노드
-	// diff: 업데이트 보정 값
 	static void update(int start, int end, int node, int index, long diff) {
-		// 범위 밖에 있는 경우
-		if (index < start || index > end) {
+		if (index < start || end < index) {
 			return;
 		}
 		
-		// 범위 안에 있으면 올라가며 다른 원소도 갱신
 		tree[node] += diff;
 		if (start == end) {
+			arr[index] = tree[node];
 			return;
 		}
 		
@@ -42,50 +37,39 @@ public class Main2 {
 		update(mid + 1, end, node * 2 + 1, index, diff);
 	}
 	
-	// start: 시작 인덱스, end: 끝 인덱스
-	// left, right: 구간 합을 구하고자 하는 범위
 	static long sum(int start, int end, int node, int left, int right) {
-		// 범위 밖에 있는 경우
-		if (left > end || right < start) {
+		if (right < start || end < left) {
 			return 0;
 		}
 		
-		// 범위 안에 있는 경우
 		if (left <= start && end <= right) {
 			return tree[node];
 		}
 		
-		// 그렇지 않다면, 두 부분으로 나눠 합을 구하기
 		int mid = (start + end) / 2;
 		return sum(start, mid, node * 2, left, right) + sum(mid + 1, end, node * 2 + 1, left, right);
 	}
 	
 	public static void main(String[] args) {
-		StringTokenizer st;
-		StringBuilder sb = new StringBuilder();
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out))) {
-			st = new StringTokenizer(br.readLine());
-			N = Integer.parseInt(st.nextToken());
-			M = Integer.parseInt(st.nextToken());
-			K = Integer.parseInt(st.nextToken());
+			StringTokenizer st;
+			StringBuilder sb = new StringBuilder();
 			
-			arr = new long[N + 1]; // arr 배열은 N개의 수 집합
-			for (int i = 1; i <= N; i++) { // i는 1부터 시작
+			st = new StringTokenizer(br.readLine());
+			N = Integer.parseInt(st.nextToken()); // 입력받는 숫자
+			M = Integer.parseInt(st.nextToken()); // update 횟수
+			K = Integer.parseInt(st.nextToken()); // sum 횟수
+			
+			arr = new long[N + 1]; // 1부터 N까지 입력받는 숫자
+			for (int i = 1; i <= N; i++) {
 				arr[i] = Long.parseLong(br.readLine());
 			}
 			
-			// 2^k >= N을 만족하는 k의 최솟값을 구한 후
-			// 2^k * 2를 tree 배열의 크기로 정의
-			int k = (int) Math.ceil(Math.log(N) / Math.log(2));
+			int k = (int) Math.ceil(Math.log(N) / Math.log(2)); // 세그먼트 트리 생성
 			int size = (int) Math.pow(2, k + 1);
 			tree = new long[size];
-			
-			// 사이즈를 구하는 과정이 귀찮으면, 단순히 N * 4 사이즈 사용
-			// tree = new long[N * 4];
-			
-			// tree 배열 값 채우기
-			init(1, N, 1); // i는 1부터 시작
+			init(1, N, 1);
 			
 			for (int i = 0; i < M + K; i++) {
 				st = new StringTokenizer(br.readLine());
