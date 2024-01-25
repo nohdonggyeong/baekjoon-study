@@ -8,39 +8,46 @@ import java.util.StringTokenizer;
 
 public class Main {
 	static int N, M, K;
-	static long[] tree;
-	static int cacheEnd;
+	static long[] arr, tree;
 	
-	static void init(int index) {
-		while (index > 1) {
-			tree[index / 2] += tree[index];
-			index--;	
+	static long init(int start, int end, int node) {
+		if (start == end) {
+			tree[node] = arr[start];
+			return tree[node];
 		}
+		
+		int mid = (start + end) / 2;
+		tree[node] = init(start, mid, node * 2) + init(mid + 1, end, node * 2 + 1);
+		return tree[node];
 	}
 	
-	static void update(int index, long number) {
-		long diff = number - tree[index];
-		while (index > 0) {
-			tree[index] += diff;
-			index /= 2;
+	static void update(int start, int end, int node, int index, long diff) {
+		if (index < start || end < index) {
+			return;
 		}
+		
+		tree[node] += diff;
+		if (start == end) {
+			arr[index] = tree[node];
+			return;
+		}
+		
+		int mid = (start + end) / 2;
+		update(start, mid, node * 2, index, diff);
+		update(mid + 1, end, node * 2 + 1, index, diff);
 	}
 	
-	static long sum(int start, int end) {
-		long sum = 0;
-		while (start <= end) {
-			if (start % 2 == 1) {
-				sum += tree[start];
-				start++;
-			}
-			if (end % 2 == 0) {
-				sum += tree[end];
-				end--;
-			}
-			start /= 2;
-			end /= 2;
+	static long sum(int start, int end, int node, int left, int right) {
+		if (right < start || end < left) {
+			return 0;
 		}
-		return sum;
+		
+		if (left <= start && end <= right) {
+			return tree[node];
+		}
+		
+		int mid = (start + end) / 2;
+		return sum(start, mid, node * 2, left, right) + sum(mid + 1, end, node * 2 + 1, left, right);
 	}
 	
 	public static void main(String[] args) {
@@ -54,14 +61,13 @@ public class Main {
 			M = Integer.parseInt(st.nextToken());
 			K = Integer.parseInt(st.nextToken());
 			
-			int height = (int) Math.ceil(Math.log(N) / Math.log(2));
-			int size = (int) Math.pow(2, height + 1) - 1;
-			tree = new long[size + 1];
-			cacheEnd = size / 2;
-			for (int n = 1; n <= N; n++) {
-				tree[cacheEnd + n] = Long.parseLong(br.readLine());
+			arr = new long[N + 1];
+			for (int i = 1; i<= N; i++) {
+				arr[i] = Long.parseLong(br.readLine());
 			}
-			init(size);
+			
+			tree = new long[N * 4 + 1];
+			init(1, N, 1);
 			
 			for (int i = 0; i < M + K; i++) {
 				st = new StringTokenizer(br.readLine());
@@ -70,9 +76,11 @@ public class Main {
 				long c = Long.parseLong(st.nextToken());
 				
 				if (a == 1) {
-					update(cacheEnd + b, c);
+					long diff = c - arr[b];
+					arr[b] = c;
+					update(1, N, 1, b, diff);
 				} else if (a == 2) {
-					sb.append(sum(cacheEnd + b, cacheEnd + (int) c)).append("\n");
+					sb.append(sum(1, N, 1, b, (int) c)).append("\n");
 				}
 			}
 			

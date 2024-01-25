@@ -67,8 +67,8 @@ public class Main_v1 {
 			}
 			
 			int k = (int) Math.ceil(Math.log(N) / Math.log(2)); // 세그먼트 트리 생성
-			int size = (int) Math.pow(2, k + 1);
-			tree = new long[size];
+			int size = (int) Math.pow(2, k + 1) - 1;
+			tree = new long[size + 1];
 			init(1, N, 1);
 			
 			for (int i = 0; i < M + K; i++) {
