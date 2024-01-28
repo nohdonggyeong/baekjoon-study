@@ -12,35 +12,35 @@ import java.util.StringTokenizer;
 
 public class Main {
 	static int V, E, K;
-	static List<Node>[] graph;
+	static List<Next>[] graph;
 	static int[] dist;
 	static final int INF = 3000000;
 	
-	static class Node implements Comparable<Node>{
+	static class Next implements Comparable<Next>{
 		private int end;
 		private int weight;
 		
-		public Node(int end, int weight) {
+		public Next(int end, int weight) {
 			this.end = end;
 			this.weight = weight;
 		}
 		
 		@Override
-		public int compareTo(Node o) {
+		public int compareTo(Next o) {
 			return weight - o.weight;
 		}
 	}
 	
 	static void dijkstra(int k) {
-		PriorityQueue<Node> pq = new PriorityQueue<>();
-		pq.offer(new Node(k, 0));
+		PriorityQueue<Next> pq = new PriorityQueue<>();
+		pq.offer(new Next(k, 0));
 		
 		dist[k] = 0;
 		
 		boolean[] check = new boolean[V + 1];
 		
 		while (!pq.isEmpty()) {
-			Node curNode = pq.poll();
+			Next curNode = pq.poll();
 			int cur = curNode.end;
 			
 			if (check[cur]) {
@@ -49,10 +49,10 @@ public class Main {
 			
 			check[cur] = true;
 			
-			for (Node node : graph[cur]) {
+			for (Next node : graph[cur]) {
 				if (dist[node.end] > dist[cur] + node.weight) {
 					dist[node.end] = dist[cur] + node.weight;
-					pq.offer(new Node(node.end, dist[node.end])); // priority queue에서 값이 작아 무한 루프 돌면 안되므로 dist[node.end]를 담아준다.
+					pq.offer(new Next(node.end, dist[node.end])); // priority queue에서 값이 작아 무한 루프 돌면 안되므로 dist[node.end]를 담아준다.
 				}
 			}
 		}
@@ -78,7 +78,7 @@ public class Main {
 				int u = Integer.parseInt(st.nextToken());
 				int v = Integer.parseInt(st.nextToken());
 				int w = Integer.parseInt(st.nextToken());
-				graph[u].add(new Node(v, w));
+				graph[u].add(new Next(v, w));
 			}
 			
 			dist = new int[V + 1];

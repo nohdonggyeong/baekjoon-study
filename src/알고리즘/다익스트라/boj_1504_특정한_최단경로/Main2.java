@@ -11,31 +11,31 @@ import java.util.StringTokenizer;
 
 public class Main2 {
 	static int N, E;
-	static ArrayList<Node>[] graph; // 인접 리스트
+	static ArrayList<Next>[] graph; // 인접 리스트
 	static int v1, v2; // 반드시 거쳐야 하는 정점
 	
 	static int[] dist; // 시작점에서 각 정점으로 가는 최단 거리
 	static boolean[] check; // 방문 확인
 	static final int INF = 200_000_000; // E 200,000 * c 1,000
 	
-	static class Node implements Comparable<Node> {
+	static class Next implements Comparable<Next> {
 		private int end; // end node
 		private int weight; // end node로 가는 가중치
 		
-		public Node (int end, int weight) {
+		public Next (int end, int weight) {
 			this.end = end;
 			this.weight = weight;
 		}
 		
 		@Override
-		public int compareTo(Node o) {
+		public int compareTo(Next o) {
 			return weight - o.weight;
 		}
 	}
 	
 	static int dijkstra(int start, int end) {
-		PriorityQueue<Node> pq = new PriorityQueue<Main2.Node>();
-		pq.offer(new Node(start, 0));
+		PriorityQueue<Next> pq = new PriorityQueue<Main2.Next>();
+		pq.offer(new Next(start, 0));
 		
 		check = new boolean[N + 1];
 		
@@ -45,16 +45,16 @@ public class Main2 {
 		dist[start] = 0;
 		
 		while (!pq.isEmpty()) {
-			Node curNode = pq.poll();
+			Next curNode = pq.poll();
 			int cur = curNode.end;
 			
 			if (!check[cur]) {
 				check[cur] = true;
 				
-				for (Node node : graph[cur]) {
+				for (Next node : graph[cur]) {
 					if (dist[node.end] > dist[cur] + node.weight) {
 						dist[node.end] = dist[cur] + node.weight;
-						pq.add(new Node(node.end, dist[node.end]));
+						pq.add(new Next(node.end, dist[node.end]));
 					}
 				}
 			}
@@ -75,7 +75,7 @@ public class Main2 {
 			// 양방향 인접 리스트 구현
 			graph = new ArrayList[N + 1];
 			for (int i = 1; i < N + 1; i++) {
-				graph[i] = new ArrayList<Main2.Node>();
+				graph[i] = new ArrayList<Main2.Next>();
 			}
 			
 			for (int i = 0; i < E; i++) {
@@ -84,8 +84,8 @@ public class Main2 {
 				int end = Integer.parseInt(st.nextToken());
 				int weight = Integer.parseInt(st.nextToken());
 				
-				graph[start].add(new Node(end, weight));
-				graph[end].add(new Node(start,weight));
+				graph[start].add(new Next(end, weight));
+				graph[end].add(new Next(start,weight));
 			}
 			
 			// 반드시 거쳐야 하는 정점 입력

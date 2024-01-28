@@ -13,28 +13,28 @@ import java.util.StringTokenizer;
 public class Main {
 	static int N, E;
 	static int v1, v2;
-	static List<Node>[] graph;
+	static List<Next>[] graph;
 	static int[] dist;
 	static final int INF = 200000000;
 	
-	static class Node implements Comparable<Node>{
+	static class Next implements Comparable<Next>{
 		private int end;
 		private int weight;
 		
-		Node(int end, int weight) {
+		Next(int end, int weight) {
 			this.end = end;
 			this.weight = weight;
 		}
 		
 		@Override
-		public int compareTo(Node o) {
+		public int compareTo(Next o) {
 			return weight - o.weight;
 		}
 	}
 	
 	static int dijkstra(int start, int finish) {
-		PriorityQueue<Node> pq = new PriorityQueue<>();
-		pq.offer(new Node(start, 0));
+		PriorityQueue<Next> pq = new PriorityQueue<>();
+		pq.offer(new Next(start, 0));
 		
 		boolean[] check = new boolean[N + 1];
 		
@@ -43,7 +43,7 @@ public class Main {
 		dist[start] = 0;
 		
 		while (!pq.isEmpty()) {
-			Node curNode = pq.poll();
+			Next curNode = pq.poll();
 			int cur = curNode.end;
 			
 			if (check[cur]) {
@@ -51,10 +51,10 @@ public class Main {
 			}
 			
 			check[cur] = true;
-			for (Node node : graph[cur]) {
+			for (Next node : graph[cur]) {
 				if (dist[node.end] > dist[cur] + node.weight) {
 					dist[node.end] = dist[cur] + node.weight;
-					pq.offer(new Node(node.end, dist[node.end]));
+					pq.offer(new Next(node.end, dist[node.end]));
 				}
 			}
 		}
@@ -79,8 +79,8 @@ public class Main {
 				int start = Integer.parseInt(st.nextToken());
 				int end = Integer.parseInt(st.nextToken());
 				int weight = Integer.parseInt(st.nextToken());
-				graph[start].add(new Node(end, weight));
-				graph[end].add(new Node(start, weight));
+				graph[start].add(new Next(end, weight));
+				graph[end].add(new Next(start, weight));
 			}
 			
 			st = new StringTokenizer(br.readLine());

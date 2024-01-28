@@ -12,33 +12,33 @@ import java.util.StringTokenizer;
 
 public class Main2 {
 	static int V, E, K;
-	static List<Node>[] graph;
+	static List<Next>[] graph;
 	
 	static int[] dist;
 	static final int INF = Integer.MAX_VALUE;
 
-	static class Node implements Comparable<Node> {
+	static class Next implements Comparable<Next> {
 		int end, weight;
 
-		public Node(int end, int weight) {
+		public Next(int end, int weight) {
 			this.end = end;
 			this.weight = weight;
 		}
 
 		@Override
-		public int compareTo(Node o) {
+		public int compareTo(Next o) {
 			return weight - o.weight;
 		}
 	}
 
 	static void dijkstra(int start) {
-		PriorityQueue<Node> queue = new PriorityQueue<Main2.Node>();
+		PriorityQueue<Next> queue = new PriorityQueue<Main2.Next>();
 		boolean[] check = new boolean[V + 1];
-		queue.offer(new Node(start, 0));
+		queue.offer(new Next(start, 0));
 		dist[start] = 0;
 		
 		while (!queue.isEmpty()) {
-			Node curNode = queue.poll();
+			Next curNode = queue.poll();
 			int cur = curNode.end;
 			
 			if (check[cur]) {
@@ -46,10 +46,10 @@ public class Main2 {
 			}
 			
 			check[cur] = true;
-			for (Node node : graph[cur]) {
+			for (Next node : graph[cur]) {
 				if (dist[node.end] > dist[cur] + node.weight) {
 					dist[node.end]= dist[cur] + node.weight;
-					queue.offer(new Node(node.end, dist[node.end]));
+					queue.offer(new Next(node.end, dist[node.end]));
 				}
 			}
 		}
@@ -68,14 +68,14 @@ public class Main2 {
 			
 			graph = new ArrayList[V + 1];
 			for (int i = 1; i <= V; i++) {
-				graph[i] = new ArrayList<Main2.Node>();
+				graph[i] = new ArrayList<Main2.Next>();
 			}
 			for (int e = 0; e < E; e++) {
 				st = new StringTokenizer(br.readLine());
 				int start = Integer.parseInt(st.nextToken());
 				int end = Integer.parseInt(st.nextToken());
 				int weight = Integer.parseInt(st.nextToken());
-				graph[start].add(new Node(end, weight));
+				graph[start].add(new Next(end, weight));
 			}
 			
 			dist = new int[V + 1];

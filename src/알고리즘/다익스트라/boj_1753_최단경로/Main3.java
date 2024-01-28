@@ -12,21 +12,21 @@ import java.util.StringTokenizer;
 
 public class Main3 {
 	static int V, E, K;
-	static List<Node>[] graph;
+	static List<Next>[] graph;
 	static int[] dist;
 	static final int INF = 3000000; // E * W: 오버플로우 나지 않기 위함
 	
-	static class Node implements Comparable<Node>{
+	static class Next implements Comparable<Next>{
 		private int end;
 		private int weight;
 		
-		public Node(int end, int weight) {
+		public Next(int end, int weight) {
 			this.end = end;
 			this.weight = weight;
 		}
 		
 		@Override
-		public int compareTo(Node o) {
+		public int compareTo(Next o) {
 			return weight - o.weight;
 		}
 	}
@@ -35,8 +35,8 @@ public class Main3 {
 	// queue와 Node는 다익스트라 알고리즘을 수행하는 작업물
 	// dist는 출발노드로부터 각 노드의 최단 거리 산출물
 	static void dijkstra(int start) {
-		PriorityQueue<Node> queue = new PriorityQueue<Main3.Node>();
-		queue.offer(new Node(start, 0));
+		PriorityQueue<Next> queue = new PriorityQueue<Main3.Next>();
+		queue.offer(new Next(start, 0));
 
 		boolean[] visited = new boolean[V + 1];
 		
@@ -45,7 +45,7 @@ public class Main3 {
 		dist[start] = 0;
 		
 		while (!queue.isEmpty()) {
-			Node curNode = queue.poll();
+			Next curNode = queue.poll();
 			int cur = curNode.end;
 			
 			if (visited[cur]) {
@@ -53,10 +53,10 @@ public class Main3 {
 			}
 			
 			visited[cur] = true;
-			for (Node node : graph[cur]) {
+			for (Next node : graph[cur]) {
 				if (dist[node.end] > dist[cur] + node.weight) {
 					dist[node.end] = dist[cur] + node.weight;
-					queue.offer(new Node(node.end, dist[node.end] - dist[cur]));
+					queue.offer(new Next(node.end, dist[node.end] - dist[cur]));
 				}
 			}
 		}
@@ -75,11 +75,11 @@ public class Main3 {
 			
 			graph = new ArrayList[V + 1];
 			for (int u = 1; u <= V; u++) {
-				graph[u] = new ArrayList<Main3.Node>();
+				graph[u] = new ArrayList<Main3.Next>();
 			}
 			for (int e = 0; e < E; e++) {
 				st = new StringTokenizer(br.readLine());
-				graph[Integer.parseInt(st.nextToken())].add(new Node(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken())));
+				graph[Integer.parseInt(st.nextToken())].add(new Next(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken())));
 			}
 			
 			dijkstra(K);
