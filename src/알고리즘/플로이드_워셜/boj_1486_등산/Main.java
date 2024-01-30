@@ -17,7 +17,7 @@ public class Main {
 	static List<Integer> indexes; // flattened 배열의 번호 리스트
 	
 	static int[][] dist; // 출발지-목적지 최단 거리 배열
-    static final int INF = 1000000007;
+    static final int INF = 1_000_000;
     
     static int[] di = {0, 1, 0, -1};
     static int[] dj = {1, 0, -1, 0};
@@ -32,27 +32,27 @@ public class Main {
     		T = Integer.parseInt(st.nextToken());
     		D = Integer.parseInt(st.nextToken());
     		
-            map = new int[101][101];
-            flattened = new int[1010];
+            map = new int[N + 1][M + 1];
+            flattened = new int[N * M + 1];
     		indexes = new ArrayList<>();
             
             String str;
             for (int n = 1; n <= N; n++) {
-            	str = br.readLine(); // 세로 길이만큼 가로 한 줄 입력 받기
+            	str = br.readLine();
                 for (int m = 1; m <= M; m++) {
                     if ('a' <= str.charAt(m - 1)) {
                     	map[n][m] = str.charAt(m - 1) - 'a' + 26;
                     } else {
                     	map[n][m] = str.charAt(m - 1) - 'A';
                     }
-                    flattened[n * M + m] = map[n][m]; // 중복되지 않게 M진법의 수로 인덱스와 배열 생성
-                    indexes.add(n * M + m);
+                    flattened[(n - 1) * M + m] = map[n][m];
+                    indexes.add((n - 1) * M + m);
                 }
             }
 
-            dist = new int[1010][1010];
-            for (int n = 1; n <= 1000; n++) {
-        		for (int m = 1; m <= 1000; m++) {
+            dist = new int[N * M + 1][N * M + 1];
+            for (int n = 1; n <= N * M; n++) {
+        		for (int m = 1; m <= N * M; m++) {
         			if (n != m) {
         				dist[n][m] = INF;
         			}
@@ -72,8 +72,8 @@ public class Main {
                         	continue;
                         }	
                         
-                        int start = n * M + m;
-                        int end = nn * M + nm;
+                        int start = (n - 1) * M + m;
+                        int end = (nn - 1) * M + nm;
                         
                         if (map[n][m] >= map[nn][nm]) {
                         	dist[start][end] = 1;
@@ -103,7 +103,7 @@ public class Main {
             
             int answer = 0;
             for (int k : indexes) {
-            	if (dist[M + 1][k] + dist[k][M + 1] <= D) { // 1, 1 지점과 k 지점 사이의 왕복 거리가 D보다 작거나 같은 조건
+            	if (dist[1][k] + dist[k][1] <= D) {
                 	answer = Math.max(answer, flattened[k]);
                 }
             }
