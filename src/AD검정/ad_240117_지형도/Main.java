@@ -71,10 +71,11 @@ public class Main {
 	}
 	
 	public static void main(String[] args) {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st;
-		StringBuilder sb = new StringBuilder();
 		try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out))) {
+			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+			StringBuilder sb = new StringBuilder();
+			StringTokenizer st;
+			
 			T = Integer.parseInt(br.readLine()); // Test case 반복
 			for (int t = 1; t <= T; t++) {
 				N = Integer.parseInt(br.readLine()); // N 입력
@@ -114,7 +115,7 @@ public class Main {
 			bw.write(sb.toString().trim());
 			bw.flush();
 		} catch (IOException e) {
-			e.getStackTrace();
+			e.printStackTrace();
 		}
 	}
 }
