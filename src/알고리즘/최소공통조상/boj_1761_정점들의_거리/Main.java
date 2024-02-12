@@ -1,4 +1,4 @@
-package 알고리즘.최소공통조상;
+package 알고리즘.최소공통조상.boj_1761_정점들의_거리;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
