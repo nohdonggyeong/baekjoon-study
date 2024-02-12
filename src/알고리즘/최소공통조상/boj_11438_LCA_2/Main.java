@@ -5,108 +5,128 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.StringTokenizer;
 
 public class Main {
-	static ArrayList<Integer>[] tree;
-	static int[] depth;
-	static int kmax;
+	static int N, M;
+	static List<Integer>[] adjList;
+	
+	static int kMax;
 	static int[][] parent;
-	static boolean[] visited;
-
-	static int LCA(int a, int b) {
-		if (depth[a] > depth[b]) {// 더 깊이가 깊은 depth가 b가 되도록 변경해주기
-			int temp = a;
-			a = b;
-			b = temp;
+	static int[] depth;
+	
+	static void BFS() {
+		Queue<Integer> queue = new LinkedList<Integer>();
+		queue.add(1);
+		
+		boolean[] visited = new boolean[N + 1];
+		visited[1] = true;
+		
+		int nextLevel = 1;
+		int count = 0;
+		int nowSize = 1;
+		while (!queue.isEmpty()) {
+			int now = queue.remove();
+			
+			for (int next : adjList[now]) {
+				if (!visited[next]) {
+					visited[next] = true;
+					queue.add(next) ;
+					
+					parent[0][next] = now;
+					depth[next] = nextLevel;
+				}
+			}
+			count++;
+			
+			if (count == nowSize) {
+				nextLevel++;
+				count = 0;
+				nowSize = queue.size();
+			}
 		}
-		for (int k = kmax; k >= 0; k--) {// depth 빠르게 맞춰주기
-			if (Math.pow(2, k) <= depth[b] - depth[a]) {
-				if (depth[a] <= depth[parent[k][b]]) {
-					b = parent[k][b];
+	}
+	
+	static int LCA(int a, int b) {
+		if (depth[a] < depth[b]) {
+			int temp = b;
+			b = a;
+			a = temp;
+		}
+		
+		for (int k = kMax; k >= 0; k--) {
+			if (Math.pow(2, k) <= depth[a] - depth[b]) {
+				if (depth[b] <= depth[parent[k][a]]) {
+					a = parent[k][a];
 				}
 			}
 		}
-		for (int k = kmax; k >= 0 && a != b; k--) { // 조상 빠르게 찾기
+		
+		for (int k = kMax; k >= 0 && a != b; k--) {
 			if (parent[k][a] != parent[k][b]) {
 				a = parent[k][a];
 				b = parent[k][b];
 			}
 		}
+		
 		int result = a;
-		if (a != b)
+		if (a != b) {
 			result = parent[0][result];
-		return result;
-	}
-
-	// BFS구현
-	private static void BFS(int node) {
-		Queue<Integer> queue = new LinkedList<Integer>();
-		queue.add(node);
-		visited[node] = true;
-		int level = 1;
-		int now_size = 1;
-		int count = 0;
-		while (!queue.isEmpty()) {
-			int now_node = queue.poll();
-			for (int next : tree[now_node]) {
-				if (!visited[next]) {
-					visited[next] = true;
-					queue.add(next);
-					parent[0][next] = now_node; // 부모 노드 저장
-					depth[next] = level; // 노드 depth 저장
-				}
-			}
-			count++;
-			if (count == now_size) {
-				count = 0;
-				now_size = queue.size();
-				level++;
-			}
 		}
-	}
+		
+		return result;
+ 	}
 	
-	public static void main(String[] args) throws NumberFormatException, IOException {
+	public static void main(String[] args) {
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out))) {
 			StringTokenizer st;
 			StringBuilder sb = new StringBuilder();
 			
-			int N = Integer.parseInt(br.readLine()); // 정점의 수
-			tree = new ArrayList[N + 1];
-			for (int i = 1; i <= N; i++) {
-				tree[i] = new ArrayList<Integer>();
+			N = Integer.parseInt(br.readLine());
+			adjList = new ArrayList[N + 1];
+			for (int n = 1; n <= N; n++) {
+				adjList[n] = new ArrayList<Integer>();
 			}
-			for (int i = 0; i < N - 1; i++) { // A인접리스트에 그래프 데이터 저장
+			
+			int u, v;
+			for (int n = 1; n < N; n++) {
 				st = new StringTokenizer(br.readLine());
-				int s = Integer.parseInt(st.nextToken());
-				int e = Integer.parseInt(st.nextToken());
-				tree[s].add(e);
-				tree[e].add(s);
+				u = Integer.parseInt(st.nextToken());
+				v = Integer.parseInt(st.nextToken());
+				adjList[u].add(v);
+				adjList[v].add(u);
 			}
-			depth = new int[N + 1];
-			visited = new boolean[N + 1];
+			
+			kMax = 0;
 			int temp = 1;
-			kmax = 0;
-			while (temp <= N) { // 최대 가능 Depth 구하기
-				temp <<= 1;
-				kmax++;
+			while (temp <= N) {
+				temp = temp * 2;
+				kMax++;
 			}
-			parent = new int[kmax + 1][N + 1];
-			BFS(1); // depth를 BFS를 통하여 구하기
-			for (int k = 1; k <= kmax; k++) {
+			
+			parent = new int[kMax + 1][N + 1];
+			depth = new int[N + 1];
+			BFS();
+			for (int k = 1; k <= kMax; k++) {
 				for (int n = 1; n <= N; n++) {
 					parent[k][n] = parent[k - 1][parent[k - 1][n]];
 				}
 			}
-			int M = Integer.parseInt(br.readLine()); // 질의의 수
-			for (int i = 0; i < M; i++) {
-				// 공통 조상을 구할 두 노드
+			
+			M = Integer.parseInt(br.readLine());
+			int a, b, result;
+			for (int m = 0; m < M; m++) {
 				st = new StringTokenizer(br.readLine());
-				int a = Integer.parseInt(st.nextToken());
-				int b = Integer.parseInt(st.nextToken());
+				a = Integer.parseInt(st.nextToken());
+				b = Integer.parseInt(st.nextToken());
 				
-				sb.append(LCA(a, b)).append("\n");
+				result = LCA(a, b);
+				sb.append(result).append("\n");
 			}
 			
 			bw.write(sb.toString().trim());
