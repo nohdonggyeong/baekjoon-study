@@ -6,37 +6,69 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
 	static int T, N;
-	static int[] childToParent;
-	static List<Integer> parentListA;
+	static List<Integer>[] adjList;
+	static int root;
+	static int[] parentArr, depthArr;
 	static int result;
 	
-	static void dfsA(int a) {
-		parentListA.add(a);
+	static void BFS(int root) {
+		Queue<Integer> queue = new LinkedList<Integer>();
+		queue.add(root);
 		
-		int parent = childToParent[a];
-		if (parent != 0) {
-			dfsA(parent);
+		boolean[] visited = new boolean[N + 1];
+		visited[root] = true;
+		
+		int nextLevel = 1;
+		int count = 0;
+		int nowSize = 1;
+		while (!queue.isEmpty()) {
+			int now = queue.poll();
+			
+			for (int next : adjList[now]) {
+				if (!visited[next]) {
+					visited[next] = true;
+					queue.add(next);
+					
+					parentArr[next] = now;
+					depthArr[next] = nextLevel;
+				}
+			}
+			count++;
+			
+			if (count == nowSize) {
+				nextLevel++;
+				count = 0;
+				nowSize = queue.size();
+			}
 		}
 	}
 	
-	static void backTrackingB(int b) {
-		if (parentListA.contains(b)) {
-			result = b;
-			return;
+	static int LCA(int a, int b) {
+		if (depthArr[a] < depthArr[b]) {
+			int temp = b;
+			b = a;
+			a = temp;
 		}
 		
-		int parent = childToParent[b];
-		if (parent != 0) {
-			backTrackingB(parent);
+		while (depthArr[a] != depthArr[b]) {
+			a = parentArr[a];
 		}
+		
+		while (a != b) {
+			a = parentArr[a];
+			b = parentArr[b];
+		}
+		
+		return a;
 	}
-	
-	static void main(String[] args) {
+	public static void main(String[] args) {
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out))) {
 			StringTokenizer st;
@@ -46,25 +78,39 @@ public class Main {
 			for (int t = 1; t <= T; t++) {
 				N = Integer.parseInt(br.readLine());
 				
-				childToParent = new int[N + 1];
-				
-				int u, v;
-				for (int n = 1; n < N; n++) {
-					st = new StringTokenizer(br.readLine());
-					u = Integer.parseInt(st.nextToken());
-					v = Integer.parseInt(st.nextToken());
-					childToParent[v] = u; // child -> parent
+				adjList = new ArrayList[N + 1];
+				for (int n = 1; n <= N; n++) {
+					adjList[n] = new ArrayList<Integer>();
 				}
 				
-				int a, b;
+				int parent, child;
+				boolean[] hasParent = new boolean[N + 1];
+				for (int n = 1; n < N; n++) {
+					st = new StringTokenizer(br.readLine());
+					parent = Integer.parseInt(st.nextToken());
+					child = Integer.parseInt(st.nextToken());
+					
+					hasParent[child] = true;
+					adjList[parent].add(child);
+				}
+				
+				for (int n = 1; n <= N; n++) {
+					if (adjList[n].size() > 0 && !hasParent[n]) {
+						root = n;
+						break;
+					}
+				}
+				
+				parentArr = new int[N + 1];
+				depthArr = new int[N + 1];
+				
+				BFS(root);
+				
 				st = new StringTokenizer(br.readLine());
-				a = Integer.parseInt(st.nextToken());
-				b = Integer.parseInt(st.nextToken());
+				int a = Integer.parseInt(st.nextToken());
+				int b = Integer.parseInt(st.nextToken());
 				
-				parentListA = new ArrayList<Integer>();
-				dfsA(a);
-				
-				backTrackingB(b);
+				result = LCA(a, b);
 				sb.append(result).append("\n");
 			}
 			
