@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main2 {
 	static int N, M;
 	static List<Integer>[] adjList;
 	
@@ -19,22 +19,23 @@ public class Main {
 	static int[][] parent;
 	static int[] depth;
 	
-	static void bfs(int root) {
+	static void BFS() {
 		Queue<Integer> queue = new LinkedList<Integer>();
-		queue.add(root);
+		queue.add(1);
 		
 		boolean[] visited = new boolean[N + 1];
-		visited[root] = true;
+		visited[1] = true;
 		
 		int nextLevel = 1;
 		int count = 0;
 		int nowSize = 1;
 		while (!queue.isEmpty()) {
 			int now = queue.remove();
+			
 			for (int next : adjList[now]) {
 				if (!visited[next]) {
 					visited[next] = true;
-					queue.add(next);
+					queue.add(next) ;
 					
 					parent[0][next] = now;
 					depth[next] = nextLevel;
@@ -50,11 +51,11 @@ public class Main {
 		}
 	}
 	
-	static int lca(int a, int b) {
+	static int LCA(int a, int b) {
 		if (depth[a] < depth[b]) {
-			int temp = a;
-			a = b;
-			b = temp;
+			int temp = b;
+			b = a;
+			a = temp;
 		}
 		
 		for (int k = kMax; k >= 0; k--) {
@@ -65,12 +66,10 @@ public class Main {
 			}
 		}
 		
-		for (int k = kMax; k >= 0; k--) {
-			if (a != b) {
-				if (parent[k][a] != parent[k][b]) {
-					a = parent[k][a];
-					b = parent[k][b];
-				}
+		for (int k = kMax; k >= 0 && a != b; k--) {
+			if (parent[k][a] != parent[k][b]) {
+				a = parent[k][a];
+				b = parent[k][b];
 			}
 		}
 		
@@ -80,7 +79,7 @@ public class Main {
 		}
 		
 		return result;
-	}
+ 	}
 	
 	public static void main(String[] args) {
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -89,10 +88,9 @@ public class Main {
 			StringBuilder sb = new StringBuilder();
 			
 			N = Integer.parseInt(br.readLine());
-			
 			adjList = new ArrayList[N + 1];
 			for (int n = 1; n <= N; n++) {
-				adjList[n] = new ArrayList<>();
+				adjList[n] = new ArrayList<Integer>();
 			}
 			
 			int u, v;
@@ -100,7 +98,6 @@ public class Main {
 				st = new StringTokenizer(br.readLine());
 				u = Integer.parseInt(st.nextToken());
 				v = Integer.parseInt(st.nextToken());
-				
 				adjList[u].add(v);
 				adjList[v].add(u);
 			}
@@ -108,16 +105,16 @@ public class Main {
 			kMax = 0;
 			int temp = 1;
 			while (temp <= N) {
-				temp *= 2;
+				temp = temp * 2;
 				kMax++;
 			}
 			
 			parent = new int[kMax + 1][N + 1];
 			depth = new int[N + 1];
-			bfs(1);
+			BFS();
 			for (int k = 1; k <= kMax; k++) {
 				for (int n = 1; n <= N; n++) {
-					parent[k][n] = parent[k - 1][parent[k-1][n]];
+					parent[k][n] = parent[k - 1][parent[k - 1][n]];
 				}
 			}
 			
@@ -128,7 +125,7 @@ public class Main {
 				a = Integer.parseInt(st.nextToken());
 				b = Integer.parseInt(st.nextToken());
 				
-				result = lca(a, b);
+				result = LCA(a, b);
 				sb.append(result).append("\n");
 			}
 			
