@@ -1,4 +1,4 @@
-package 알고리즘.최소공통조상.boj_3176_도로_네트워크;
+package 알고리즘.최소공통조상.boj_1761_정점들의_거리;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -12,13 +12,12 @@ import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
-	static int N, K;
+	static int N, M;
 	static List<Node>[] adjList;
 	static int kMax;
 	static int[][] parent;
 	static int[] depth;
-	static int[][] minDist, maxDist;
-	static int min, max;
+	static int[] dist;
 	
 	static void bfs(int root) {
 		Queue<Integer> queue = new LinkedList<Integer>();
@@ -32,7 +31,6 @@ public class Main {
 		int nowSize = 1;
 		while (!queue.isEmpty()) {
 			int now = queue.remove();
-			
 			for (Node next : adjList[now]) {
 				if (!visited[next.end]) {
 					visited[next.end] = true;
@@ -40,8 +38,7 @@ public class Main {
 					
 					parent[0][next.end] = now;
 					depth[next.end] = nextLevel;
-					minDist[0][next.end] = next.weight;
-					maxDist[0][next.end] = next.weight;
+					dist[next.end] = dist[now] + next.weight;
 				}
 			}
 			count++;
@@ -54,7 +51,7 @@ public class Main {
 		}
 	}
 	
-	static void lca(int a, int b) {
+	static int lca(int a, int b) {
 		if (depth[a] < depth[b]) {
 			int temp = a;
 			a = b;
@@ -63,36 +60,29 @@ public class Main {
 		
 		for (int k = kMax; k >= 0; k--) {
 			if (Math.pow(2, k) <= depth[a] - depth[b]) {
-				min = Math.min(min, minDist[k][a]);
-				max = Math.max(max, maxDist[k][a]);
 				a = parent[k][a];
 			}
 		}
 		
 		if (a == b) {
-//			return a;
-			return;
+			return a;
 		}
 		
 		for (int k = kMax; k >= 0; k--) {
 			if (parent[k][a] != parent[k][b]) {
-				min = Math.min(min, Math.min(minDist[k][a], minDist[k][b]));
-				max = Math.max(max, Math.max(maxDist[k][a], maxDist[k][b]));
 				a = parent[k][a];
 				b = parent[k][b];
 			}
 		}
 		
-//		return parent[0][a];
-		min = Math.min(min, Math.min(minDist[0][a], minDist[0][b]));
-		max = Math.max(max, Math.max(maxDist[0][a], maxDist[0][b]));
+		return parent[0][a];
 	}
 	
-	static class Node{
+	static class Node {
 		int end;
 		int weight;
 		
-		Node(int end, int weight) {
+		Node (int end, int weight) {
 			this.end = end;
 			this.weight = weight;
 		}
@@ -116,7 +106,6 @@ public class Main {
 				u = Integer.parseInt(st.nextToken());
 				v = Integer.parseInt(st.nextToken());
 				w = Integer.parseInt(st.nextToken());
-				
 				adjList[u].add(new Node(v, w));
 				adjList[v].add(new Node(u, w));
 			}
@@ -124,29 +113,23 @@ public class Main {
 			kMax = (int) (Math.log(N) / Math.log(2)) + 1;
 			parent = new int[kMax + 1][N + 1];
 			depth = new int[N + 1];
-			minDist = new int[kMax + 1][N + 1];
-			maxDist = new int[kMax + 1][N + 1];
+			dist = new int[N + 1];
 			bfs(1);
 			for (int k = 1; k <= kMax; k++) {
 				for (int n = 1; n <= N; n++) {
 					parent[k][n] = parent[k - 1][parent[k - 1][n]];
-					minDist[k][n] = Math.min(minDist[k - 1][n], minDist[k - 1][parent[k - 1][n]]);
-					maxDist[k][n] = Math.max(maxDist[k - 1][n], maxDist[k - 1][parent[k - 1][n]]);
 				}
 			}
 			
-			K = Integer.parseInt(br.readLine());
-			int a, b, lca;
-			for (int k = 0; k < K; k++) {
+			M = Integer.parseInt(br.readLine());
+			int a, b, lca, distance;
+			for (int m = 0; m < M; m++) {
 				st = new StringTokenizer(br.readLine());
 				a = Integer.parseInt(st.nextToken());
 				b = Integer.parseInt(st.nextToken());
-				
-				min = Integer.MAX_VALUE;
-				max = Integer.MIN_VALUE;
-				lca(a, b);
-				
-				sb.append(min).append(" ").append(max).append("\n");
+				lca = lca(a, b);
+				distance = dist[a] + dist[b] - 2 * dist[lca];
+				sb.append(distance).append("\n");
 			}
 			
 			bw.write(sb.toString().trim());
@@ -157,4 +140,3 @@ public class Main {
 		}
 	}
 }
-
