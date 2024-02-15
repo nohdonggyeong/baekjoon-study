@@ -83,6 +83,8 @@ public class 다익스트라_시간초과 {
 				adjList[u].add(new Node(v, w));
 				adjList[v].add(new Node(u, w));
 			}
+
+			dist = new int[N + 1];
 			
 			M = Integer.parseInt(br.readLine());
 			int a, b, result;
@@ -91,7 +93,6 @@ public class 다익스트라_시간초과 {
 				a = Integer.parseInt(st.nextToken());
 				b = Integer.parseInt(st.nextToken());
 			
-				dist = new int[N + 1];
 				Arrays.fill(dist, INF);
 				
 				dijkstra(a);
