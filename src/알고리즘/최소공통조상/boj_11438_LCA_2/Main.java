@@ -98,7 +98,7 @@ public class Main {
 				adjList[v].add(u);
 			}
 			
-			kMax = (int) (Math.log(N) / Math.log(2)) + 1;
+			kMax = (int) Math.ceil(Math.log(N) / Math.log(2));
 			parent = new int[kMax + 1][N + 1];
 			depth = new int[N + 1];
 			bfs(1);
