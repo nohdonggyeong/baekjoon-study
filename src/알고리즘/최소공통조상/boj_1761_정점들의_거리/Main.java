@@ -51,6 +51,14 @@ public class Main {
 		}
 	}
 	
+	static void fillParent() {
+		for (int k = 1; k <= kMax; k++) {
+			for (int n = 1; n <= N; n++) {
+				parent[k][n] = parent[k - 1][parent[k - 1][n]];
+			}
+		}
+	}
+	
 	static int lca(int a, int b) {
 		if (depth[a] < depth[b]) {
 			int temp = a;
@@ -110,16 +118,12 @@ public class Main {
 				adjList[v].add(new Node(u, w));
 			}
 			
-			kMax = (int) (Math.log(N) / Math.log(2)) + 1;
+			kMax = (int) Math.ceil(Math.log(N) / Math.log(2));
 			parent = new int[kMax + 1][N + 1];
 			depth = new int[N + 1];
 			dist = new int[N + 1];
 			bfs(1);
-			for (int k = 1; k <= kMax; k++) {
-				for (int n = 1; n <= N; n++) {
-					parent[k][n] = parent[k - 1][parent[k - 1][n]];
-				}
-			}
+			fillParent();
 			
 			M = Integer.parseInt(br.readLine());
 			int a, b, lca, distance;
