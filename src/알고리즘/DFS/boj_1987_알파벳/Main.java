@@ -8,55 +8,72 @@ import java.io.OutputStreamWriter;
 import java.util.StringTokenizer;
 
 public class Main {
-	static int R, C, answer;
-	static int[][] map;
-	static boolean[] visit;
-	static int[] dr = {0, -1, 0, 1};
-	static int[] dc = {-1, 0, 1, 0};
-	
-	static void dfs(int r, int c, int cnt) {
-		if (visit[map[r][c]]) { // 더 탐색 불가하면 max 출력
-			answer = Math.max(answer, cnt);
-			return;
-		} else {
-			visit[map[r][c]] = true; // 현재 위치 visit true
-			for (int i = 0; i < 4; i++) { // 깊게 탐색하기 for if dfs(r, c, cnt + 1)
-				int nr = r + dr[i];
-				int nc = c + dc[i];
-				
-				if (nr >= 0 && nc >= 0 && nr < R && nc < C) {
-					dfs(nr, nc, cnt + 1);
-				}
+	static int R, C;
+	static char[][] map;
+	static boolean[] checked;
+	static int maxCount;
+	static boolean[][] visited;
+	static int[] dr = {-1, 0, 1, 0};
+	static int[] dc = {0, 1, 0, -1};
+
+	static void dfs(int r, int c, int count) {
+		maxCount = Math.max(maxCount, count);
+		
+		int nr, nc;
+		for (int d = 0; d < 4; d++) {
+			nr = r + dr[d];
+			nc = c + dc[d];
+			
+			if (nr < 0 || nc < 0 || nr >= R || nc >= C) {
+				continue;
 			}
-			visit[map[r][c]] = false; // 다음 경우를 탐색하기 위해 visit true했던 것을 모두 visit false
+			if (visited[nr][nc] || checked[map[nr][nc] - 'A']) {
+				continue;
+			}
+			
+			visited[nr][nc] = true;
+			checked[map[nr][nc] - 'A'] = true;
+			count++;
+			
+			dfs(nr, nc, count);
+			
+			visited[nr][nc] = false;
+			checked[map[nr][nc] - 'A'] = false;
+			count--;
 		}
 	}
 	
-	public static void main(String args[]) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-		StringTokenizer st = new StringTokenizer(br.readLine());
-		
-		R = Integer.parseInt(st.nextToken());
-		C = Integer.parseInt(st.nextToken());
-		
-		map = new int[R][C];
-		visit = new boolean[26];
-		
-		for (int i = 0; i < R; i++) {
-			String str = br.readLine();
-			for (int j = 0; j < C; j++) {
-				map[i][j] = str.charAt(j) - 'A';
-			}
-		}
+	public static void main(String[] args) {
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out))) {
+			StringTokenizer st = new StringTokenizer(br.readLine());
+			R = Integer.parseInt(st.nextToken());
+			C = Integer.parseInt(st.nextToken());
 
-		answer = 0;
-		dfs(0, 0, 0);
-		
-		bw.write(String.valueOf(answer));
-		
-		bw.flush();
-		bw.close();
-		br.close();
+			map = new char[R][C];
+			checked = new boolean[26];
+			String str;
+			for (int r = 0; r < R; r++) {
+				str = br.readLine();
+				for (int c = 0; c < C; c++) {
+					map[r][c] = str.charAt(c);
+					
+					if (r == 0 && c == 0) {
+						checked[map[r][c] - 'A'] = true;
+					}
+				}
+			}
+			
+			maxCount = 1;
+			visited = new boolean[R][C];
+			visited[0][0] = true;
+			dfs(0, 0, 1);
+			
+			bw.write(String.valueOf(maxCount));
+			bw.flush();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
