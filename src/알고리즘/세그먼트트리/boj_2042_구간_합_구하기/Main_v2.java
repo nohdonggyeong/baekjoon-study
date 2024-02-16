@@ -45,6 +45,8 @@ public class Main_v2 {
 	public static void main(String[] args) {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out))) {
+			long startTime = System.nanoTime();
+
 			StringTokenizer st;
 			StringBuilder sb = new StringBuilder();
 			
@@ -76,6 +78,10 @@ public class Main_v2 {
 			
 			bw.write(sb.toString().trim());
 			bw.flush();
+			
+			long endTime = System.nanoTime();
+			System.out.println();
+			System.out.println("Running time: " + ((endTime - startTime) / 1_000_000_000.0) + "초");
 		} catch (Exception e) {
 			e.getStackTrace();
 		}
