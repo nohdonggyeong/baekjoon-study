@@ -2,32 +2,33 @@ package 알고리즘.세그먼트트리.boj_2042_구간_합_구하기;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main2 {
 	static int N, M, K;
-	static long[] nums, tree;
+	static long[] arr, tree;
 	
 	static long init(int start, int end, int node) {
 		if (start == end) {
-			return tree[node] = nums[start];
+			tree[node] = arr[start];
+			return tree[node];
 		}
 		
 		int mid = (start + end) / 2;
-		return tree[node] = init(start, mid, node * 2) + init(mid + 1, end, node * 2 + 1);
+		tree[node] = init(start, mid, node * 2) + init(mid + 1, end, node * 2 + 1);
+		return tree[node];
 	}
 	
 	static void update(int start, int end, int node, int index, long diff) {
-		if (index < start || index > end) {
+		if (index < start || end < index) {
 			return;
 		}
 		
 		tree[node] += diff;
-		
 		if (start == end) {
+			arr[index] = tree[node];
 			return;
 		}
 		
@@ -36,60 +37,57 @@ public class Main {
 		update(mid + 1, end, node * 2 + 1, index, diff);
 	}
 	
-	static long query(int start, int end, int node, int left, int right) {
-		if (left > end || right < start) {
+	static long sum(int start, int end, int node, int left, int right) {
+		if (right < start || end < left) {
 			return 0;
 		}
 		
-		if (left <= start && right >= end) {
+		if (left <= start && end <= right) {
 			return tree[node];
 		}
 		
 		int mid = (start + end) / 2;
-		return query(start, mid, node * 2, left, right) + query(mid + 1, end, node * 2 + 1, left, right);
+		return sum(start, mid, node * 2, left, right) + sum(mid + 1, end, node * 2 + 1, left, right);
 	}
 	
 	public static void main(String[] args) {
-		try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out))) {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out))) {
+			StringTokenizer st;
 			StringBuilder sb = new StringBuilder();
 			
-			StringTokenizer st = new StringTokenizer(br.readLine());
+			st = new StringTokenizer(br.readLine());
 			N = Integer.parseInt(st.nextToken());
 			M = Integer.parseInt(st.nextToken());
 			K = Integer.parseInt(st.nextToken());
 			
-			nums = new long[N + 1];
-			for (int n = 1; n <= N; n++) {
-				nums[n] = Long.parseLong(br.readLine());
+			arr = new long[N + 1];
+			for (int i = 1; i<= N; i++) {
+				arr[i] = Long.parseLong(br.readLine());
 			}
 			
-			tree = new long[N * 4];
+			tree = new long[N * 4 + 1];
 			init(1, N, 1);
 			
-			int a, b;
-			long c, diff, sum;
 			for (int i = 0; i < M + K; i++) {
 				st = new StringTokenizer(br.readLine());
-				a = Integer.parseInt(st.nextToken());
-				b = Integer.parseInt(st.nextToken());
-				c = Long.parseLong(st.nextToken());
+				int a = Integer.parseInt(st.nextToken());
+				int b = Integer.parseInt(st.nextToken());
+				long c = Long.parseLong(st.nextToken());
 				
 				if (a == 1) {
-					diff = c - nums[b];
+					long diff = c - arr[b];
+					arr[b] = c;
 					update(1, N, 1, b, diff);
-					nums[b] = c;
 				} else if (a == 2) {
-					sum = query(1, N, 1, b, (int) c);
-					sb.append(sum).append("\n");
+					sb.append(sum(1, N, 1, b, (int) c)).append("\n");
 				}
 			}
 			
 			bw.write(sb.toString().trim());
 			bw.flush();
-			
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			e.getStackTrace();
 		}
 	}
 }

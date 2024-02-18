@@ -1,4 +1,4 @@
-package 알고리즘.최소공통조상.boj_13511_트리와_쿼리_2;
+package 알고리즘.최소공통조상.boj_15480_LCA와_쿼리;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -13,11 +13,14 @@ import java.util.StringTokenizer;
 
 public class Main {
 	static int N, M;
-	static List<Node>[] tree;
+	static List<Integer>[] T;
+	static int r, u, v;
+	
 	static int kMax;
 	static int[][] parent;
 	static int[] depth;
-	static long[] dist;
+	
+	static int lcaR, lcaU, lcaV, lca;
 	
 	static void bfs(int root) {
 		Queue<Integer> queue = new LinkedList<Integer>();
@@ -31,15 +34,13 @@ public class Main {
 		int nowSize = 1;
 		while (!queue.isEmpty()) {
 			int now = queue.remove();
-			for (Node nextNode : tree[now]) {
-				int next = nextNode.end;
+			for (int next : T[now]) {
 				if (!visited[next]) {
 					visited[next] = true;
 					queue.add(next);
 					
 					parent[0][next] = now;
 					depth[next] = nextLevel;
-					dist[next] = dist[now] + nextNode.weight; 
 				}
 			}
 			count++;
@@ -79,65 +80,29 @@ public class Main {
 		return parent[0][a];
 	}
 	
-	static int findKth(int u, int v, int lca, int k) {
-		int lcaOrder = depth[u] - depth[lca] + 1;
-		if (k == lcaOrder) {
-			return lca;
-		} else if (k < lcaOrder) {
-			int depthK = depth[u] - k + 1;
-			for (int km = kMax; km >= 0; km--) {
-				if (depthK <= depth[parent[km][u]]) {
-					u = parent[km][u];
-				}
-			}
-			return u;
-		} else {
-			int depthK = depth[lca] + (k - (depth[u] - depth[lca])) - 1;
-			for (int km = kMax; km >= 0; km--) {
-				if (depthK <= depth[parent[km][v]]) {
-					v = parent[km][v];
-				}
-			}
-			return v;
-		}
-	}
-	
-	static class Node {
-		int end;
-		int weight;
-		
-		Node(int end, int weight) {
-			this.end = end;
-			this.weight = weight;
-		}
-	}
-	
 	public static void main(String[] args) {
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out))) {
 			StringTokenizer st;
 			StringBuilder sb = new StringBuilder();
-			
 			N = Integer.parseInt(br.readLine());
-			tree = new ArrayList[N + 1];
+			
+			T = new ArrayList[N + 1];
 			for (int n = 1; n <= N; n++) {
-				tree[n] = new ArrayList<Main.Node>();
+				T[n] = new ArrayList<>();
 			}
 			
-			int u, v, w;
 			for (int n = 1; n < N; n++) {
 				st = new StringTokenizer(br.readLine());
 				u = Integer.parseInt(st.nextToken());
 				v = Integer.parseInt(st.nextToken());
-				w = Integer.parseInt(st.nextToken());
-				tree[u].add(new Node(v, w));
-				tree[v].add(new Node(u, w));
+				T[u].add(v);
+				T[v].add(u);
 			}
 			
 			kMax = (int) Math.ceil(Math.log(N) / Math.log(2));
 			parent = new int[kMax + 1][N + 1];
 			depth = new int[N + 1];
-			dist = new long[N + 1];
 			bfs(1);
 			for (int k = 1; k <= kMax; k++) {
 				for (int n = 1; n <= N; n++) {
@@ -146,22 +111,25 @@ public class Main {
 			}
 			
 			M = Integer.parseInt(br.readLine());
-			int op, k, lca, kth;
-			long distance;
 			for (int m = 0; m < M; m++) {
 				st = new StringTokenizer(br.readLine());
-				op = Integer.parseInt(st.nextToken());
+				r = Integer.parseInt(st.nextToken());
 				u = Integer.parseInt(st.nextToken());
 				v = Integer.parseInt(st.nextToken());
-				lca = lca(u, v);
-				if (op == 1) {
-					distance = dist[u] + dist[v] - 2 * dist[lca];
-					sb.append(distance).append("\n");
-				} else if (op == 2) {
-					k = Integer.parseInt(st.nextToken());
-					kth = findKth(u, v, lca, k);
-					sb.append(kth).append("\n");
+				
+				lcaR = lca(u, v);
+				lcaU = lca(r, v);
+				lcaV = lca(r, u);
+				
+				if (depth[lcaR] >= Math.max(depth[lcaU], depth[lcaV])) {
+					lca = lcaR;
+				} else if (depth[lcaU] >= Math.max(depth[lcaR], depth[lcaV])) {
+					lca = lcaU;
+				} else if (depth[lcaV] >= Math.max(depth[lcaR], depth[lcaU])) {
+					lca = lcaV;
 				}
+				
+				sb.append(lca).append("\n");
 			}
 			
 			bw.write(sb.toString().trim());
