@@ -1,4 +1,4 @@
-package 알고리즘.다이나믹프로그래밍.boj_11726_2xn_타일링;
+package 알고리즘.다이나믹프로그래밍.boj_11727_2xn_타일링_2;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -16,10 +16,10 @@ public class Main2 {
         int[] dp = new int[1001]; // 런타임 에러 (ArrayIndexOutOfBounds) 해결을 위해 n + 1을 1001로 변경
         dp[0] = 0;
         dp[1] = 1;
-        dp[2] = 2;
+        dp[2] = 3;
 
         for (int i = 3; i <= n; i++) {
-            dp[i] = (dp[i - 1] + dp[i - 2]) % 10007 ; // 10007를 나눈 나머지를 저장하지 않으면 오버플로우가 발생하여 잘못된 값이 들어감
+            dp[i] = (dp[i - 1] + 2* dp[i - 2]) % 10007 ; // 10007를 나눈 나머지를 저장하지 않으면 오버플로우가 발생하여 잘못된 값이 들어감
         }
         bw.write(String.valueOf(dp[n]));
         bw.flush();

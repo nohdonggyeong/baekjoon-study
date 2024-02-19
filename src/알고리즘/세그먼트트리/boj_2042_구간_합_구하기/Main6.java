@@ -7,7 +7,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main6 {
 	static int N, M, K;
 	static long[] nums, tree;
 	

@@ -7,7 +7,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main5 {
 	static int N, M, K;
 	static long[] nums, tree;
 	
@@ -26,7 +26,6 @@ public class Main {
 		}
 		
 		tree[node] += diff;
-		
 		if (start == end) {
 			return;
 		}

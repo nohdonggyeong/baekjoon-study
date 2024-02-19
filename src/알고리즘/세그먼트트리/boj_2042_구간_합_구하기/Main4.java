@@ -7,7 +7,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main4 {
 	static int N, M, K;
 	static long[] nums, tree;
 	
@@ -17,7 +17,7 @@ public class Main {
 		}
 		
 		int mid = (start + end) / 2;
-		return tree[node] = init(start, mid, node * 2) + init(mid + 1, end, node * 2 + 1);
+		return tree[node] = init(start, mid, 2 * node) + init(mid + 1, end, 2 * node + 1);
 	}
 	
 	static void update(int start, int end, int node, int index, long diff) {
@@ -26,7 +26,6 @@ public class Main {
 		}
 		
 		tree[node] += diff;
-		
 		if (start == end) {
 			return;
 		}
@@ -64,11 +63,11 @@ public class Main {
 				nums[n] = Long.parseLong(br.readLine());
 			}
 			
-			tree = new long[N * 4];
+			tree = new long[4 * N + 1];
 			init(1, N, 1);
 			
 			int a, b;
-			long c, diff, sum;
+			long c, diff, answer;
 			for (int i = 0; i < M + K; i++) {
 				st = new StringTokenizer(br.readLine());
 				a = Integer.parseInt(st.nextToken());
@@ -80,12 +79,12 @@ public class Main {
 					update(1, N, 1, b, diff);
 					nums[b] = c;
 				} else if (a == 2) {
-					sum = query(1, N, 1, b, (int) c);
-					sb.append(sum).append("\n");
+					answer = query(1, N, 1, b, (int) c);
+					sb.append(answer).append("\n");
 				}
 			}
 			
-			bw.write(sb.toString().trim());
+			bw.write(sb.toString());
 			bw.flush();
 			
 		} catch (IOException e) {
