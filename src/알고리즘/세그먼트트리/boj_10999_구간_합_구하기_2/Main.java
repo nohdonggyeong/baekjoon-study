@@ -9,7 +9,7 @@ import java.util.StringTokenizer;
 
 public class Main {
 	static int N, M, K;
-	static long[] nums, tree;
+	static long[] nums, tree, lazy;
 	
 	static long init(int start, int end, int node) {
 		if (start == end) {
@@ -20,23 +20,41 @@ public class Main {
 		return tree[node] = init(start, mid, node * 2) + init(mid + 1, end, node * 2 + 1);
 	}
 	
+	static void propagate(int start, int end, int node) {
+		if (lazy[node] != 0) {
+			if (start != end) {
+				lazy[node * 2] += lazy[node];
+				lazy[node * 2 + 1] += lazy[node];
+			}
+			
+			tree[node] += lazy[node] * (end - start + 1);
+			lazy[node] = 0;
+		}
+	}
+	
 	static void update(int start, int end, int node, int left, int right, long diff) {
+		propagate(start, end, node);
+		
 		if (left > end || right < start) {
 			return;
 		}
 		
-		tree[node] += diff;
-		
-		if (start == end) {
+		if (left <= start && end <= right) {
+			lazy[node] = diff;
+			propagate(start, end, node);
 			return;
 		}
 		
 		int mid = (start + end) / 2;
 		update(start, mid, node * 2, left, right, diff);
 		update(mid + 1, end, node * 2 + 1, left, right, diff);
+		
+		tree[node] = tree[node * 2] + tree[node * 2 + 1];
 	}
 	
 	static long query(int start, int end, int node, int left, int right) {
+		propagate(start, end, node);
+		
 		if (left > end || right < start) {
 			return 0;
 		}
@@ -65,6 +83,7 @@ public class Main {
 			}
 			
 			tree = new long[N * 4];
+			lazy = new long[N * 4];
 			init(1, N, 1);
 			
 			int a, b, c;
@@ -77,9 +96,6 @@ public class Main {
 				
 				if (a == 1) {
 					d = Long.parseLong(st.nextToken());
-					for (int j = b; j <= c; j++) {
-						nums[j] += d;
-					}
 					update(1, N, 1, b, c, d);
 				} else if (a == 2) {
 					sum = query(1, N, 1, b, c);
