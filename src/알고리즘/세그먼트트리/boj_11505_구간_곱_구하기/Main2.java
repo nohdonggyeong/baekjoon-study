@@ -7,10 +7,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main2 {
 	static int N, M, K;
 	static long[] nums, tree;
-	static final int MOD = 1_000_000_007;
+	static final int MOD =  1_000_000_007;
 	
 	static long init(int start, int end, int node) {
 		if (start == end) {
@@ -18,7 +18,7 @@ public class Main {
 		}
 		
 		int mid = (start + end) / 2;
-		return tree[node] = init(start, mid, node * 2) * init(mid + 1, end, node * 2 + 1) % MOD;
+		return tree[node] = (init(start, mid, node * 2) * init(mid + 1, end, node * 2 + 1)) % MOD;
 	}
 	
 	static long update(int start, int end, int node, int index, long num) {
@@ -59,7 +59,7 @@ public class Main {
 			
 			nums = new long[N + 1];
 			for (int n = 1; n <= N; n++) {
-				nums[n] = Long.parseLong(br.readLine());
+				nums[n] = Integer.parseInt(br.readLine());
 			}
 			
 			tree = new long[N * 4];
@@ -72,12 +72,13 @@ public class Main {
 				a = Integer.parseInt(st.nextToken());
 				b = Integer.parseInt(st.nextToken());
 				c = Long.parseLong(st.nextToken());
+				
 				if (a == 1) {
 					update(1, N, 1, b, c);
 					nums[b] = c;
 				} else if (a == 2) {
 					mul = query(1, N, 1, b, (int) c);
-					sb.append(mul % MOD).append("\n");
+					sb.append(mul % 1000000007).append("\n");
 				}
 			}
 			
