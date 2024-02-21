@@ -13,6 +13,14 @@ public class Main2 {
     public static Book [] tree;
     public static int [][] query;
     
+    static class Book {
+        int count, val;
+        public Book(int val) {
+            this.val = val;
+            count = 1;
+        }
+    }
+    
     public static void main(String [] args) throws Exception {
     	long start = System.currentTimeMillis();
     	
@@ -92,13 +100,5 @@ public class Main2 {
         } else {
             return tree[node].val;
         }
-    }
-}
- 
-class Book {
-    int count, val;
-    public Book(int val) {
-        this.val = val;
-        count = 1;
     }
 }

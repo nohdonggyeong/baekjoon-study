@@ -8,71 +8,61 @@ import java.io.OutputStreamWriter;
 import java.util.StringTokenizer;
 
 public class Main {
+	static final int LAST_NUMBER = 1_000_000;
 	static int n;
-	static SegmentTree sgtree = new SegmentTree(4 * 1_000_000);
+	static int[] tree;
 	
-	static class SegmentTree {
-		long[] tree;
-		
-		SegmentTree(int n) {
-			tree = new long[n];
+	static int init(int start, int end, int node) {
+		if (start == end) {
+			return tree[node] = 0;
 		}
 		
-		long init(int start, int end, int node) {
-			if (start == end) {
-				return tree[node] = 0;
-			}
-			
-			int mid = (start + end) / 2;
-			return tree[node] = init(start, mid, node * 2) + init(mid + 1, end, node * 2 + 1);
-		}
-		
-		void update(int start, int end, int node, int index, int diff) {
-			if (index < start || index > end) {
-				return;
-			}
-			
-			tree[node] += diff;
-			
-			if (start == end) {
-				return;
-			}
-			
-			int mid = (start + end) / 2;
-			update(start, mid, node * 2, index, diff);
-			update(mid + 1, end, node * 2 + 1, index, diff);
-		}
-		
-		long sum(int start, int end, int node, int left, int right) {
-			if (left > end || right < start) {
-				return 0;
-			}
-			
-			if (left <= start && right >= end) {
-				return tree[node];
-			}
-			
-			int mid = (start + end) / 2;
-			return sum(start, mid, node * 2, left, right) + sum(mid + 1, end, node * 2 + 1, left, right);
-		}
+		int mid = (start + end) / 2;
+		return tree[node] = init(start, mid, node * 2) + init(mid + 1, end, node * 2 + 1);
 	}
 	
-	static int binarySearch(int left, int right, long n) {
-		int pl = left;
-		int pr = right;
+	static void update(int start, int end, int node, int index, int diff) {
+		if (index < start || index > end) {
+			return;
+		}
 		
+		tree[node] += diff;
+		
+		if (start == end) {
+			return;
+		}
+		
+		int mid = (start + end) / 2;
+		update(start, mid, node * 2, index, diff);
+		update(mid + 1, end, node * 2 + 1, index, diff);
+	}
+	
+	static long sum(int start, int end, int node, int left, int right) {
+		if (left > end || right < start) {
+			return 0;
+		}
+		
+		if (left <= start && right >= end) {
+			return tree[node];
+		}
+		
+		int mid = (start + end) / 2;
+		return sum(start, mid, node * 2, left, right) + sum(mid + 1, end, node * 2 + 1, left, right);
+	}
+	
+	static int binarySearch(int start, int end, long order) {
 		do {
-			int pc = (pl + pr) / 2;
-			long sum = sgtree.sum(1, 1_000_000, 1, 1, pc);
+			int mid = (start + end) / 2;
+			long sum = sum(1, LAST_NUMBER, 1, 1, mid);
 			
-			if (sum < n) {
-				pl = pc + 1;
-			} else if (sum >= n) {
-				pr = pc - 1;
+			if (sum < order) {
+				start = mid + 1;
+			} else {
+				end = mid - 1;
 			}
-		} while (pl <= pr);
+		} while (start <= end);
 		
-		return pl;
+		return start;
 	}
 	public static void main(String[] args) {
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -80,21 +70,22 @@ public class Main {
 			StringTokenizer st;
 			StringBuilder sb = new StringBuilder();
 			
-			sgtree.init(1, 1_000_000, 1);
-
+			tree = new int[LAST_NUMBER * 4];
+			init(1, LAST_NUMBER, 1);
+			
 			n = Integer.parseInt(br.readLine());
 			for (int i = 0; i < n; i++) {
 				st = new StringTokenizer(br.readLine());
 				int A = Integer.parseInt(st.nextToken());
 				if (A == 1) {
 					long B = Long.parseLong(st.nextToken());
-					int res = binarySearch(1, 1_000_000, B);
-					sb.append(res).append("\n");
-					sgtree.update(1, 1_000_000, 1, res, -1);
+					int number = binarySearch(1, LAST_NUMBER, B);
+					sb.append(number).append("\n");
+					update(1, LAST_NUMBER, 1, number, - 1);					
 				} else if (A == 2) {
 					int B = Integer.parseInt(st.nextToken());
 					int C = Integer.parseInt(st.nextToken());
-					sgtree.update(1, 1_000_000, 1, B, C);
+					update(1, LAST_NUMBER, 1, B, C);
 				}
 			}
 			
