@@ -12,10 +12,8 @@ import java.util.StringTokenizer;
 public class Main {	
 	static int T, N, Q;
 	static List<Integer> history; // 계속해서 반납하는 책 번호를 추가하는 history 리스트
-	static int[] tree; // 리프 노드에서 history에 대해 책이 현재 존재하면 1, 없으면 0으로 개수 저장
+	static int[] tree; // 리프 노드에서 history에 대해 책이 존재하면 1, 없으면 0으로 개수 저장
 	static int total;
-	
-	static final int MAX_SIZE = 150_000; // N(100_000) + Q/2(50_000)
 	
 	static int init(int start, int end, int node) {
 		if (start == end) {
@@ -58,7 +56,7 @@ public class Main {
 	static int binarySearch(int start, int end, int order) {
 		do {
 			int mid = (start + end) / 2;
-			int count = sum(1, MAX_SIZE, 1, 1, mid);
+			int count = sum(1, N, 1, 1, mid);
 			
 			if (count < order) {
 				start = mid + 1;
@@ -66,6 +64,14 @@ public class Main {
 				end = mid - 1;
 			}
 		} while (start <= end);
+		
+		while (true) {
+			if (sum(1, N, 1, 1, start - 1) == sum(1, N, 1, 1, start)) {
+				start--;
+			} else {
+				break;
+			}
+		}
 		
 		return start;
 	}
@@ -87,8 +93,8 @@ public class Main {
 					history.add(n);
 				}
 				
-				tree = new int[MAX_SIZE * 4];
-				init(1, MAX_SIZE, 1);
+				tree = new int[N * 4];
+				init(1, N, 1);
 				
 				total = 0;
 				for (int q = 0; q < Q; q++) {
@@ -96,13 +102,13 @@ public class Main {
 					int op = Integer.parseInt(st.nextToken());					
 					if (op == 1) {
 						int order = Integer.parseInt(st.nextToken());
-						int realOrder = binarySearch(1, MAX_SIZE, order);
+						int realOrder = binarySearch(1, N, order);
 						int number = history.get(realOrder);
 						total += number;
-						update(1, MAX_SIZE, 1, realOrder, -1);
+						update(1, N, 1, realOrder, -1);
 					} else if (op == 2) {
 						int number = Integer.parseInt(st.nextToken());
-						update(1, MAX_SIZE, 1, MAX_SIZE + 1, 1);
+						update(1, N, 1, N + 1, 1);
 						history.add(number);
 					}
 				}
