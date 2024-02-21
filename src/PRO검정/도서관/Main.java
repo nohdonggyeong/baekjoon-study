@@ -67,7 +67,7 @@ public class Main {
 			}
 		} while (start <= end);
 		
-		return history.get(start);
+		return start;
 	}
 	
 	public static void main(String[] args) {
@@ -96,10 +96,10 @@ public class Main {
 					int op = Integer.parseInt(st.nextToken());					
 					if (op == 1) {
 						int order = Integer.parseInt(st.nextToken());
-						int number = binarySearch(1, MAX_SIZE, order);
-//						System.out.println("Book number: " + number);
+						int realOrder = binarySearch(1, MAX_SIZE, order);
+						int number = history.get(realOrder);
 						total += number;
-						update(1, MAX_SIZE, 1, order, -1);
+						update(1, MAX_SIZE, 1, realOrder, -1);
 					} else if (op == 2) {
 						int number = Integer.parseInt(st.nextToken());
 						update(1, MAX_SIZE, 1, MAX_SIZE + 1, 1);
