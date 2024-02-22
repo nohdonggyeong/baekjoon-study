@@ -39,7 +39,7 @@ public class Main {
 			return;
 		}
 		
-		if (left <= start && end <= right) {
+		if (left <= start && right >= end) {
 			lazy[node] = diff;
 			propagate(start, end, node);
 			return;
@@ -52,7 +52,7 @@ public class Main {
 		tree[node] = tree[node * 2] + tree[node * 2 + 1];
 	}
 	
-	static long query(int start, int end, int node, int left, int right) {
+	static long sum(int start, int end, int node, int left, int right) {
 		propagate(start, end, node);
 		
 		if (left > end || right < start) {
@@ -64,7 +64,7 @@ public class Main {
 		}
 		
 		int mid = (start + end) / 2;
-		return query(start, mid, node * 2, left, right) + query(mid + 1, end, node * 2 + 1, left, right);
+		return sum(start, mid, node * 2, left, right) + sum(mid + 1, end, node * 2 + 1, left, right);
 	}
 	
 	public static void main(String[] args) {
@@ -88,17 +88,16 @@ public class Main {
 			
 			int a, b, c;
 			long d, sum;
-			for (int  i = 0; i < M + K; i++) {
+			for (int i = 0; i < M + K; i++) {
 				st = new StringTokenizer(br.readLine());
 				a = Integer.parseInt(st.nextToken());
 				b = Integer.parseInt(st.nextToken());
 				c = Integer.parseInt(st.nextToken());
-				
 				if (a == 1) {
 					d = Long.parseLong(st.nextToken());
 					update(1, N, 1, b, c, d);
 				} else if (a == 2) {
-					sum = query(1, N, 1, b, c);
+					sum = sum(1, N ,1, b, c);
 					sb.append(sum).append("\n");
 				}
 			}

@@ -1,4 +1,4 @@
-package 알고리즘.세그먼트트리.boj_2243_사탕상자;
+package 알고리즘.세그먼트트리.boj_2243_사탕상자_이진탐색;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
