@@ -56,7 +56,7 @@ public class Main {
 	static int binarySearch(int start, int end, int order) {
 		do {
 			int mid = (start + end) / 2;
-			int count = sum(1, N, 1, 1, mid);
+			int count = sum(1, N * 2, 1, 1, mid);
 			
 			if (count < order) {
 				start = mid + 1;
@@ -66,7 +66,7 @@ public class Main {
 		} while (start <= end);
 		
 		while (true) {
-			if (sum(1, N, 1, 1, start - 1) == sum(1, N, 1, 1, start)) {
+			if (sum(1, N * 2, 1, 1, start - 1) == sum(1, N * 2, 1, 1, start)) {
 				start--;
 			} else {
 				break;
@@ -93,8 +93,8 @@ public class Main {
 					history.add(n);
 				}
 				
-				tree = new int[N * 4];
-				init(1, N, 1);
+				tree = new int[N * 2 * 4];
+				init(1, N * 2, 1);
 				
 				total = 0;
 				for (int q = 0; q < Q; q++) {
@@ -102,13 +102,12 @@ public class Main {
 					int op = Integer.parseInt(st.nextToken());					
 					if (op == 1) {
 						int order = Integer.parseInt(st.nextToken());
-						int realOrder = binarySearch(1, N, order);
+						int realOrder = binarySearch(1, N * 2, order);
 						int number = history.get(realOrder);
 						total += number;
-						update(1, N, 1, realOrder, -1);
+						update(1, N * 2, 1, realOrder, -1);
 					} else if (op == 2) {
 						int number = Integer.parseInt(st.nextToken());
-						update(1, N, 1, N + 1, 1);
 						history.add(number);
 					}
 				}
