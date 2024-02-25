@@ -2,120 +2,89 @@ package PRO검정.배달;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
- 
+
 public class Main {
- 
-    private static int n, m, d;
-    private static long result1, result2;
-    private static int [] arr;
-    private static Store [] tree;
-    private static ArrayList<House> houses;
-     
-    public static void main(String[] args) throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-        StringBuilder sb = new StringBuilder();
-        
-        StringTokenizer st = new StringTokenizer(br.readLine().trim());
-        n = Integer.parseInt(st.nextToken()); // 음식점의 수 1 ~ 100_000
-        m = Integer.parseInt(st.nextToken()); // 집의 수 1 ~ 100_000
-        d = Integer.parseInt(st.nextToken()); // 배달 가능한 거리
-        
-        arr = new int[n]; // x 좌표 위의 n개의 음식점 위치
-        st = new StringTokenizer(br.readLine().trim());
-        for(int i=0; i < n; i++) {
-            arr[i] = Integer.parseInt(st.nextToken());
-        }
-        
-        Arrays.sort(arr); // 정렬 후 Tree 생성
-        tree = new Store[n*4];
-        init(1, n, 1);
-         
-        houses = new ArrayList<House>(); // x, y 좌표의 m개의 집 위치
-        for(int i=0; i < m; i++) {
-            st = new StringTokenizer(br.readLine().trim());
-            int x = Integer.parseInt(st.nextToken());
-            int y = Integer.parseInt(st.nextToken());
-            
-            int scope = Math.abs(y) - d; // x, y에서 x축으로 수직거리 계산. scope > 0이면 x축에 닿지 않는다.
-            if(scope <= 0) { // Y 에서 배달거리가 X축에 닿는 경우만 배달 가능
-                houses.add(new House(x - Math.abs(scope), x + Math.abs(scope)));
-            }
-        }
-         
-        for(House house : houses) {
-            Store store = query(1, n, 1, house.left, house.right);
-            if(store.cnt > 0) result1++;
-            result2 += store.cnt;
-        }
-         
-        sb.append(result1 + " " + result2 + "\n");
-        bw.write(sb.toString());
-        bw.flush();
-        bw.close();
-        br.close();
-    }
- 
-    /**
-     * Min-Max Tree
-     */
-    public static Store init(int start, int end, int node) {
-        if(start == end) {
-            return tree[node] = new Store(arr[start-1], arr[start-1], arr[start-1], 1);
-        }
-         
-        int mid = (start + end) / 2;
-         
-        Store leftNode = init(start, mid, node*2);
-        Store rightNode = init(mid+1, end, node*2+1);
-         
-        return tree[node] = new Store(Math.min(leftNode.min, rightNode.min),
-                Math.max(leftNode.max, rightNode.max), 0, leftNode.cnt + rightNode.cnt);   
-    }
-     
-    /**
-     * 구간 최대 최소 조회
-     */
-    public static Store query(int start, int end, int node, int left, int right) {
-        if(right < tree[node].min || tree[node].max < left) {
-            return new Store(Long.MAX_VALUE, Long.MIN_VALUE, 0, 0);
-        }
-         
-        if(left <= tree[node].min && tree[node].max <= right) {
-            return tree[node];
-        }
-         
-        int mid = (start + end) / 2;
-         
-        Store leftNode = query(start, mid, node*2, left, right);
-        Store rightNode = query(mid+1, end, node*2+1, left, right);
-         
-        return new Store(Math.min(leftNode.min, rightNode.min),
-                Math.max(leftNode.max, rightNode.max), 0, leftNode.cnt + rightNode.cnt);   
-    }
-}
- 
-class Store {
-    public long min, max, dist, cnt;
- 
-    public Store(long min, long max, long dist, long cnt) {
-        this.min = min;
-        this.max = max;
-        this.dist = dist;
-        this.cnt = cnt;
-    }
-}
- 
-class House {
-    public int left, right;
- 
-    public House(int left, int right) {
-        this.left = left;
-        this.right = right;
-    }
+	static int N, M, D;
+	static long[] tree;
+	static long deliverableHomeCount, deliverablePairCount;
+	
+	static final int NEGATIVE_COMPENSATION = 1_000_000_001; // 음식점 좌표 -1,000,000,000 ~ 1,000,000,000 범위를 1 ~ 2,000,000,001로 보정하기 위한 값
+	
+	public static void main(String[] args) {
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+				BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out))) {
+			StringBuilder sb = new StringBuilder();
+			
+			StringTokenizer st = new StringTokenizer(br.readLine());
+			N = Integer.parseInt(st.nextToken());
+			M = Integer.parseInt(st.nextToken());
+			D = Integer.parseInt(st.nextToken());
+
+			tree = new long[N * 4];
+			st = new StringTokenizer(br.readLine());
+			long index;
+			for (int n = 1; n <= N; n++) {
+				index = Long.parseLong(st.nextToken()) + NEGATIVE_COMPENSATION;
+				update(1, N, 1, index, 1);
+			}
+			
+			deliverableHomeCount = 0;
+			deliverablePairCount = 0;
+			int x, y, overD;
+			for (int m = 0; m < M; m++) {
+				st = new StringTokenizer(br.readLine());
+				x = Integer.parseInt(st.nextToken());
+				y = Integer.parseInt(st.nextToken());
+				
+				overD = Math.abs(y) - D;
+				if (overD >= 0) {
+					deliverableHomeCount++;
+					deliverablePairCount += query(1, N, 1, restaurantLocationOrder.get(x - overD), restaurantLocationOrder.get(x + overD));
+				}
+			}
+			
+			sb.append(deliverableHomeCount).append(" ").append(deliverablePairCount);
+			bw.write(sb.toString());
+			bw.flush();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	static void update(int start, int end, int node, int index, int diff) {
+		if (index < start || index > end) {
+			return;
+		}
+		
+		tree[node] += diff;
+		
+		if (start == end) {
+			return;
+		}
+		
+		int mid = (start + end) / 2;
+		update(start, mid, node * 2, index, diff);
+		update(mid + 1, end, node * 2 + 1, index, diff);
+	}
+	
+	static int query(int start, int end, int node, int left, int right) {
+		if (left > end || right < start) {
+			return 0;
+		}
+		
+		if (left <= start && right >= end) {
+			return tree[node];
+		}
+		
+		int mid = (start + end) / 2;
+		return query(start, mid, node * 2, left, right) + query(mid + 1, end, node * 2 + 1, left, right);
+	}
 }
