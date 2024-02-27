@@ -10,11 +10,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-public class Main2 {
+public class Main {
 	static int N, M, D;
 	static int[] restaurantLocation;
 	static Restaurant[] tree;
-	static int deliverableHomeCount, deliverablePairCount;
+	static long deliverableHomeCount, deliverablePairCount;
 	
 	public static void main(String[] args) {
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -45,8 +45,11 @@ public class Main2 {
 				
 				leftoverD = D - Math.abs(y);
 				if (leftoverD >= 0) {
-					deliverableHomeCount++;
-					deliverablePairCount += query(1, x - leftoverD, x + leftoverD).count;
+					int count = query(1, x - leftoverD, x + leftoverD).count;
+					if (count > 0) {
+						deliverableHomeCount += 1;
+						deliverablePairCount += count;						
+					}
 				}
 			}
 			
