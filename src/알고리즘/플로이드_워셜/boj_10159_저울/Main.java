@@ -9,7 +9,7 @@ import java.util.StringTokenizer;
 
 public class Main {
 	static int N, M;
-	static int[][] adjArr;
+	static int[][] adjArr, adjArr2;
 	
 	static final int INF = 101;
 	
@@ -31,12 +31,22 @@ public class Main {
 				}
 			}
 			
+			adjArr2 = new int[N + 1][N + 1];
+			for (int i = 1; i <= N; i++) {
+				for (int j = 1; j <= N; j++) {
+					if (i != j) {
+						adjArr2[i][j] = INF;
+					}
+				}
+			}
+			
 			int u , v;
 			for (int m = 0; m < M; m++) {
 				st = new StringTokenizer(br.readLine());
 				u = Integer.parseInt(st.nextToken());
 				v = Integer.parseInt(st.nextToken());
 				adjArr[v][u] = 1;
+				adjArr2[u][v] = 1;
 			}
 			
 			for (int k = 1; k <= N; k++) {
@@ -51,6 +61,9 @@ public class Main {
 						if (adjArr[i][j] > adjArr[i][k] + adjArr[k][j]) {
 							adjArr[i][j] = adjArr[i][k] + adjArr[k][j];
 						}
+						if (adjArr2[i][j] > adjArr2[i][k] + adjArr2[k][j]) {
+							adjArr2[i][j] = adjArr2[i][k] + adjArr2[k][j];
+						}
 					}
 				}
 			}
@@ -59,7 +72,7 @@ public class Main {
 			for (int i = 1; i <= N; i++) {
 				count = 0;
 				for (int j = 1; j <= N; j++) {
-					if (adjArr[i][j] == INF) {
+					if (adjArr[i][j] == INF && adjArr2[i][j] == INF) {
 						count++;
 					}
 				}
