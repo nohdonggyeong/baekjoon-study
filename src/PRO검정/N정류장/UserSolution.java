@@ -10,17 +10,9 @@ public class UserSolution {
 	static List<int[]> output;
 	static int result;
 	
-	// UserSolution.find(graph, N, 1, 7, 1, new int[] {2,0,0,0,0});
 	static void find(int[][] graph, int vertices, int start, int end, int m, int[] minCosts) {
 		
-		int[][] dist = floydWarshall(graph, vertices);
-		for (int i = 1; i <= vertices; i++) {
-			for (int j = 1; j <= vertices; j++) {
-				System.out.print(dist[i][j] + " ");
-			}
-			System.out.println();
-		}
-		
+		int[][] dist = floydWarshall(graph, vertices, start, end);		
 		
 		n = r = m;
 		input = new int[n];
@@ -34,26 +26,24 @@ public class UserSolution {
 		permutation(0);
 		
 		// 순열 돌며  Floyd–Warshall에서 구한 거리 합산의 최소 값을 출력
-		result = 0;
-		for (int[] el : output) {
-			System.out.print("[");
-			for (int e : el) {
-				System.out.print(e + " ");
-			}
-			System.out.println("]");
-			
-			result += dist[start][el[0]];
+		result = 1000000000;
+		for (int[] el : output) {			
+			int sum = dist[start][el[0]];
 			for (int i = 1; i < el.length; i++) {
-				result += dist[el[i - 1]][el[i]];
+				sum += dist[el[i - 1]][el[i]];
 			}
-			result += dist[el[el.length - 1]][end];
+			sum += dist[el[el.length - 1]][end];
+			result = Math.min(result, sum);
 		}
 		
 		System.out.println(result >= 1000000001 ? -1 : result);
 	}
 	
-	static int[][] floydWarshall(int[][] graph, int N) {
+	static int[][] floydWarshall(int[][] graph, int N, int start, int end) {
 		for (int k = 1; k <= N; k++) {
+			if (k == start || k == end) {
+				continue;
+			}
 			for (int i = 1; i <= N; i++) {
 				if (i == k) {
 					continue;

@@ -27,7 +27,9 @@ public class Solution {
          
         for (int i = 1; i <= N; i++) {
             for (int j = 1; j <= N; j++) {
-                graph[i][j] = INF;
+            	if (i != j) {
+            		graph[i][j] = INF;
+            	}
             }
         }
          
@@ -93,12 +95,12 @@ public class Solution {
         }
          
         //최단 경로 출력
-      for (int i = 1; i <= vertices; i++) {
-          for (int j = 1; j <= vertices; j++) {
-              System.out.print((dist[i][j] == INF ? "INF" : dist[i][j]) + "\t");
-          }
-          System.out.println();
-      }
+//      for (int i = 1; i <= vertices; i++) {
+//          for (int j = 1; j <= vertices; j++) {
+//              System.out.print((dist[i][j] == INF ? "INF" : dist[i][j]) + "\t");
+//          }
+//          System.out.println();
+//      }
          
         return dist;
     }
