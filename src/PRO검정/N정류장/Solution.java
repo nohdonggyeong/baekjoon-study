@@ -37,8 +37,8 @@ public class Solution {
             int end = Integer.parseInt(st.nextToken());
             int cost = Integer.parseInt(st.nextToken());
              
-            graph[start][end] = Math.min(graph[start][end], cost);
-            graph[end][start] = Math.min(graph[end][start], cost);
+            graph[start][end] = cost;
+            graph[end][start] = cost;
         }
      
         UserSolution.find(graph, N, 1, 7, 1, new int[] {2,0,0,0,0});

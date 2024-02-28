@@ -14,6 +14,13 @@ public class UserSolution {
 	static void find(int[][] graph, int vertices, int start, int end, int m, int[] minCosts) {
 		
 		int[][] dist = floydWarshall(graph, vertices);
+		for (int i = 1; i <= vertices; i++) {
+			for (int j = 1; j <= vertices; j++) {
+				System.out.print(dist[i][j] + " ");
+			}
+			System.out.println();
+		}
+		
 		
 		n = r = m;
 		input = new int[n];
@@ -29,6 +36,12 @@ public class UserSolution {
 		// 순열 돌며  Floyd–Warshall에서 구한 거리 합산의 최소 값을 출력
 		result = 0;
 		for (int[] el : output) {
+			System.out.print("[");
+			for (int e : el) {
+				System.out.print(e + " ");
+			}
+			System.out.println("]");
+			
 			result += dist[start][el[0]];
 			for (int i = 1; i < el.length; i++) {
 				result += dist[el[i - 1]][el[i]];
