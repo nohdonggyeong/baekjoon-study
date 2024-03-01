@@ -9,69 +9,17 @@ import java.util.StringTokenizer;
 
 public class Main {
 	static int n;
-	static int[] nums, tree;
-	static long maxWidth;
+	static int[] nums;
+	static long[] tree;
+	static long area, maxArea;
 	static final int INF = 1_000_000_000;
-	
-	static int init(int start, int end, int node) {
-		if (start == end) {
-			return tree[node] = start;
-		}
-		
-		int mid = (start + end) / 2;
-		int leftMinIndex = init(start, mid, node * 2);
-		int rightMinIndex = init(mid + 1, end, node * 2 + 1);
-		
-		return tree[node] = nums[leftMinIndex] < nums[rightMinIndex] ? leftMinIndex :rightMinIndex; 
-	}
-	
-	static int query(int start, int end, int node, int left, int right) {
-		if (left > end || right < start) {
-			return INF;
-		}
-		
-		if (left <= start && right >= end) {
-			return tree[node];
-		}
-		
-		int mid = (start + end) / 2;
-		int leftMinIndex = query(start, mid, node * 2, left, right);
-		int rightMinIndex = query(mid + 1, end, node * 2 + 1, left, right);
-		
-		if (leftMinIndex == INF) {
-			return rightMinIndex;
-		} else if (rightMinIndex == INF) {
-			return leftMinIndex;
-		} else {
-			return nums[leftMinIndex] < nums[rightMinIndex] ? leftMinIndex : rightMinIndex;
-		}
-	}
-	
-	static long getMaxWidth(int left, int right) {
-		long maxWidth, tempWidth;
-		int minIndex = query(1, n, 1, left, right);
-		
-		maxWidth = (long) (right - left + 1) * (long) nums[minIndex];
-		
-		if (left < minIndex) {
-			tempWidth = getMaxWidth(left,  minIndex - 1);
-			maxWidth = Math.max(maxWidth, tempWidth);
-		}
-		
-		if (right > minIndex) {
-			tempWidth = getMaxWidth(minIndex + 1, right);
-			maxWidth = Math.max(maxWidth, tempWidth);
-		}
-		
-		return maxWidth;
-	}
 	
 	public static void main(String[] args) {
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out))) {
-			StringTokenizer st;
+				BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out))) {
 			StringBuilder sb = new StringBuilder();
 			
+			StringTokenizer st;
 			while (true) {
 				st = new StringTokenizer(br.readLine());
 				n = Integer.parseInt(st.nextToken());
@@ -84,11 +32,17 @@ public class Main {
 					nums[i] = Integer.parseInt(st.nextToken());
 				}
 				
-				tree = new int[n * 4];
+				tree = new long[n * 4];
 				init(1, n, 1);
 				
-				maxWidth = getMaxWidth(1, n);
-				sb.append(maxWidth).append("\n");
+				maxArea = 0;
+				for (int i = 1; i <= n; i++) {
+					for (int j = i; j <= n; j++) {
+						area = (j - i + 1) * query(1, n, 1, i, j);
+						maxArea = Math.max(maxArea, area);
+					}
+				}
+				sb.append(maxArea).append("\n");
 			}
 			
 			bw.write(sb.toString().trim());
@@ -97,5 +51,27 @@ public class Main {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	static long init(int start, int end, int node) {
+		if (start == end) {
+			return tree[node] = nums[start];
+		}
+		
+		int mid = (start + end) / 2;
+		return tree[node] = Math.min(init(start, mid, node * 2), init(mid + 1, end, node * 2 + 1));
+	}
+	
+	static long query(int start, int end, int node, int left, int right) {
+		if (left > end || right < start) {
+			return INF;
+		}
+		
+		if (left <= start && right >= end) {
+			return tree[node];
+		}
+		
+		int mid = (start + end) / 2;
+		return Math.min(query(start, mid, node * 2, left, right), query(mid + 1, end, node * 2 + 1, left, right));
 	}
 }
