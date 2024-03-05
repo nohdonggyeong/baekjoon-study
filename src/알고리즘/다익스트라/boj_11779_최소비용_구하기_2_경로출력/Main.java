@@ -16,12 +16,11 @@ import java.util.StringTokenizer;
 public class Main {
 	static int n, m;
 	static List<Node>[] adjList;
-	static int[] dist, prev;
-	static List<Integer> pathList;
-	static int start, end;
-	static List<Integer> cityList;
 	
-	static final int INF = 100_000_000;
+	static int[] dist, prev;
+	static final int INF = 100_000_001;
+	
+	static int start, end;
 	
 	static class Node implements Comparable<Node> {
 		int end;
@@ -42,7 +41,7 @@ public class Main {
 		Arrays.fill(dist, INF);
 		dist[start] = 0;
 		
-		Queue<Node> pq = new PriorityQueue<>();
+		Queue<Node> pq = new PriorityQueue<Main.Node>();
 		pq.add(new Node(start, 0));
 		
 		boolean[] visited = new boolean[n + 1];
@@ -57,17 +56,14 @@ public class Main {
 			
 			visited[cur] = true;
 			
-			for (Node linkedNode : adjList[cur]) {
-				if (dist[linkedNode.end] > dist[cur] + linkedNode.weight) {
-					dist[linkedNode.end] = dist[cur] + linkedNode.weight;
-					
-					prev[linkedNode.end] = cur;
-//					for (int i = 0; i < prev.length; i++) {
-//						System.out.print(String.valueOf(prev[i]) + " ");
-//					}
-//					System.out.println();
-					
-					pq.add(new Node(linkedNode.end, dist[linkedNode.end]));
+			for (Node adjNode : adjList[cur]) {
+				if (dist[adjNode.end] > dist[cur] + adjNode.weight) {
+					dist[adjNode.end] = dist[cur] + adjNode.weight;
+
+					prev[adjNode.end] = cur;
+					pq.add(new Node(adjNode.end, dist[adjNode.end]));
+				} else if (dist[adjNode.end] == dist[cur] + adjNode.weight && prev[adjNode.end] > cur) {
+					prev[adjNode.end] = cur;
 				}
 			}
 		}
@@ -84,7 +80,7 @@ public class Main {
 			
 			adjList = new ArrayList[n + 1];
 			for (int i = 1; i <= n; i++) {
-				adjList[i] = new ArrayList<>();
+				adjList[i] = new ArrayList<Main.Node>();
 			}
 			
 			int u, v, w;
@@ -103,7 +99,6 @@ public class Main {
 			
 			dist = new int[n + 1];
 			prev = new int[n + 1];
-			pathList = new ArrayList<>();
 			dijkstra(start);
 			
 			Stack<Integer> pathStack = new Stack<Integer>();
@@ -112,12 +107,12 @@ public class Main {
 				pathStack.push(temp);
 				temp = prev[temp];
 			}
+			
 			sb.append(dist[end]).append("\n");
 			sb.append(pathStack.size()).append("\n");
 			while (!pathStack.isEmpty()) {
 				sb.append(pathStack.pop()).append(" ");
 			}
-			
 			bw.write(sb.toString().trim());
 			bw.flush();
 			
