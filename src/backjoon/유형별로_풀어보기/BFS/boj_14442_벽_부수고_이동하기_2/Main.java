@@ -11,11 +11,14 @@ import java.util.StringTokenizer;
 
 public class Main {
 	static int N, M, K;
+	
 	static int[][] map;
 	static boolean[][][] visited;
-	static int result;
+	
 	static int[] dn = {-1, 0, 1, 0};
 	static int[] dm = {0, 1, 0, -1};
+
+	static int result;
 	
 	static void bfs() {
 		Queue<Node> queue = new LinkedList<>();
@@ -35,6 +38,7 @@ public class Main {
 				if (nn < 0 || nn >= N || nm < 0 || nm >= M) {
 					continue;
 				}
+				
 				if (map[nn][nm] == 1) {					
 					if (node.k > 0 && !visited[nn][nm][node.k - 1]) {
 						visited[nn][nm][node.k - 1] = true;

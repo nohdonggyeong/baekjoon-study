@@ -94,7 +94,8 @@ public class Main {
 	}
 	
 	static void permutation(int depth) {
-		if (depth == r) {
+		if (depth == 
+				r) {
 			output.add(temp.clone());
 			return;
 		}
