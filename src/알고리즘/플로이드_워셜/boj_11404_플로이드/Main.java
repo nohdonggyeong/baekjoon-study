@@ -2,76 +2,80 @@ package 알고리즘.플로이드_워셜.boj_11404_플로이드;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.StringTokenizer;
 
 public class Main {
-	static int N, M;
-	static int[][] map;
-	static final int INF = 10_000_000;
+	static int n, m;
+	static int[][] adjArr;
+	static final int INF = 10_000_001;
 	
-	static void floydWarshall(int N) {
-		for (int k = 1; k < N + 1; k++) {
-			for (int i = 1; i < N + 1; i++) {
-				if (k == i) {
+	static void floydWarshall() {
+		for (int k = 1; k <= n; k++) {
+			for (int i = 1; i <= n; i++) {
+				if (i == k) {
 					continue;
 				}
-				for (int j = 1; j < N + 1; j++) {
-					if (k == j || i == j) {
+				for (int j = 1; j <= n; j++) {
+					if (j == k || j == i) {
 						continue;
 					}
-					if (map[i][j] > map[i][k] + map[k][j]) {
-						map[i][j] = map[i][k] + map[k][j];
+					
+					if (adjArr[i][j] > adjArr[i][k] + adjArr[k][j]) {
+						adjArr[i][j] = adjArr[i][k] + adjArr[k][j];
 					}
 				}
 			}
 		}
 	}
 	
-	public static void main(String[] args) {
-		try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out))) {
-			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-			StringBuilder sb = new StringBuilder();
+	public static void main(String[] args) throws IOException {
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+				BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out))) {
 			StringTokenizer st;
+			StringBuilder sb = new StringBuilder();
 			
-			N = Integer.parseInt(br.readLine());
-			M = Integer.parseInt(br.readLine());
+			n = Integer.parseInt(br.readLine());
+			m = Integer.parseInt(br.readLine());
 			
-			map = new int[N + 1][N + 1];
-			for (int i = 1; i < N + 1; i++) {
-				for (int j = 1; j < N + 1; j++) {
+			adjArr = new int[n + 1][n + 1];
+			for (int i = 1; i <= n; i++) {
+				for (int j = 1; j <= n; j++) {
 					if (i != j) {
-						map[i][j] = INF;
+						adjArr[i][j] = INF;
 					}
 				}
 			}
 			
-			for (int m = 0; m < M; m++) {
+			int a, b, c;
+			for (int i = 0; i < m; i++) {
 				st = new StringTokenizer(br.readLine());
-				int start = Integer.parseInt(st.nextToken());
-				int end = Integer.parseInt(st.nextToken());
-				int weight = Integer.parseInt(st.nextToken());
-				map[start][end] = Math.min(map[start][end], weight);
+				a = Integer.parseInt(st.nextToken());
+				b = Integer.parseInt(st.nextToken());
+				c = Integer.parseInt(st.nextToken());
+				
+				// adjArr[a][b] = c; <- 같은 경로에 여러 가중치가 주어지면 그 중 가장 작은 값만 남겨 저장해두어야 한다.
+				adjArr[a][b] = Math.min(adjArr[a][b], c);
 			}
 			
-			floydWarshall(N);
+			floydWarshall();
 			
-			for (int i = 1; i < N + 1; i++) {
-				for (int j = 1; j < N + 1; j++) {
-					if (map[i][j] == INF) {
+			for(int i = 1; i <= n; i++) {
+				for (int j = 1; j <= n; j++) {
+					if (adjArr[i][j] == INF) { // 만약, i에서 j로 갈 수 없는 경우에는 그 자리에 0을 출력한다.
 						sb.append(0).append(" ");
 					} else {
-						sb.append(map[i][j]).append(" ");
+						sb.append(adjArr[i][j]).append(" ");
 					}
 				}
+				sb.deleteCharAt(sb.length() - 1);
 				sb.append("\n");
 			}
 			
 			bw.write(sb.toString().trim());
 			bw.flush();
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 }
