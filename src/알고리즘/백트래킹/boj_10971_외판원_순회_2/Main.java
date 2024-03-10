@@ -1,4 +1,4 @@
-package 알고리즘.DFS.boj_10971_외판원_순회_2;
+package 알고리즘.백트래킹.boj_10971_외판원_순회_2;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

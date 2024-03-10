@@ -1,4 +1,4 @@
-package 알고리즘.DFS.boj_17070_파이프_옮기기_1;
+package 알고리즘.백트래킹.boj_17070_파이프_옮기기_1;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

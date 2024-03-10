@@ -1,4 +1,4 @@
-package 알고리즘.DFS.boj_2644_촌수계산;
+package 알고리즘.백트래킹.boj_2644_촌수계산;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

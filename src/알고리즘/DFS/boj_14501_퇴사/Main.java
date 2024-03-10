@@ -1,4 +1,4 @@
-package 알고리즘.브루트포스.boj_14501_퇴사;
+package 알고리즘.DFS.boj_14501_퇴사;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

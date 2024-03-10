@@ -1,4 +1,4 @@
-package 알고리즘.BFS.boj_14716_현수막;
+package 알고리즘.DFS.boj_14716_현수막;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

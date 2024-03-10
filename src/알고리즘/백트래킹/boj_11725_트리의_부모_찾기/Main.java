@@ -1,4 +1,4 @@
-package 알고리즘.DFS.boj_11725_트리의_부모_찾기;
+package 알고리즘.백트래킹.boj_11725_트리의_부모_찾기;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

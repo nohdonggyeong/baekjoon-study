@@ -1,4 +1,4 @@
-package 알고리즘.DFS.boj_1189_컴백홈;
+package 알고리즘.백트래킹.boj_1189_컴백홈;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
