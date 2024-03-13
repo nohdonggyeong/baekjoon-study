@@ -62,6 +62,7 @@ public class Main {
 						continue;
 					}
 					
+					// 사이클이 발생은 a에서 b로 갈 수 있고, b에서 a로 갈 수 있는지 확인
 					if (adjArr[i][j] != INF && adjArr[j][i] != INF) {
 						result = Math.min(result, adjArr[i][j] + adjArr[j][i]);
 					}
