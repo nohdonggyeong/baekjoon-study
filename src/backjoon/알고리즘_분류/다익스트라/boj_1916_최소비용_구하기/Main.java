@@ -25,6 +25,9 @@ class Next implements Comparable<Next> {
 	}
 }
 
+/**
+ * boj_1916_최소비용_구하기
+ */
 public class Main {
 	static int N, M;
 	static List<Next>[] graph;
