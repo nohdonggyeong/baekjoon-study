@@ -7,10 +7,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.StringTokenizer;
 
-/**
- * https://www.geeksforgeeks.org/union-by-rank-and-path-compression-in-union-find-algorithm/
- */
 public class Main {
+	static int n, m, op, a, b;
 	static int[] parent, rank;
 	
 	static void init(int n) {
@@ -22,71 +20,60 @@ public class Main {
 		}
 	}
 	
-	static int find(int x) {
-		if (parent[x] != x) {
-			parent[x] = find(parent[x]); // path compression
-		}
-		return parent[x];
-	}
-
-	static void union(int x, int y) {
-		x = find(x);
-		y = find(y);
+	static void union(int a, int b) {
+		a = find(a);
+		b = find(b);
 		
-		if (x == y) {
+		if (a == b) {
 			return;
 		}
 		
-		// union by rank
-		if (rank[x] < rank[y]) {
-			parent[x] = y;
-		} else if (rank[x] > rank[y]) {
-			parent[y] = x;
-		} else { // rank[x] == rank[y]
-			parent[y] = x;
-			rank[x]++;
+		if (rank[a] < rank[b]) {
+			parent[a] = b;
+		} else if (rank[b] < rank[a]) {
+			parent[b] = a;
+		} else {
+			parent[b] = a;
+			++rank[a];
 		}
+	}
+	
+	static int find(int a) {
+		if (parent[a] != a) {
+			parent[a] = find(parent[a]);
+		}
+		return parent[a];
 	}
 	
 	public static void main(String[] args) throws IOException {
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 				BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out))) {
-			long start = System.currentTimeMillis();
-			
 			StringTokenizer st = new StringTokenizer(br.readLine());
-			int n = Integer.parseInt(st.nextToken());
-			int m = Integer.parseInt(st.nextToken());
+			n = Integer.parseInt(st.nextToken());
+			m = Integer.parseInt(st.nextToken());
 			init(n);
 			
-			String op;
-			int a, b;
 			StringBuilder sb = new StringBuilder();
 			for (int i = 0; i < m; i++) {
 				st = new StringTokenizer(br.readLine());
-				op = st.nextToken();
+				op = Integer.parseInt(st.nextToken());
 				a = Integer.parseInt(st.nextToken());
 				b = Integer.parseInt(st.nextToken());
 				
-				switch(op) {
-				case "0":
-					union(a, b);
-					break;
-				case "1":
-					a = find(a);
-					b = find(b);
-					sb.append(a == b ? "YES" : "NO").append("\n");
-					break;
-				default:
-					break;
+				switch (op) {
+					case 0:
+						union(a, b);
+						break;
+					case 1:
+						sb.append(find(a) == find(b) ? "YES" : "NO").append("\n");
+						break;
+					default:
+						break;
 				}
 			}
 			
 			bw.write(sb.deleteCharAt(sb.length() - 1).toString());
 			bw.flush();
-			
-			long end = System.currentTimeMillis();
-			System.out.println();
-			System.out.println("Runtime: " + (end - start) + "ms");
 		}
 	}
 }

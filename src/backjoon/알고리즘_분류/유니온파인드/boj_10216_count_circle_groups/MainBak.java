@@ -5,13 +5,12 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-public class Main {
-	static class Node implements Comparable<Node> {
+public class MainBak {
+	static class Node {
 		int x;
 		int y;
 		int R;
@@ -21,47 +20,36 @@ public class Main {
 			this.y = y;
 			this.R = R;
 		}
-		
-		@Override
-		public int compareTo(Node o) {
-			if (this.x == o.x) {
-				if (this.y == o.y) {
-					return Integer.compare(o.R, this.R);
-				}
-				return Integer.compare(this.y, o.y);
-			}
-			return Integer.compare(this.x, o.x);
-		}
 	}
 	
 	static int T, N, x, y, R;
 	static Node[] nodes;
 	static int[] parent, rank;
-	static Set<Integer> countSet = new HashSet<Integer>();
+	static Set<Integer> parentSet;
 	
-	static void union(int a, int b) {
-		a = find(a);
-		b = find(b);
+	static int find(int x) {
+		if (parent[x] != x) {
+			parent[x] = find(parent[x]);
+		}
+		return parent[x];
+	}
+	
+	static void union(int x, int y) {
+		x = find(x);
+		y = find(y);
 		
-		if (a == b) {
+		if (x == y) {
 			return;
 		}
 		
-		if (rank[a] < rank[b]) {
-			parent[a] = b;
-		} else if (rank[b] < rank[a]) {
-			parent[b] = a;
+		if (rank[x] < rank[y]) {
+			parent[x] = y;
+		} else if (rank[y] < rank[x]) {
+			parent[y] = x;
 		} else {
-			parent[b] = a;
-			++rank[a];
+			parent[y] = x;
+			++rank[x];
 		}
-	}
-	
-	static int find(int a) {
-		if (parent[a] != a) {
-			parent[a] = find(parent[a]);
-		}
-		return parent[a];
 	}
 	
 	public static void main(String[] args) throws IOException {
@@ -72,49 +60,47 @@ public class Main {
 			
 			T = Integer.parseInt(br.readLine());
 			while (T-- > 0) {
-				
 				N = Integer.parseInt(br.readLine());
 				nodes = new Node[N];
+				parent = new int[N];
+				rank = new int[N];
 				
-				for (int n = 0; n < N; n++) {
+				for (int i = 0; i < N; i++) {
 					st = new StringTokenizer(br.readLine());
 					x = Integer.parseInt(st.nextToken());
 					y = Integer.parseInt(st.nextToken());
 					R = Integer.parseInt(st.nextToken());
-					nodes[n] = new Node(x, y, R);
+					
+					nodes[i] = new Node(x, y, R);
+					parent[i] = i;
+					rank[i] = 0;
 				}
 				
-				Arrays.sort(nodes);
-
-				parent = new int[N];
-				rank = new int[N];
-				for (int n = 0; n < N; n++) {
-					parent[n] = n;
-					rank[n] = 0;
-				}
-				
+				Node nodeI, nodeJ;
 				for (int i = 0; i < N - 1; i++) {
 					for (int j = i + 1; j < N; j++) {
-						if (Math.pow(nodes[i].x - nodes[j].x, 2) + Math.pow(nodes[i].y - nodes[j].y, 2)
-						<= Math.pow(nodes[i].R + nodes[j].R, 2)) {
+						nodeI = nodes[i];
+						nodeJ = nodes[j];
+
+						if (find(i) == find(j)) {
+							continue;
+						}
+						
+						if (Math.pow(nodeI.x - nodeJ.x, 2) + Math.pow(nodeI.y - nodeJ.y, 2) <= Math.pow(nodeI.R + nodeJ.R, 2)) {
 							union(i, j);
 						}
 					}
 				}
 				
-				for (int i = 0; i < N; i++) {
-					parent[i] = find(parent[i]);
+				parentSet = new HashSet<>();
+				for (int num : parent) {
+					parentSet.add(find(num));
 				}
 				
-				countSet.clear();
-				for (int i = 0; i < N; i++) {
-					countSet.add(parent[i]);
-				}
-				
-				sb.append(countSet.size()).append("\n");
+				sb.append(parentSet.size()).append("\n");
 			}
 			
-			bw.append(sb.deleteCharAt(sb.length() - 1).toString());
+			bw.write(sb.deleteCharAt(sb.length() - 1).toString());
 			bw.flush();
 		}
 	}

@@ -2,69 +2,91 @@ package backjoon.알고리즘_분류.유니온파인드.boj_1717_집합의_표�
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.StringTokenizer;
 
+/**
+ * https://www.geeksforgeeks.org/union-by-rank-and-path-compression-in-union-find-algorithm/
+ */
 public class MainBak {
-	static int n, m;
-	static int[] parent;
+	static int[] parent, rank;
 	
-	static void union(int a, int b) {
-		a = find(a);
-		b = find(b);
+	static void init(int n) {
+		parent = new int[n + 1];
+		rank = new int[n + 1];
+		for (int i = 0; i <= n; i++) {
+			parent[i] = i;
+			rank[i] = 0;
+		}
+	}
+	
+	static int find(int x) {
+		if (parent[x] != x) {
+			parent[x] = find(parent[x]); // path compression
+		}
+		return parent[x];
+	}
+
+	static void union(int x, int y) {
+		x = find(x);
+		y = find(y);
 		
-		if (a != b) {
-			parent[b] = a;
+		if (x == y) {
+			return;
+		}
+		
+		// union by rank
+		if (rank[x] < rank[y]) {
+			parent[x] = y;
+		} else if (rank[x] > rank[y]) {
+			parent[y] = x;
+		} else { // rank[x] == rank[y]
+			parent[y] = x;
+			rank[x]++;
 		}
 	}
 	
-	static int find(int a) {
-		if (a == parent[a]) {
-			return a;
-		} else {
-			return parent[a] = find(parent[a]);
-		}
-	}
-	
-	public static void main(String[] args) {
-		try(BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out))) {
-			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	public static void main(String[] args) throws IOException {
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+				BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out))) {
+			long start = System.currentTimeMillis();
+			
+			StringTokenizer st = new StringTokenizer(br.readLine());
+			int n = Integer.parseInt(st.nextToken());
+			int m = Integer.parseInt(st.nextToken());
+			init(n);
+			
+			String op;
+			int a, b;
 			StringBuilder sb = new StringBuilder();
-			StringTokenizer st;
-			
-			st = new StringTokenizer(br.readLine());
-			n = Integer.parseInt(st.nextToken());
-			m = Integer.parseInt(st.nextToken());
-			
-			parent = new int[n + 1];
-			for (int i = 0; i < n + 1; i++) {
-				parent[i] = i;
-			}
-			
 			for (int i = 0; i < m; i++) {
 				st = new StringTokenizer(br.readLine());
-				int c = Integer.parseInt(st.nextToken());
-				int a = Integer.parseInt(st.nextToken());
-				int b = Integer.parseInt(st.nextToken());
+				op = st.nextToken();
+				a = Integer.parseInt(st.nextToken());
+				b = Integer.parseInt(st.nextToken());
 				
-				if (c == 0) {
+				switch(op) {
+				case "0":
 					union(a, b);
-				} else if (c == 1) {
+					break;
+				case "1":
 					a = find(a);
 					b = find(b);
-					if (a == b) {
-						sb.append("YES").append("\n");
-					} else {
-						sb.append("NO").append("\n");
-					}
+					sb.append(a == b ? "YES" : "NO").append("\n");
+					break;
+				default:
+					break;
 				}
 			}
 			
-			bw.write(sb.toString().trim());
+			bw.write(sb.deleteCharAt(sb.length() - 1).toString());
 			bw.flush();
-		} catch (Exception e) {
-			e.printStackTrace();
+			
+			long end = System.currentTimeMillis();
+			System.out.println();
+			System.out.println("Runtime: " + (end - start) + "ms");
 		}
 	}
 }
