@@ -8,40 +8,40 @@ import java.io.OutputStreamWriter;
 import java.util.Arrays;
 import java.util.StringTokenizer;
 
-class Meeting implements Comparable<Meeting> {
-	int start;
-	int end;
-	
-	Meeting(int start, int end) {
-		this.start = start;
-		this.end = end;
-	}
-	@Override
-	public int compareTo(Meeting o) {
-		if (this.end == o.end) {
-			return Integer.compare(this.start,  o.start);
-		}
-		return Integer.compare(this.end, o.end);
-	}
-}
 
 public class Main {
+	static class Meeting implements Comparable<Meeting> {
+		int start;
+		int end;
+		
+		Meeting(int start, int end) {
+			this.start = start;
+			this.end = end;
+		}
+		
+		@Override
+		public int compareTo(Meeting o) {
+			if (this.end == o.end) {
+				return Integer.compare(this.start,  o.start);
+			}
+			return Integer.compare(this.end, o.end);
+		}
+	}
+	
 	static int N;
 	static Meeting[] meetings;
 	static int count;
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		try (BufferedReader br = new  BufferedReader(new InputStreamReader(System.in));
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out))) {
-			StringTokenizer st;
-			
 			N = Integer.parseInt(br.readLine());
+			
 			meetings = new Meeting[N];
+			StringTokenizer st;
 			for (int n = 0; n < N; n++) {
 				st = new StringTokenizer(br.readLine());
-				int start = Integer.parseInt(st.nextToken());
-				int end = Integer.parseInt(st.nextToken());
-				meetings[n] = new Meeting(start, end);
+				meetings[n] = new Meeting(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
 			}
 			Arrays.sort(meetings);
 			
@@ -55,9 +55,6 @@ public class Main {
 			
 			bw.write(String.valueOf(count));
 			bw.flush();
-			
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 }
