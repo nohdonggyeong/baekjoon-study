@@ -4,6 +4,10 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
+	static int N, M;
+	static int[][] map;
+	static boolean[][] visit;
+	static int islandNum = 0;
 
 	static class Node {
 		int r, c;
@@ -13,6 +17,9 @@ public class Main {
 			this.c = c;
 		}
 	}
+
+	static int[] dr = { -1, 0, 1, 0 };
+	static int[] dc = { 0, -1, 0, 1 };
 
 	static class Edge implements Comparable<Edge> {
 		int u;
@@ -31,24 +38,119 @@ public class Main {
 		}
 	}
 
-	static int N, M;
-	static int[][] map;
-	static boolean[][] visit;
-	
-	static int islandNum = 0;
-
-	static int[] dr = {-1, 0, 1, 0};
-	static int[] dc = {0, -1, 0, 1};
-
 	static PriorityQueue<Edge> pq = new PriorityQueue<>();
 	static int[] parent;
 	static int bridgeCnt = 0;
 	static int result = 0;
 
+	static void bfs(Node startNode) { // 섬 번호 매기기
+		Queue<Node> queue = new ArrayDeque<>();
+		queue.add(startNode);
+		visit[startNode.r][startNode.c] = true;
+		map[startNode.r][startNode.c] = islandNum;
+
+		int nr, nc;
+		while (!queue.isEmpty()) {
+			Node curNode = queue.poll();
+
+			for (int d = 0; d < 4; d++) {
+				nr = curNode.r + dr[d];
+				nc = curNode.c + dc[d];
+
+				if (nr < 0 || nr >= N || nc < 0 || nc >= M || map[nr][nc] != 1 || visit[nr][nc]) {
+					continue;
+				}
+
+				queue.add(new Node(nr, nc));
+				visit[nr][nc] = true;
+				map[nr][nc] = islandNum;
+			}
+		}
+	}
+
+	static void exhaustiveSearch(Node startNode, int num) { // 다리 후보 모으기
+		int nr = startNode.r;
+		int nc = startNode.c;
+		int length = 0;
+
+		for (int d = 0; d < 4; d++) { // 상하좌우 중에서 한 방향으로 계속 이동
+			while (true) {
+				nr += dr[d];
+				nc += dc[d];
+
+				if (nr < 0 || nr >= N || nc < 0 || nc >= M // 다른 섬에 이어지지 못하고 범위 벗어나거나
+						|| map[nr][nc] == num) { // 자신과 같은 번호의 섬 부분과 이어지면 취소
+					nr = startNode.r;
+					nc = startNode.c;
+					length = 0;
+					break;
+				}
+
+				if (map[nr][nc] != 0) { // 다른 섬에 이어졌는데
+					if (length > 1) { // length가 1보다 큰 경우 다리 후보 추가
+						pq.add(new Edge(num, map[nr][nc], length));
+					} // 그리고 다른 방향도 살펴보기
+					nr = startNode.r;
+					nc = startNode.c;
+					length = 0;
+					break;
+				} else {
+					++length; // 빈칸이면 더 나아가기
+				}
+			}
+		}
+	}
+
+	static int find(int a) {
+		if (a == parent[a])
+			return a;
+
+		return parent[a] = find(parent[a]);
+	}
+
+	static void union(int a, int b) {
+		a = find(a);
+		b = find(b);
+
+		if (a != b) {
+			parent[a] = b;
+		} else {
+			return;
+		}
+	}
+	
+	static void kruskal() { // 다리 후보 중 mst 가중치 합산
+		parent = new int[islandNum + 1];
+		for (int i = 0; i < parent.length; i++) {
+			parent[i] = i;
+		}
+
+		int a, b;
+		while (!pq.isEmpty()) {
+			Edge edge = pq.poll();
+
+			a = find(edge.u);
+			b = find(edge.v);
+
+			if (a == b) {
+				continue;
+			}
+
+			union(edge.u, edge.v);
+
+			result += edge.w;
+			++bridgeCnt;
+		}
+
+		if (result == 0 || bridgeCnt != islandNum - 1) {
+			result = -1;
+		}
+	}
+	
 	public static void main(String[] args) throws Exception {
 		try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));) {
 			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-			
+
 			StringTokenizer st = new StringTokenizer(br.readLine());
 			N = Integer.parseInt(st.nextToken());
 			M = Integer.parseInt(st.nextToken());
@@ -62,133 +164,31 @@ public class Main {
 				}
 			}
 
-			// 그래프 노드 번호 부여
+			// 섬 번호 매기기 = 그래프 노드 생성 과정
 			for (int r = 0; r < N; r++) {
 				for (int c = 0; c < M; c++) {
 					if (map[r][c] == 1 && !visit[r][c]) {
 						++islandNum;
-						numberIsland(new Node(r, c));
+						bfs(new Node(r, c));
 					}
 				}
 			}
-	        
-			// 그래프 간선 만들기
+
+			// 다리 후보 모으기 = 그래프 간선 생성 과정
 			visit = new boolean[N][M];
 			for (int r = 0; r < N; r++) {
 				for (int c = 0; c < M; c++) {
 					if (map[r][c] != 0) {
-						makeBridge(new Node(r, c), map[r][c]);
+						exhaustiveSearch(new Node(r, c), map[r][c]);
 					}
 				}
 			}
 
-			// 크루스칼 알고리즘
-			parent = new int[islandNum + 1];
-			for (int i = 0; i < parent.length; i++) {
-				parent[i] = i;
-			}
+			// 다리 후보 중 mst 가중치 합산
+			kruskal();
 
-			while (!pq.isEmpty()) {
-				Edge edge = pq.poll();
-
-				int a = find(edge.u);
-				int b = find(edge.v);
-
-				if (a == b)
-					continue;
-
-				union(edge.u, edge.v);
-				result += edge.w;
-				bridgeCnt++;
-			}
-
-			if (result == 0 || bridgeCnt != islandNum - 1) {
-				result = -1;
-			}
-			
 			bw.write(String.valueOf(result));
 			bw.flush();
-		}
-	}
-
-	public static int find(int a) {
-		if (a == parent[a])
-			return a;
-
-		return parent[a] = find(parent[a]);
-	}
-
-	public static void union(int a, int b) {
-		a = find(a);
-		b = find(b);
-
-		if (a != b) {
-			parent[a] = b;
-		} else {
-			return;
-		}
-	}
-
-	public static void numberIsland(Node node) { // bfs
-		Queue<Node> queue = new ArrayDeque<>();
-		queue.add(node);
-		visit[node.r][node.c] = true;
-		map[node.r][node.c] = islandNum;
-
-		while (!queue.isEmpty()) {
-			Node temp = queue.poll();
-			int r = temp.r;
-			int c = temp.c;
-
-			for (int d = 0; d < 4; d++) {
-				int nr = r + dr[d];
-				int nc = c + dc[d];
-
-				if (nr >= 0 && nr < N && nc >= 0 && nc < M
-						&& map[nr][nc] == 1 && !visit[nr][nc]) {
-					queue.add(new Node(nr, nc));
-					visit[nr][nc] = true;
-					map[nr][nc] = islandNum;
-				}
-			}
-		}
-	}
-
-	// 상하좌우 중 한 방향으로 계속 이동, 다른 섬이 나올 때까지 반복
-	public static void makeBridge(Node node, int num) {
-		int cr = node.r;
-		int cc = node.c;
-		int length = 0;
-
-		for (int d = 0; d < 4; d++) {
-			while (true) {
-				cr = cr + dr[d];
-				cc = cc + dc[d];
-
-				if (cr >= 0 && cr < N && cc >= 0 && cc < M) {
-					if (map[cr][cc] == num) { // 자신과 같은 번호가 나오면 좌표와 length 초기화
-						length = 0;
-						cr = node.r;
-						cc = node.c;
-						break;
-					} else if (map[cr][cc] == 0) {
-						length++;
-					} else { // 1보다 큰 경우 pq에 추가
-						if (length > 1) {
-							pq.add(new Edge(num, map[cr][cc], length));
-						}
-						length = 0;
-						cr = node.r;
-						cc = node.c;
-						break;
-					}
-				} else {
-					length = 0;
-					cr = node.r;
-					cc = node.c;
-					break;
-				}
-			}
 		}
 	}
 }
