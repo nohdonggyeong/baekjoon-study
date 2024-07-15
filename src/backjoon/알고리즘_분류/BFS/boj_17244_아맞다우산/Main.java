@@ -7,15 +7,15 @@ public class Main {
     static int N, M;
     
     static char[][] map;
-    static boolean[][][] visited;
     
     static int itemNum;
     static int[][] itemNums;
+
+    static int fullBit;
+    static boolean[][][] visit;
     
     static int[] dr = {-1, 0, 1, 0};
     static int[] dc = {0, 1, 0, -1};
-    
-    static int result = -1;
 
     static class Node {
     	int r;
@@ -38,6 +38,8 @@ public class Main {
     		this.time = time;
     	}
     }
+    
+    static int result = -1;
 
     public static void main(String[] args) throws IOException {
     	try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));) {
@@ -63,42 +65,48 @@ public class Main {
                 }
             }
 
-            int fullBit = (1 << itemNum) - 1;
-            visited = new boolean[1 << itemNum][M][N];
+            int bitSize = 1 << itemNum;
+            visit = new boolean[bitSize][M][N];
+            fullBit = bitSize - 1;
+            
             Queue<Cursor> queue = new ArrayDeque<>();
             queue.offer(new Cursor(new Node(start.r, start.c), 0, 0));
-            visited[0][start.r][start.c] = true;
+            visit[0][start.r][start.c] = true;
 
+            int cr, cc, cBit, cTime, nr, nc, nBit, nTime;
             while (!queue.isEmpty()) {
                 Cursor cursor = queue.poll();
-                int r = cursor.node.r;
-                int c = cursor.node.c;
-                int bit = cursor.bit;
-                int time = cursor.time;
+                cr = cursor.node.r;
+                cc = cursor.node.c;
+                cBit = cursor.bit;
+                cTime = cursor.time;
                 
-                if (bit == fullBit && map[r][c] == 'E') {
-                    result= time;
+                if (cBit == fullBit && map[cr][cc] == 'E') {
+                    result = cTime;
                     break;
                 }
 
                 for (int d = 0; d < 4; d++) {
-                    int nr = r + dr[d];
-                    int nc = c + dc[d];
+                    nr = cr + dr[d];
+                    nc = cc + dc[d];
 
                     if (nr < 0 || nr >= M || nc < 0 || nc >= N
-                    		|| map[nr][nc] == '#' || visited[bit][nr][nc]) {
+                    		|| map[nr][nc] == '#' || visit[cBit][nr][nc]) {
                         continue;
                     }
 
-                    int nBit = bit;
+                    nBit = cBit;
                     if (map[nr][nc] == 'X') {
                         nBit |= (1 << itemNums[nr][nc]);
                     }
+                    
+                    nTime = cTime + 1;
 
-                    queue.offer(new Cursor(new Node(nr, nc), nBit, time + 1));
-                    visited[nBit][nr][nc] = true;
+                    queue.offer(new Cursor(new Node(nr, nc), nBit, nTime));
+                    visit[nBit][nr][nc] = true;
                 }
             }
+            
             bw.write(String.valueOf(result));
             bw.flush();
     	}
