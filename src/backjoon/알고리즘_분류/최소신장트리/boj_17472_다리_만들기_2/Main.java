@@ -9,98 +9,74 @@ public class Main {
 	static boolean[][] visit;
 	static int islandNum = 0;
 
-	static class Node {
-		int r, c;
-
-		Node(int r, int c) {
-			this.r = r;
-			this.c = c;
-		}
-	}
-
 	static int[] dr = { -1, 0, 1, 0 };
 	static int[] dc = { 0, -1, 0, 1 };
 
 	static class Edge implements Comparable<Edge> {
-		int u;
-		int v;
-		int w;
+		int from;
+		int to;
+		int weight;
 
-		Edge(int s, int e, int w) {
-			this.u = s;
-			this.v = e;
-			this.w = w;
+		Edge(int from, int to, int weight) {
+			this.from = from;
+			this.to = to;
+			this.weight = weight;
 		}
 
 		@Override
 		public int compareTo(Edge o) {
-			return Integer.compare(this.w, o.w);
+			return Integer.compare(this.weight, o.weight);
 		}
 	}
 
 	static PriorityQueue<Edge> pq = new PriorityQueue<>();
 	static int[] parent;
 	static int bridgeCnt = 0;
+	
 	static int result = 0;
 
-	static void bfs(Node startNode) { // 섬 번호 매기기
-		Queue<Node> queue = new ArrayDeque<>();
-		queue.add(startNode);
-		visit[startNode.r][startNode.c] = true;
-		map[startNode.r][startNode.c] = islandNum;
+	// 섬 넘버링
+	static void numberIslands(int r, int c) {
+	    if (r < 0 || r >= N || c < 0 || c >= M
+	    		|| map[r][c] != 1 || visit[r][c]) {
+	        return;
+	    }
 
-		int nr, nc;
-		while (!queue.isEmpty()) {
-			Node curNode = queue.poll();
+	    visit[r][c] = true;
+	    map[r][c] = islandNum;
 
-			for (int d = 0; d < 4; d++) {
-				nr = curNode.r + dr[d];
-				nc = curNode.c + dc[d];
-
-				if (nr < 0 || nr >= N || nc < 0 || nc >= M || map[nr][nc] != 1 || visit[nr][nc]) {
-					continue;
-				}
-
-				queue.add(new Node(nr, nc));
-				visit[nr][nc] = true;
-				map[nr][nc] = islandNum;
-			}
-		}
+	    int nr, nc;
+	    for (int d = 0; d < 4; d++) {
+	        nr = r + dr[d];
+	        nc = c + dc[d];
+	        numberIslands(nr, nc);
+	    }
 	}
 
-	static void exhaustiveSearch(Node startNode, int num) { // 다리 후보 모으기
-		int nr = startNode.r;
-		int nc = startNode.c;
-		int length = 0;
+	// 가능한 모든 다리 찾기
+	static void collectBridgeCandidates(int r, int c, int d, int length, int from) {
+	    int nr = r + dr[d];
+	    int nc = c + dc[d];
 
-		for (int d = 0; d < 4; d++) { // 상하좌우 중에서 한 방향으로 계속 이동
-			while (true) {
-				nr += dr[d];
-				nc += dc[d];
+	    // 범위를 벗어나거나 자신의 섬으로 돌아온 경우
+	    if (nr < 0 || nr >= N || nc < 0 || nc >= M
+	    		|| map[nr][nc] == from) {
+	        return;
+	    }
 
-				if (nr < 0 || nr >= N || nc < 0 || nc >= M // 다른 섬에 이어지지 못하고 범위 벗어나거나
-						|| map[nr][nc] == num) { // 자신과 같은 번호의 섬 부분과 이어지면 취소
-					nr = startNode.r;
-					nc = startNode.c;
-					length = 0;
-					break;
-				}
+	    // 다른 섬에 도달한 경우
+	    if (map[nr][nc] != 0) {
+	        if (length > 1) {
+	        	// 다리 길이가 2 이상인 경우에만 후보로 추가
+	            pq.add(new Edge(from, map[nr][nc], length));
+	        }
+	        return;
+	    }
 
-				if (map[nr][nc] != 0) { // 다른 섬에 이어졌는데
-					if (length > 1) { // length가 1보다 큰 경우 다리 후보 추가
-						pq.add(new Edge(num, map[nr][nc], length));
-					} // 그리고 다른 방향도 살펴보기
-					nr = startNode.r;
-					nc = startNode.c;
-					length = 0;
-					break;
-				} else {
-					++length; // 빈칸이면 더 나아가기
-				}
-			}
-		}
+	    // 계속해서 같은 방향으로 탐색
+	    collectBridgeCandidates(nr, nc, d, length + 1, from);
 	}
-
+	
 	static int find(int a) {
 		if (a == parent[a])
 			return a;
@@ -119,7 +95,8 @@ public class Main {
 		}
 	}
 	
-	static void kruskal() { // 다리 후보 중 mst 가중치 합산
+	// 모든 섬을 연결하는 다리 길이의 최솟값 구하기
+	static void findMinimumBridgeLength() {
 		parent = new int[islandNum + 1];
 		for (int i = 0; i < parent.length; i++) {
 			parent[i] = i;
@@ -129,21 +106,17 @@ public class Main {
 		while (!pq.isEmpty()) {
 			Edge edge = pq.poll();
 
-			a = find(edge.u);
-			b = find(edge.v);
+			a = find(edge.from);
+			b = find(edge.to);
 
 			if (a == b) {
 				continue;
 			}
 
-			union(edge.u, edge.v);
+			union(edge.from, edge.to);
 
-			result += edge.w;
+			result += edge.weight;
 			++bridgeCnt;
-		}
-
-		if (result == 0 || bridgeCnt != islandNum - 1) {
-			result = -1;
 		}
 	}
 	
@@ -164,28 +137,33 @@ public class Main {
 				}
 			}
 
-			// 섬 번호 매기기 = 그래프 노드 생성 과정
+			// 섬 넘버링 = 그래프 노드 생성 과정
 			for (int r = 0; r < N; r++) {
 				for (int c = 0; c < M; c++) {
 					if (map[r][c] == 1 && !visit[r][c]) {
 						++islandNum;
-						bfs(new Node(r, c));
+						numberIslands(r, c);
 					}
 				}
 			}
 
-			// 다리 후보 모으기 = 그래프 간선 생성 과정
+			// 가능한 모든 다리 찾기 = 그래프 간선 생성 과정
 			visit = new boolean[N][M];
 			for (int r = 0; r < N; r++) {
 				for (int c = 0; c < M; c++) {
 					if (map[r][c] != 0) {
-						exhaustiveSearch(new Node(r, c), map[r][c]);
+					    for (int d = 0; d < 4; d++) { // 상하좌우 중에서 한 방향으로 탐색
+					        collectBridgeCandidates(r, c, d, 0, map[r][c]);
+					    }
 					}
 				}
 			}
 
-			// 다리 후보 중 mst 가중치 합산
-			kruskal();
+			// 모든 섬을 연결하는 다리 길이의 최솟값 구하기 = 모든 정점을 연결하는 간선 가중치의 최소 합 구하는 과정
+			findMinimumBridgeLength();
+			if (result == 0 || bridgeCnt != islandNum - 1) {
+				result = -1;
+			}
 
 			bw.write(String.valueOf(result));
 			bw.flush();
